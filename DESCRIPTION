@@ -1,0 +1,15 @@
+Package: BOM
+Type: Package
+Title: Bag of motifs
+Version: 0.0.1
+Authors@R: c(person("Paola", "Cornejo", role = c("aut", "cre"), email = "p.cornejo@victorchang.edu.au"),
+			person ("David", "Humphreys", role = c("aut"), email = "d.humphreys@victorchang.edu.au"))
+Description: Bag of motifs R package
+License: file LICENSE
+Encoding: UTF-8
+LazyData: true
+Depends: R (>= 3.4.0)
+Imports: GenomicFeatures,  GenomicRanges, rsample, xgboost, 
+RoxygenNote: 7.1.2
+Suggests: 
+VignetteBuilder: knitr
