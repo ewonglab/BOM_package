@@ -1,133 +1,102 @@
-# Load required packages
-
-required_packages <- c("rsample","xgboost")
-
-load_required_packages <- function(packages) {
-  for (pkg in packages) {
-    if (!requireNamespace(pkg, quietly = TRUE)) {
-      stop(paste("Package", pkg, "is not installed. Please install it before proceeding."))
-    } else {
-      suppressMessages(library(pkg, character.only = TRUE))
-    }
+############################################################
+### add.missing.vars_xgb
+#' Function to add columns with zero counts for motifs present in the model but not in the test set  
+#' @param xgb.model XGBoost model
+#' @param testSet Data frame containing a CRE test set 
+#'
+#'
+#' @return  
+add.missing.vars_xgb <- function(xgb.model, testSet)
+  {
+  missing.vars <- setdiff(xgb.model$feature_names, colnames(testSet))
+  testSet[, missing.vars] <- lapply(missing.vars, function(var) as.integer(0))
+  return(testSet)
   }
-}
 
-load_required_packages(required_packages)
 
-# Read parameters
-
-params <- list(
-  input_data = NULL
-  , xgb_model = NULL
-  , pred = "predictions.txt"
-  , training_set = NULL
-)
-
-display_help <- FALSE
-
-args <- commandArgs(trailingOnly = TRUE)
-
-for (arg in args) {
-  param <- strsplit(arg, "=", fixed = TRUE)[[1]]
-  if (param[1] == "--help") {
-    display_help <- TRUE
-    break
+#############################################################
+## predict_binary
+#' Function to predict a set of test CREs using a binary classification model  
+#' 
+#' @param motifs  File containing motif counts
+#' @param xgb_model File name of model
+#' @param pred File name to output predicted values (default "predictions.txt")
+#' @param training_set File name to output training counts (optional)
+#' 
+#' @examples 
+#'
+#' extdata_path <- system.file("extdata",package = "BagOfMotifs")
+#' motif_counts <- paste0(extdata_path, "/tutorial/Cardiomyocytes_vs_other_counts.txt")
+#' 
+#' 
+#' predict_binary(motifs = motif_counts, xgb_model = "Cardiomyocytes_vs_other.rds")
+#
+#' @export
+predict_binary <- function(xgb_model)
+  {
+  message("Reading classification model...\n")
+  
+  xgb <- readRDS(xgb_model)
+  
+  message("Saving XGBoost model in .bin format...\n")
+  xgboost::xgb.save(xgb, gsub(".rds", ".bin", xgb_model))
+  
+  message(paste("Best tree:", xgb$best_iteration, "\n"))
+  
+  # Reading table of motif counts
+  
+  message("Reading motif counts matrix...\n")
+  counts.tab <- read.table(file = motifs, header =T, stringsAsFactors = F, sep = '\t')
+  counts.tab$celltype <- NULL
+  
+  counts.tab.NAs <- sapply(counts.tab, function(x) sum(is.na(x)))
+  
+  if(any(counts.tab.NAs) > 0){
+    warning("NAs present in input matrix...\n")  
   }
-  param[1] <- sub("--", "", param[1])
-  if (param[1] %in% names(params)) {
-    params[[param[1]]] <- param[2]
+  
+  # Binary label as numeric
+  counts.tab$binary_celltype <- as.numeric(counts.tab$binary_celltype)
+  
+  # Split dataset into training, validation and test sets
+  set.seed(123)
+  motifs_split <- rsample::initial_split(counts.tab, prop = .6)
+  motifs_train <- rsample::training(motifs_split)
+  motifs_test <- rsample::testing(motifs_split)
+  
+  set.seed(123)
+  motifs_split2 <- rsample::initial_split(motifs_test, prop = .5)
+  motifs_val <- rsample::training(motifs_split2)
+  motifs_test <- rsample::testing(motifs_split2)
+  
+  # Removing non-variable motifs from training set
+  motifs_train.sd <- apply(motifs_train, 2, sd)
+  motifs_train <- motifs_train[, names(which(motifs_train.sd != 0))]
+  
+  # Save training set if a file name is provided
+  if (!is.null(training_set)) {
+    message(paste("Saving training set to", training_set, "...\n"))
+    write.table(x = motifs_train, file = training_set, quote = FALSE, sep ='\t')
   }
+  
+  motifs_test <- add.missing.vars_xgb(xgb, motifs_test)
+  test_labels <- motifs_test$binary_celltype
+  motifs_test <- motifs_test[,xgb$feature_names]  
+  
+ set.seed(123)
+  y_pred <- predict(xgb, data.matrix(motifs_test), type="response")
+  predicted.class <- y_pred > 0.5 
+  predicted.class <- gsub("TRUE", 1, predicted.class)
+  predicted.class <- gsub("FALSE", 0, predicted.class)
+  
+  actual.vs.predicted <- data.frame(true_class = test_labels
+                                    , predicted_class = predicted.class
+                                    , prob = y_pred
+                                    , stringsAsFactors = F)
+  
+  rownames(actual.vs.predicted) <- rownames(motifs_test)
+  
+  message(paste("Saving predicted values to", pred, "...\n"))
+  write.table(x = actual.vs.predicted, file = pred, quote = F)
+
 }
-
-if (display_help) {
-  cat("Usage: Rscript xgboost_predictions.R [parameters]\n")
-  cat("\n")
-  cat("Parameters:\n")
-  cat("--input_data=<file>       Path to the input data file\n")
-  cat("--xgb_model=<file>        Path to the xgboost model file\n")
-  cat("--predictions=<file>      Path to save the predicted values\n")
-  cat("--training_set=<file>     Path to save the training set (optional)\n")
-  cat("--help                    Display this help message\n")
-  cat("\n")
-  q("no", status = 0)
-  } else {
-  input_data <- params$input_data
-  xgb_model <- params$xgb_model
-  predictions <- params$predictions
-  training_set <- params$training_set
-}
-
-add.missing.vars_xgb <- function(xgb.model , data){
-  missing.vars <- setdiff(xgb.model$feature_names, colnames(data))
-  data[, missing.vars] <- lapply(missing.vars, function(var) as.integer(0))
-  return(data)}
-
-
-# READING XGBOOST MODEL
-
-cat("Reading model...\n")
-
-#xgb <- xgb.load(xgb_model)
-xgb <- readRDS(xgb_model)
-xgb.save(xgb, gsub(".rds", ".bin", xgb_model))
-
-cat(paste("Best tree:", xgb$best_iteration, "\n"))
-
-# Reading table of motif counts
-
-cat("Reading data...\n")
-counts.tab <- read.table(file = input_data, header =T, stringsAsFactors = F, sep = '\t')
-counts.tab$celltype <- NULL
-
-counts.tab.NAs <- sapply(counts.tab, function(x) sum(is.na(x)))
-
-if(any(counts.tab.NAs) > 0){
-  cat("There are NAs in input data...\n")  
-}
-
-# Binary label as numeric
-counts.tab$binary_celltype <-as.numeric(counts.tab$binary_celltype)
-
-# Split dataset into training, validation and test sets
-set.seed(123)
-motifs_split <- initial_split(counts.tab, prop = .6)
-motifs_train <- training(motifs_split)
-motifs_test <- testing(motifs_split)
-
-set.seed(123)
-motifs_split2 <- initial_split(motifs_test, prop = .5)
-motifs_val <- training(motifs_split2)
-motifs_test <- testing(motifs_split2)
-
-# Removing non-variable motifs from training set
-motifs_train.sd <- apply(motifs_train, 2, sd)
-motifs_train <- motifs_train[, names(which(motifs_train.sd != 0))]
-
-# Save training set if a file name is provided
-if (!is.null(training_set)) {
-  cat("Saving training set...\n")
-  write.table(x = motifs_train, file = training_set, quote = FALSE, sep ='\t')
-}
-
-motifs_test <- add.missing.vars_xgb(xgb, motifs_test)
-test_labels <- motifs_test$binary_celltype
-motifs_test <- motifs_test[,xgb$feature_names]  
-
-set.seed(123)
-y_pred <- predict(xgb, data.matrix(motifs_test), type="response")
-predicted.class <- y_pred > 0.5 
-predicted.class <- gsub("TRUE", 1, predicted.class)
-predicted.class <- gsub("FALSE", 0, predicted.class)
-
-actual.vs.predicted <- data.frame(true_class = test_labels
-                                  , predicted_class = predicted.class, prob = y_pred
-                                  , stringsAsFactors = F)
-
-rownames(actual.vs.predicted) <- rownames(motifs_test)
-
-cat(paste("Saving predicted values...\n"))
-
-write.table(x = actual.vs.predicted, file = params$pred, quote = F)
-
-cat("Done\n")
-
