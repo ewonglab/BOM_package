@@ -1,79 +1,49 @@
-params <- list(
-  shap_file = NULL
-  , out_file = NULL
-  , rank_type = "sum"
-)
-
-display_help <- FALSE
-
-args <- commandArgs(trailingOnly = TRUE)
-
-for (arg in args) {
-  param <- strsplit(arg, "=", fixed = TRUE)[[1]]
-  if (param[1] == "--help") {
-    display_help <- TRUE
-    break
-  }
-  param[1] <- sub("--", "", param[1])
-  if (param[1] %in% names(params)) {
-    params[[param[1]]] <- param[2]
-  }
-}
-
-if (display_help) {
-  cat("Usage: Rscript rank_motifs.R [parameters]\n")
-  cat("\n")
-  cat("Parameters:\n")
-  cat("  --shap_file=<file>       Path to the SHAP values file\n")
-  cat("  --out_file=<file>      Path to save the motifs ranked by SHAP\n")
-  cat("  --rank_type=<file>      Rank type. Either 'sum' or 'mean' \n")
-  cat("\n")
-  q("no", status = 1)
-} 
+#############################################################
+## rankMotifs
+#' Function to rank motifs by the sum or mean of absolute SHAP scores.  
+#' 
+#' @param shap_file  Path to the file containing SHAP scores
+#' @param out_file File name to output the motifs ranked by SHAP
+#' @param rank_type Rank type. Either 'sum' or 'mean'
+#' 
+#' @examples 
+#'
+#' extdata_path <- system.file("extdata",package = "BagOfMotifs")
+#' binPredictions <- paste0(extdata_path, "/tutorial/[SHAP SCORES FILE]")
+#' 
+#' 
+#' rankMotifs(shap_file = binPredictions, out_file = "ranked_motifs", rank_type = "sum")
+#
+#' @export
 
 
-shap_file <- params$shap_file
-out_file <- params$out_file
-rank_type <- params$rank_type
-
-rank_shap <- function(shap.df, type){
-  if(!type %in% c("sum", "mean")){
+rank_shap <- function(shap_file, type, out_file){
+  
+    if(!type %in% c("sum", "mean")){
     stop(paste("Invalid ranking type:", type))
-  }
+    }
+  message("Reading SHAP values...\n")
+  shap <- read.table(file = shap_file, header = T, stringsAsFactors = F, sep ='\t', row.names = 1)
+  
   if(type == "sum"){
-    shap_per_motif <- apply(shap.df, 2, function(x) sum(abs(x)))
+    shap_per_motif <- apply(shap, 2, function(x) sum(abs(x)))
   }
   if(type == "mean"){
-    shap_per_motif <- apply(shap.df, 2, function(x) mean(abs(x)))
+    shap_per_motif <- apply(shap, 2, function(x) mean(abs(x)))
   }
   
   shap_per_motif <- shap_per_motif[order(-shap_per_motif)]
-  return(shap_per_motif)
+  shap_per_motif <- as.data.frame(shap_per_motif)
+  
+  if(type == "sum"){
+    colnames(shap_per_motif) <- "sum_abs_SHAP"
   }
-
-
-# READING SHAP VALUES
-cat("Reading SHAP values...\n")
-
-shap <- read.table(file = shap_file, header = T, stringsAsFactors = F, sep ='\t', row.names = 1)
-
-cat("Ranking motifs by SHAP...\n")
-
-ranked_motifs <- rank_shap(shap, rank_type)
-ranked_motifs <- as.data.frame(ranked_motifs)
-
-if(rank_type == "sum"){
-  colnames(ranked_motifs) <- "sum_abs_SHAP"
+  if(type == "mean"){
+    colnames(shap_per_motif) <- "mean_abs_SHAP"
+  }
+  
+  # return(shap_per_motif)
+  message("Saving ranked motifs...\n")
+  write.table(x = shap_per_motif, file = out_file, quote = F)
+  
 }
-if(rank_type == "mean"){
-  colnames(ranked_motifs) <- "mean_abs_SHAP"
-}
-
-
-cat("Saving ranked motifs...\n")
-
-write.table(x = ranked_motifs, file = out_file, quote = F)
-
-cat("Done\n")
-
-
