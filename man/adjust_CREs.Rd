@@ -5,12 +5,14 @@
 \title{adjust_CREs
 Function to trim (or extend) CREs}
 \usage{
-adjust_CREs(x, N)
+adjust_CREs(x, N, chrom_sizes)
 }
 \arguments{
 \item{x}{data frame of genomic coordinates. BED file format.}
 
 \item{N}{Number of base pairs - used to extend coordinates stored in x.}
+
+\item{chom_sizes}{dataframe of chromosome sizes}
 }
 \description{
 adjust_CREs

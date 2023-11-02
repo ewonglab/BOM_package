@@ -3,8 +3,9 @@
 #' Function to trim (or extend) CREs 
 #' @param x data frame of genomic coordinates. BED file format. 
 #' @param N Number of base pairs - used to extend coordinates stored in x.
+#' @param chom_sizes  dataframe of chromosome sizes
 #' 
-adjust_CREs <- function(x, N){
+adjust_CREs <- function(x, N, chrom_sizes){
   
   x$width <- with(x, V3-V2)
   #x$centre <- with(x, V2 + (width/2))
@@ -135,7 +136,7 @@ filterCREs <- function(input_bed = NULL,
 	  
 	  # Adjust CREs
 	  cat("Adjusting CRE length...\n")
-	  cres <- adjust_CREs(cres, nbp)
+	  cres <- adjust_CREs(cres, nbp, chrom_sizes)
 	}
 
 	# Save filtered regions
