@@ -1,4 +1,4 @@
-Package: BOM
+Package: BagOfMotifs
 Type: Package
 Title: Bag of motifs
 Version: 0.0.1
@@ -9,7 +9,6 @@ License: file LICENSE
 Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.4.0)
-Imports: GenomicFeatures,  GenomicRanges, rsample, xgboost, 
-RoxygenNote: 7.1.2
-Suggests: 
+Imports: GenomicFeatures,  GenomicRanges, rsample, xgboost, knitr
+RoxygenNote: 7.2.3
 VignetteBuilder: knitr

@@ -1,6 +1,6 @@
 #############################################################
-## train_binary
-#' Function to train a binary classification model. 
+#' train_binary
+#' @description Function to train a binary classification model. 
 #' 
 #' @param input_data  File containing the input matrix of motif counts
 #' @param nrounds Number of boosting rounds (default: 10000)
@@ -21,14 +21,14 @@
 #' @param print_every_n Print evaluation messages each n-th iterations (default: 1)
 #'      
 #' @examples 
-#'
+#' \dontrun{
 #' extdata_path <- system.file("extdata",package = "BagOfMotifs")
 #' motif_counts <- paste0(extdata_path, "/tutorial/Cardiomyocytes_vs_other_counts.txt")
 #' 
 #' 
 #' train_binary(input_data = motif_counts, save_name="Cardiomyocytes_vs_other.rds"
 #' , early_stopping_rounds = 100, print_every_n = 100, nthread = 4)
-#
+#' }
 #' @export
 train_binary <- function(input_data = NULL, nrounds = 10000
                          , eta = 0.01, max_depth = 6, subsample = 0.5

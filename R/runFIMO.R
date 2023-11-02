@@ -23,7 +23,7 @@
 runFIMO <- function(input_path, genome_path, motifs_path, out_path
                     , p_thresh = 0.0001, rm_fasta = TRUE){
   # create output directory
-  mkidir_command <- paste("mkdir -p" out_path)
+  mkidir_command <- paste("mkdir -p", out_path)
   system(mkidir_command)
   
   # get sequences for CRE coordinates

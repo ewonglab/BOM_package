@@ -1,10 +1,9 @@
 ############################################################
-### adjust_CREs
+#' adjust_CREs
 #' Function to trim (or extend) CREs 
-#' @param x
-#' @param N
-#'
-#' @return  
+#' @param x data frame of genomic coordinates. BED file format. 
+#' @param N Number of base pairs - used to extend coordinates stored in x.
+#' 
 adjust_CREs <- function(x, N){
   
   x$width <- with(x, V3-V2)
@@ -45,21 +44,20 @@ adjust_CREs <- function(x, N){
 
 
 #############################################################
-## filterCREs
-#'
+#' filterCREs
+#' @description Function to filter Cis Regulatory Elements (CRE)
 #' @param inputBedFile  input bed filename
 #' @param annotFile     annotation file name
 #' @param u number of basepairs upstream of transcriptional start sites
 #' @param d number of basepairs downstream of transcriptional start site
 #' @param nbp  number of base pairs
-#' @param keep_proximal  boolean. If True keeps proximal regions close to Transcription start site
-#' @param remove_proximal 
-#' @param non_exonic
+#' @param keep_proximal  boolean. Only keep proximal regions (defined by u and d) relative to transcription start sites
+#' @param remove_proximal  Boolean: Remove proximal regions (defined by u and d) relative to transcriptional start sites
+#' @param non_exonic Boolean - defines if non exonic regions should ONLY be considered.
 #' @param out_bed   name of output bed file
-#' @returns
 #'
 #' @examples 
-#'
+#' \dontrun{
 #' extdata_path <- system.file("extdata",package = "BagOfMotifs")
 #' input.bed <- paste0(extdata_path, "/tutorial/mouseE8.25_peaks.bed")
 #' annot.file <- paste0(extdata_path,"/Mus_musculus.GRCm38.92.gtf.gz")
@@ -71,7 +69,7 @@ adjust_CREs <- function(x, N){
 #' 					   u =  1000, d=1000, nbp=500,
 #'                     chrSizes = mouseChrSizes, 
 #'                     out_bed =  'mouseE8.25_peaks_filt.bed')
-#
+#' }
 #' @export
 filterCREs <- function(input_bed = NULL, 
 				annot = NULL,

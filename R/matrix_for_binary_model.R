@@ -1,6 +1,6 @@
 #############################################################
-## matrix_binModel
-#' Function to produce a matrix of motif frequency. Motif instances will be filtered using the q-value threshold provided. 
+#' matrix_binModel
+#' @description Function to produce a matrix of motif frequency. Motif instances will be filtered using the q-value threshold provided. 
 #' The regions annotated to the target cell type/condition will be coded as 1. Background regions will be coded as 0.
 #' The outpud matrix will contain a balanced number of positive (target) and negative (background) instances.
 #' 
@@ -10,24 +10,23 @@
 #' @param out_filename Name for the output file
 #' 
 #' @examples 
-#'
+#' \dontrun{
 #' extdata_path <- system.file("extdata",package = "BagOfMotifs")
+#' data_path <- paste0(extdata_path, "/tutorial/motifs") 
 #' binPredictions <- paste0(extdata_path, "/tutorial/Cardiomyocytes_vs_other_pred.txt")
 #' 
-#' 
-#' mat <- matrix_binModel(inputFile = binPredictions)
-#
+#' mat <- matrix_binModel(target_ct= 'Cardiomyocytes', data_path=data_path, qval_thresh=0.5, out_filename='cardiomyocytes_vs_other_counts.txt')
+#' }
 #' @export
-
 matrix_binModel <- function(target_ct, data_path, qval_thresh, out_filename)
 {
   # list directories containing FIMO output
   directories <- list.dirs(path = data_path, full.names = T, recursive=F)
   celltypes <- basename(directories)
   
-  counts_files <- (paste0(directories, "/fimo.tsv"))
+  counts_files <- (paste0(directories, "/fimo.tsv.gz"))
   # Read results of motif search
-  message(paste("Reading input data...\n"))
+  message(paste0("Reading input data from ",data_path,".\nThere are ", length(directories), " directories found."))
   suppressWarnings({
     counts <- lapply(counts_files, data.table::fread)
   })
@@ -104,7 +103,7 @@ matrix_binModel <- function(target_ct, data_path, qval_thresh, out_filename)
   final_set <- final_set[,c(colnames(final_set)[colnames(final_set)!="celltype"],"celltype")]
   final_set$binary_celltype <- ifelse(final_set$celltype==target_ct, 1, 0)
   
-  if()
+#  if()
   message(paste("Saving matrix of motif counts for binary classification...\n"))
   write.table(x = final_set, file = out_filename, quote = F, sep = '\t')
   

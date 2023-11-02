@@ -6,7 +6,6 @@
 #' @param FP Number of False Positive instances
 #' @param FN Number of False Negative instances
 #'
-#' @return  
 MCC <- function(TP, TN, FP, FN){
   TP <- as.numeric(TP)
   TN <- as.numeric(TN)
@@ -31,8 +30,6 @@ MCC <- function(TP, TN, FP, FN){
 #' binaryStats(inputFile = binPredictions)
 #
 #' @export
-
-
 binaryStats <- function(inputFile)
 {
   message("Reading predicted values...\n")

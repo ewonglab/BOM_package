@@ -1,6 +1,6 @@
 #############################################################
-## rankMotifs
-#' Function to rank motifs by the sum or mean of absolute SHAP scores.  
+#' rankMotifs
+#' @description Function to rank motifs by the sum or mean of absolute SHAP scores.  
 #' 
 #' @param shap_file  Path to the file containing SHAP scores
 #' @param out_file File name to output the motifs ranked by SHAP
@@ -8,15 +8,14 @@
 #' 
 #' @examples 
 #'
+#' \dontrun{
 #' extdata_path <- system.file("extdata",package = "BagOfMotifs")
 #' binPredictions <- paste0(extdata_path, "/tutorial/[SHAP SCORES FILE]")
 #' 
 #' 
 #' rankMotifs(shap_file = binPredictions, out_file = "ranked_motifs", rank_type = "sum")
-#
+#' }
 #' @export
-
-
 rank_shap <- function(shap_file, type, out_file){
   
     if(!type %in% c("sum", "mean")){

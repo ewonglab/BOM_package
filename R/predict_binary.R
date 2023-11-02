@@ -1,11 +1,11 @@
 ############################################################
-### add.missing.vars_xgb
+#' add.missing.vars_xgb
+#' @description 
 #' Function to add columns with zero counts for motifs present in the model but not in the test set  
 #' @param xgb.model XGBoost model
 #' @param testSet Data frame containing a CRE test set 
 #'
-#'
-#' @return  
+#' 
 add.missing.vars_xgb <- function(xgb.model, testSet)
   {
   missing.vars <- setdiff(xgb.model$feature_names, colnames(testSet))
@@ -15,8 +15,8 @@ add.missing.vars_xgb <- function(xgb.model, testSet)
 
 
 #############################################################
-## predict_binary
-#' Function to predict a set of test CREs using a binary classification model  
+#' predict_binary
+#' @description Function to predict a set of test CREs using a binary classification model  
 #' 
 #' @param motifs  File containing motif counts
 #' @param xgb_model File name of model
@@ -24,13 +24,13 @@ add.missing.vars_xgb <- function(xgb.model, testSet)
 #' @param training_set File name to output training counts (optional)
 #' 
 #' @examples 
-#'
+#' \dontrun{
 #' extdata_path <- system.file("extdata",package = "BagOfMotifs")
 #' motif_counts <- paste0(extdata_path, "/tutorial/Cardiomyocytes_vs_other_counts.txt")
 #' 
 #' 
 #' predict_binary(motifs = motif_counts, xgb_model = "Cardiomyocytes_vs_other.rds")
-#
+#' }
 #' @export
 predict_binary <- function(xgb_model)
   {
