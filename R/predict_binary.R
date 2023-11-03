@@ -5,7 +5,7 @@
 #' @param xgb.model XGBoost model
 #' @param testSet Data frame containing a CRE test set 
 #'
-#' 
+#' @export
 add.missing.vars_xgb <- function(xgb.model, testSet)
   {
   missing.vars <- setdiff(xgb.model$feature_names, colnames(testSet))
