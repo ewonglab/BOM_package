@@ -33,6 +33,8 @@ MCC <- function(TP, TN, FP, FN){
 binaryStats <- function(inputFile)
 {
   message("Reading predicted values...\n")
+  
+  pred_tab <- read.table(file = inputFile, header = T, stringsAsFactors = F)
   TP <- nrow(pred_tab[pred_tab$true_class == 1 & pred_tab$predicted_class == 1, ])
   TN <- nrow(pred_tab[pred_tab$true_class == 0 & pred_tab$predicted_class == 0, ])
   FP <- nrow(pred_tab[pred_tab$true_class == 0 & pred_tab$predicted_class == 1, ])
