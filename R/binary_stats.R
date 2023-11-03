@@ -5,7 +5,7 @@
 #' @param TN Number of True Negative instances
 #' @param FP Number of False Positive instances
 #' @param FN Number of False Negative instances
-#'
+#' @export
 MCC <- function(TP, TN, FP, FN){
   TP <- as.numeric(TP)
   TN <- as.numeric(TN)
