@@ -24,7 +24,7 @@ matrix_binModel <- function(target_ct, data_path, qval_thresh, out_filename)
   directories <- list.dirs(path = data_path, full.names = T, recursive=F)
   celltypes <- basename(directories)
   
-  counts_files <- (paste0(directories, "/fimo.tsv.gz"))
+  count_files <- list.files(path=data_path, full.names =T, recursive=T, pattern='fimo.tsv*')
   # Read results of motif search
   message(paste0("Reading input data from ",data_path,".\nThere are ", length(directories), " directories found."))
   suppressWarnings({
