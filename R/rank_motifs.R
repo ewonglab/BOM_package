@@ -3,7 +3,7 @@
 #' @description Function to rank motifs by the sum or mean of absolute SHAP scores.  
 #' 
 #' @param shap_file  Path to the file containing SHAP scores
-#' @param out_file File name to output the motifs ranked by SHAP
+#' @param out_file File name to output the motifs ranked by SHAP (default to "ranked_motifs")
 #' @param rank_type Rank type. Either 'sum' or 'mean'
 #' 
 #' @examples 
@@ -13,10 +13,10 @@
 #' binPredictions <- paste0(extdata_path, "/tutorial/[SHAP SCORES FILE]")
 #' 
 #' 
-#' rankMotifs(shap_file = binPredictions, out_file = "ranked_motifs", rank_type = "sum")
+#' rankMotifs(shap_file = binPredictions, out_file = "ranked_motifs", type = "sum")
 #' }
 #' @export
-rank_shap <- function(shap_file, type, out_file){
+rankMotifs <- function(shap_file, type, out_file){
   
     if(!type %in% c("sum", "mean")){
     stop(paste("Invalid ranking type:", type))
