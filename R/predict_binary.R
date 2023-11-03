@@ -32,7 +32,7 @@ add.missing.vars_xgb <- function(xgb.model, testSet)
 #' predict_binary(motifs = motif_counts, xgb_model = "Cardiomyocytes_vs_other.rds")
 #' }
 #' @export
-predict_binary <- function(xgb_model)
+predict_binary <- function(motifs, xgb_model, training_set = NULL, pred = "predictions.txt")
   {
   message("Reading classification model...\n")
   
