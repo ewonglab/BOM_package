@@ -1,0 +1,76 @@
+---
+title: "BAG of Motifs: "
+author: 
+  - name: Paola 
+    affiliation: Developmental and Stem Cell Biology Division, Victor Chang Cardiac Research Institute
+abstract: "This vignette provides a working example on how to use Bag of motifs."
+date: "`r format(Sys.Date(), '%B %d, %Y')`"
+output: 
+    BiocStyle::html_document:
+      highlight: pygments
+      toc: true
+    #number_sections: true  ## if you want number sections at each table header
+    #theme: united 
+keywords: single cell RNASeq, scRNA-Seq, RNA-Sequencing, RNA-Seq, transcript isoform
+vignette: >
+  %\VignetteEngine{knitr::rmarkdown}
+  %\VignetteIndexEntry{BOM}
+  %\VignetteEncoding{UTF-8}
+---
+
+# Introduction
+
+
+# Tutorial
+
+## Step 1: Preparing input data
+
+The Bag of motif pipeline requires a list of enhancer sequences that are known to exist within a specific cell type. 
+An easy starting point to obtain this information is to have genomic coordinates stored in a table format. 
+The supplementary table from Pijuan et al is in this format and will be the starting point for this vignette. 
+
+This first block of code converts the Pijuan et al supplementary data table into a BED formatted file.
+
+```
+	extdata_path <- system.file("extdata",package = "BagOfMotifs") 
+	filename <- paste0(extdata_path, '/Pijuan_etal_table_S6.csv.gz')
+
+	# load snATAC data
+	mouseE8.25 <- read.csv(file = filename, header = T, stringsAsFactors = F)
+
+	# removing all the peaks that were not annotated to a cell type
+	mouseE8.25 <- mouseE8.25[!is.na(mouseE8.25$celltype_specificity),]
+
+	# only the peaks annotated to a single cell type
+	mouseE8.25 <- mouseE8.25[!grepl(pattern = ";", x = mouseE8.25$celltype_specificity),]
+
+	# remove any duplicated peaks (only keep the peak coordinates and cell type annotation)
+	mouseE8.25 <- unique(mouseE8.25[,c("peak_chr", "peak_start", "peak_end", "celltype_specificity")])
+
+	# Convert to Genomic Ranges
+	mouseE8.25_gr <- with(mouseE8.25, GenomicRanges::GRanges(peak_chr, IRanges::IRanges(peak_start+1, peak_end)))
+	mouseE8.25_gr <- sort(mouseE8.25_gr)
+
+	# Save processed peak into a bed file
+	output_file <- 'mouseE8.25_peaks.bed'
+	write.table(x = mouseE8.25, file = output_file, col.names = F, row.names = F, quote = F, sep = '\t')
+```
+
+## Step 2  - Peak filter
+
+We next filter the bed entries against a gene model. Below we select non-exonic sites that are not proximal to start of a gene.
+
+```
+    input_bed_filename = 'mouseE8.25_peaks.bed'
+	# the following file should be identical to what was created above
+	input_bed_filename = paste0(extdata_path, '/tutorial/mouseE8.25_peaks.bed')
+    annot= paste0(extdata_path, "/Mus_musculus.GRCm38.92.gtf.gz")
+    out_bed="mouseE8.25_peaks_filt.bed"
+	BagOfMotifs::filterCREs(input_bed = input_bed_filename, annot= annot, chr_sizes=chr_sizes,
+		u = 1000, d = 1000, nbp= 500, 
+		remove_proximal = TRUE, non_exonic = TRUE,
+		out_bed="mouseE8.25_peaks_filt.bed")
+```
+
+## Step 3
+

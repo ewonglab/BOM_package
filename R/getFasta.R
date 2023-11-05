@@ -1,5 +1,6 @@
 #############################################################
-## getFasta
+#' getFasta
+#' @description extracts fasta sequences from a list of BED files
 #'
 #' @param inputFile  input binary model predictions filename
 #'
@@ -12,7 +13,6 @@
 #' getFasta(bed, Mmusculus)
 #
 #' @export
-
 getFasta <- function(bedFile, genome){
   bed <- read.table(file = bedFile, header = F, stringsAsFactors = F, sep = '\t')
   gRangesBed <-  with(bed, GRanges(V1, IRanges(V2+1, V3)))
