@@ -1,23 +1,39 @@
 #############################################################
-#' getFasta
-#' @description extracts fasta sequences from a list of BED files
-#'
-#' @param inputFile  input binary model predictions filename
-#'
+## getFasta
+#' Function to extract sequences for a set of CRE coordinates in BED format 
+#' 
+#' @param bed  Data frame containing CRE coordinates. The first three columns should correspond to chromosome, start and end positions. The fourth column should contain cell type/condition annotation.
+#' @param genome  Genome as a BSgenome object
+#' @param FastaFile Path to output fasta file. If NULL, a Biostrings object will be returned. Default = NULL. 
+#'      
 #' @examples 
 #'
 #' extdata_path <- system.file("extdata",package = "BagOfMotifs")
-#' bed_path <- paste0(extdata_path, "/tutorial/bed_files")
-#' bed <- list.files(path = bed_path, pattern = "(.*)bed$", full.names = F)[1]
+#' bed_path <- paste0(extdata_path, "/tutorial/bed_files/Cardiomyocytes.bed")
+#' bed_cardiom <- read.table(file = bed_path, header = F, stringsAsFactors = F
+#' , sep = '\t')  
+#' 
+#' # Match chromosome notation
+#' bed$V1 <- paste0("chr", bed$V1)
+#' 
+#' # Load genome
+#' library("BSgenome.Mmusculus.UCSC.mm10")
 #' Mmusculus <- BSgenome.Mmusculus.UCSC.mm10::BSgenome.Mmusculus.UCSC.mm10
-#' getFasta(bed, Mmusculus)
+#' getFasta(bed = bed_cardiom, genome = Mmusculus, FastaFile = "Cardiomyocytes.fa")
 #
 #' @export
-getFasta <- function(bedFile, genome){
-  bed <- read.table(file = bedFile, header = F, stringsAsFactors = F, sep = '\t')
-  gRangesBed <-  with(bed, GRanges(V1, IRanges(V2+1, V3)))
+#' 
+getFasta <- function(bed = NULL, genome, FastaFile = NULL){
+  if(is.null(bed)){
+    stop("CRE coordinates not provided.")
+  }
+  colnames(bed) <- c("chr", "start", "end")
+  gRangesBed <-  with(bed, GRanges(chr, IRanges(start+1, end)))
   sequences <- Biostrings::getSeq(genome, gRangesBed)
-  names(sequences) <- with(bed, paste(V1, paste(V2, V3, sep = "-"), sep = ":"))
-  FastaFile <- paste0(sub("bed$", "", bedFile), "fa")
-  Biostrings::writeXStringSet(sequences, FastaFile)
+  names(sequences) <- with(bed, paste(chr, paste(start, end, sep = "-"), sep = ":"))
+  if(!is.null(FastaFile)){
+    Biostrings::writeXStringSet(sequences, FastaFile)
+  } else {
+    return(sequences)
+  }
 }
