@@ -34,25 +34,25 @@ add.missing.vars_xgb <- function(xgb.model, testSet)
 #' @export
 predict_binary <- function(motifs, xgb_model, training_set = NULL, pred = "predictions.txt")
   {
-  message("Reading classification model...\n")
+  message("Reading classification model...")
   
   xgb <- readRDS(xgb_model)
   
-  message("Saving XGBoost model in .bin format...\n")
+  message("Saving XGBoost model in .bin format...")
   xgboost::xgb.save(xgb, gsub(".rds", ".bin", xgb_model))
   
   message(paste("Best tree:", xgb$best_iteration, "\n"))
   
   # Reading table of motif counts
   
-  message("Reading motif counts matrix...\n")
+  message("Reading motif counts matrix...")
   counts.tab <- read.table(file = motifs, header =T, stringsAsFactors = F, sep = '\t')
   counts.tab$celltype <- NULL
   
   counts.tab.NAs <- sapply(counts.tab, function(x) sum(is.na(x)))
   
   if(any(counts.tab.NAs) > 0){
-    warning("NAs present in input matrix...\n")  
+    warning("NAs present in input matrix...")  
   }
   
   # Binary label as numeric
@@ -75,7 +75,7 @@ predict_binary <- function(motifs, xgb_model, training_set = NULL, pred = "predi
   
   # Save training set if a file name is provided
   if (!is.null(training_set)) {
-    message(paste("Saving training set to", training_set, "...\n"))
+    message(paste("Saving training set to", training_set, "..."))
     write.table(x = motifs_train, file = training_set, quote = FALSE, sep ='\t')
   }
   
@@ -96,7 +96,7 @@ predict_binary <- function(motifs, xgb_model, training_set = NULL, pred = "predi
   
   rownames(actual.vs.predicted) <- rownames(motifs_test)
   
-  message(paste("Saving predicted values to", pred, "...\n"))
+  message(paste("Saving predicted values to", pred, "..."))
   write.table(x = actual.vs.predicted, file = pred, quote = F)
 
 }
