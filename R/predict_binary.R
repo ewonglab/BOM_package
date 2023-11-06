@@ -26,7 +26,7 @@ add.missing.vars_xgb <- function(xgb.model, testSet)
 #' @examples 
 #' \dontrun{
 #' extdata_path <- system.file("extdata",package = "BagOfMotifs")
-#' motif_counts <- paste0(extdata_path, "/tutorial/Cardiomyocytes_vs_other_counts.txt")
+#' motif_counts <- paste0(extdata_path, "/tutorial/motifs/Cardiomyocytes_vs_other_counts.txt")
 #' 
 #' 
 #' predict_binary(motifs = motif_counts, xgb_model = paste0(extdata_path, "/tutorial/motifs/Cardiomyocytes_vs_other.rds")
