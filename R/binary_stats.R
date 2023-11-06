@@ -61,6 +61,7 @@ binaryStats <- function(inputFile)
   mcc <- round(mcc, 4)
   
   ## Print binary prediction statistics
+  message("Prediction statistics:")
   cat(paste("auROC:", auROC, '\n'))
   cat(paste("auPR:", pr_auc_val, '\n'))
   cat(paste("Accuracy:", Accuracy, '\n'))
