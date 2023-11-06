@@ -15,7 +15,7 @@
 #' bed_path <- paste0(extdata_path, "/tutorial/bed_files")
 #' 
 #' # Replace /path/to/fimo with the path to FIMO tool
-#' runFIMO(input_path = , motifs_path = "gimme.vertebrate.v5.0.meme"
+#' runFIMO(input_path = , motifs_path = paste0(extdata_path, "/gimme.vertebrate.v5.0.meme")
 #' , out_path = "mouseE8.25_motifs", p_thresh = 0.0001
 #' , FIMO_path = '/path/to/fimo')
 #
