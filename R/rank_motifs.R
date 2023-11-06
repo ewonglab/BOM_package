@@ -10,7 +10,7 @@
 #'
 #' \dontrun{
 #' extdata_path <- system.file("extdata",package = "BagOfMotifs")
-#' binPredictions <- paste0(extdata_path, "/tutorial/[SHAP SCORES FILE]")
+#' binPredictions <- paste0(extdata_path, "/tutorial/Cardiomyocytes_vs_other_SHAP.txt")
 #' 
 #' 
 #' rankMotifs(shap_file = binPredictions, out_file = "ranked_motifs", type = "sum")
