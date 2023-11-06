@@ -62,7 +62,7 @@ adjust_CREs <- function(x, N, chrom_sizes){
 #' extdata_path <- system.file("extdata",package = "BagOfMotifs")
 #' input.bed <- paste0(extdata_path, "/tutorial/mouseE8.25_peaks.bed")
 #' annot.file <- paste0(extdata_path,"/Mus_musculus.GRCm38.92.gtf.gz")
-#' mouseChrSizes <- paste0(extdata_path,"/Mus_musculus.GRCm38.92.gtf.gz")
+#' mouseChrSizes <- paste0(extdata_path,"/mouse_sizes_primary_genome_tab.txt")
 #' 
 #' 
 #'  filterCRE(inputBedFile = input.bed, annotFile = annot.file, 
