@@ -94,9 +94,9 @@ train_binary <- function(input_data = NULL, nrounds = 10000
   motifs_val <- motifs_val[,colnames(motifs_train), drop = F]
   
   # Prepare training and validation DMatrix objects
-  dtrain <- xgb.DMatrix(label = as.numeric(motifs_train$binary_celltype)
+  dtrain <- xgboost::xgb.DMatrix(label = as.numeric(motifs_train$binary_celltype)
                         , data = as.matrix(motifs_train[, colnames(motifs_train)[colnames(motifs_train)!="binary_celltype"]]))
-  dvalid <- xgb.DMatrix(label = as.numeric(motifs_val$binary_celltype)
+  dvalid <- xgboost::xgb.DMatrix(label = as.numeric(motifs_val$binary_celltype)
                         , data = as.matrix(motifs_val[, colnames(motifs_val)[colnames(motifs_val)!="binary_celltype"]]))
   
   # params$data <- dtrain
