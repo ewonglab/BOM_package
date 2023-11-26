@@ -4,16 +4,21 @@
 \alias{predict_binary}
 \title{predict_binary}
 \usage{
-predict_binary(xgb_model)
+predict_binary(
+  motifs,
+  xgb_model,
+  training_set = NULL,
+  pred = "predictions.txt"
+)
 }
 \arguments{
-\item{xgb_model}{File name of model}
-
 \item{motifs}{File containing motif counts}
 
-\item{pred}{File name to output predicted values (default "predictions.txt")}
+\item{xgb_model}{File name of model}
 
 \item{training_set}{File name to output training counts (optional)}
+
+\item{pred}{File name to output predicted values (default "predictions.txt")}
 }
 \description{
 Function to predict a set of test CREs using a binary classification model
@@ -21,9 +26,9 @@ Function to predict a set of test CREs using a binary classification model
 \examples{
 \dontrun{
 extdata_path <- system.file("extdata",package = "BagOfMotifs")
-motif_counts <- paste0(extdata_path, "/tutorial/Cardiomyocytes_vs_other_counts.txt")
+motif_counts <- paste0(extdata_path, "/tutorial/motifs/Cardiomyocytes_vs_other_counts.txt")
 
 
-predict_binary(motifs = motif_counts, xgb_model = "Cardiomyocytes_vs_other.rds")
+predict_binary(motifs = motif_counts, xgb_model = paste0(extdata_path, "/tutorial/motifs/Cardiomyocytes_vs_other.rds")
 }
 }

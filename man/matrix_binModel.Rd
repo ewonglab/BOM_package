@@ -4,16 +4,18 @@
 \alias{matrix_binModel}
 \title{matrix_binModel}
 \usage{
-matrix_binModel(target_ct, data_path, qval_thresh, out_filename)
+matrix_binModel(data_path, qval_thresh, outDir, target_ct = NULL, nthreads = 1)
 }
 \arguments{
-\item{target_ct}{Name of the target cell type/condition}
-
 \item{data_path}{Path to the data directory}
 
 \item{qval_thresh}{q-value threshold for motif filtering}
 
-\item{out_filename}{Name for the output file}
+\item{outDir}{Name of directory to save output files. Output files will be named cellType_vsOthers.}
+
+\item{target_ct}{Name of the target cell type/condition}
+
+\item{nthreads}{The number of threads to use}
 }
 \description{
 Function to produce a matrix of motif frequency. Motif instances will be filtered using the q-value threshold provided. 
@@ -26,6 +28,6 @@ extdata_path <- system.file("extdata",package = "BagOfMotifs")
 data_path <- paste0(extdata_path, "/tutorial/motifs") 
 binPredictions <- paste0(extdata_path, "/tutorial/Cardiomyocytes_vs_other_pred.txt")
 
-mat <- matrix_binModel(target_ct= 'Cardiomyocytes', data_path=data_path, qval_thresh=0.5, out_filename='cardiomyocytes_vs_other_counts.txt')
+mat <- matrix_binModel(data_path=data_path, qval_thresh=0.5, outDir='results/', target_ct= 'Cardiomyocytes')
 }
 }

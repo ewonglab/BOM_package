@@ -67,7 +67,7 @@ Function to train a binary classification model.
 \examples{
 \dontrun{
 extdata_path <- system.file("extdata",package = "BagOfMotifs")
-motif_counts <- paste0(extdata_path, "/tutorial/Cardiomyocytes_vs_other_counts.txt")
+motif_counts <- paste0(extdata_path, "/tutorial/motifs/Cardiomyocytes_vs_other_counts.txt")
 
 
 train_binary(input_data = motif_counts, save_name="Cardiomyocytes_vs_other.rds"

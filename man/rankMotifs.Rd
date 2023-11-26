@@ -9,9 +9,9 @@ rankMotifs(shap_file, type, out_file)
 \arguments{
 \item{shap_file}{Path to the file containing SHAP scores}
 
-\item{out_file}{File name to output the motifs ranked by SHAP}
+\item{out_file}{File name to output the motifs ranked by SHAP (default to "ranked_motifs")}
 
-\item{type}{Rank type. Either 'sum' or 'mean'}
+\item{rank_type}{Rank type. Either 'sum' or 'mean'}
 }
 \description{
 Function to rank motifs by the sum or mean of absolute SHAP scores.
@@ -20,9 +20,9 @@ Function to rank motifs by the sum or mean of absolute SHAP scores.
 
 \dontrun{
 extdata_path <- system.file("extdata",package = "BagOfMotifs")
-shap_scores <- paste0(extdata_path, "/tutorial/Cardiomyocytes_vs_other_SHAP.txt")
+binPredictions <- paste0(extdata_path, "/tutorial/Cardiomyocytes_vs_other_SHAP.txt")
 
 
-rankMotifs(shap_file = shap_scores, out_file = "ranked_motifs", type = "sum")
+rankMotifs(shap_file = binPredictions, out_file = "ranked_motifs", type = "sum")
 }
 }

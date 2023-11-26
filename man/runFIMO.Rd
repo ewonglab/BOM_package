@@ -6,25 +6,25 @@
 \usage{
 runFIMO(
   input_path,
-  genome_path,
   motifs_path,
   out_path,
   p_thresh = 1e-04,
-  rm_fasta = TRUE
+  FIMO_path,
+  verbosity = 1
 )
 }
 \arguments{
-\item{input_path}{Path to folder containing .bed files with CRE coordinates}
-
-\item{genome_path}{Path to genome file (fasta format)}
+\item{input_path}{Path to folder containing fasta (.fa) files with CRE sequences}
 
 \item{motifs_path}{Motif database file (meme format)}
 
-\item{out_path}{Output file folder}
+\item{out_path}{Output file folder. The output folder will be created and FIMO output for each fasta file will be saved to this directory.}
 
 \item{p_thresh}{p-value threshold (default 0.0001)}
 
-\item{rm_fasta}{whether to remove the generated fasta files that contain CRE sequences (default TRUE)}
+\item{FIMO_path}{Path to FIMO}
+
+\item{verbosity}{Level of verbosity for FIMO. Default = 1.}
 }
 \description{
 Function to execute FIMO for at least two sets of CREs specific to different cell types/conditions
@@ -34,7 +34,8 @@ Function to execute FIMO for at least two sets of CREs specific to different cel
 extdata_path <- system.file("extdata",package = "BagOfMotifs")
 bed_path <- paste0(extdata_path, "/tutorial/bed_files")
 
-
-runFIMO(input_path = bed_path, genome_path = "Mus_musculus_GRCm38.fa"
-, motifs_path = "gimme.vertebrate.v5.0.meme", out_path = "./fimo_out")
+# Replace /path/to/fimo with the path to FIMO tool
+runFIMO(input_path = , motifs_path = paste0(extdata_path, "/gimme.vertebrate.v5.0.meme")
+, out_path = "mouseE8.25_motifs", p_thresh = 0.0001
+, FIMO_path = '/path/to/fimo')
 }
