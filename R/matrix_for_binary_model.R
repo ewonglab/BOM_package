@@ -74,18 +74,8 @@ matrix_binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL ,nthr
 		binModel_oneVsOthers(target_ct, counts, n_CREs_by_ct, celltypes, outDir)
 	}
 	else  # Do all comparisons
-	{	message("Processign all cell types")
-#		pb <- txtProgressBar(min = 0,      # Minimum value of the progress bar
-#                     max = length(celltypes), # Maximum value of the progress bar
-#                     style = 3,    				# Progress bar style (also available style = 1 and style = 2)
-#                     width = 50,   			# Progress bar width. Defaults to getOption("width")
-#                     char = "=")   			# Character used to create the bar
-#		for ( i in 1:length(celltypes))
-#		{	
-#			binModel_oneVsOthers(celltypes[i], n_CREs_by_ct, celltypes, outDir)
-#			setTxtProgressBar(pb, i)
-#		}
-#		close(pb)
+	{	message("Processing all cell types")
+
 		parallel::parLapply(cl, celltypes, binModel_oneVsOthers, counts, n_CREs_by_ct, celltypes, outDir)
 		
 	}
@@ -166,7 +156,7 @@ binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, out
   
 #  if()
   message(paste("Saving matrix of motif counts for binary classification...\n"))
-  write.table(x = final_set, file = paste0(outDir,"/",target_ct,"_vs_Others"), quote = F, sep = '\t')
+  write.table(x = final_set, file = paste0(outDir,"/",target_ct,"_vs_Others.txt"), quote = F, sep = '\t')
   
   message("Content of output table:\n")
   out_content <- as.data.frame(table(final_set$binary_celltype))
