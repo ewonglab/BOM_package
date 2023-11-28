@@ -1,5 +1,100 @@
 
+##############################################################################
+## shapPlots
+#' Plots a waterfall plot of SHAP values for a selected locus
+#'
+#' @param shp  	    A shapviz object
+#' @param plotType  Plottype, can be "bar" (default), "beeswarm", or "waterfall"
+#' @param annotData Dataframe with columns "Motif" and "Factor". The values in "Motif" should match what was used 
+#' @param numTF  Number of transcription factors to plot. The remaining transcriptions factors are plotted under other 
+#' 
+#' @example
+#'	ts <- read.table(training_set,header = TRUE)
+#'	shp <- shapviz::shapviz(object = xgb_model, data.matrix(ts))
+#'  
+#'
+#' @export
+shapPlots <- function(shp,plotType="bar", annotDat=NULL, annotLength=30, order="decreasing",...)
+{	p <- {}
+	if (plotType == "bar")
+	{
+		p <- shapviz::sv_importance(shp, kind="bar",fill="red", ...) + 
+				theme(panel.background = element_blank(), axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black")) +
+				geom_vline(xintercept = 0, linetype = "solid", color = "grey")
+		if (! is.null(annotDat))
+		{  p$data$feature <- annonTATE(p$data, annotDat)  }
+	}
+	else if (plotType == "beeswarm")
+	{  	p <- shapviz::sv_importance(shp, kind="beeswarm",...) +
+				theme(panel.background = element_blank(), axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black"))
+		if (! is.null(annotDat))
+		{ p$data$feature <- annonTATE(p$data, annotDat)   }
+	}
+	else if (plotType =="waterfall")
+	{	p <- shapviz::sv_waterfall(shp,...) + theme(panel.background = element_blank(),panel.grid.major.y = element_blank()) + 
+				theme(panel.background = element_blank(),panel.grid.major.y = element_blank())
+		if (! is.null(annotDat))
+		{	p$data
+			df <- data.frame(feature=row.names(p$data), value=0)
+			p$data$label <- annonTATE(df,gimme_annot,makeUnique=TRUE, waterfallOther=p$data["other","label"])
+		}
+	}
+	
+	
+	return(p)
+}
 
+
+
+##############################################################################
+## annonTATE
+#' Re-annotates a ggplot created from shapviz
+#'
+#' @param plotDat  			Data slot from a ggplot object
+#' @param peakAnnotations  	
+#' @param annotLength       Number of characters to truncate annotation to. Default 30 character.
+#' @param makeUnique        Make sure every MOTIF converts to a unique entry. Default FALSE. When false multiple TF entries are collapsed
+#' @param waterfallOther  	Annotation for waterfall plots "other" category
+#'
+annonTATE <- function(plotDat, peakAnnotations, annotLength = 30, makeUnique=FALSE, waterfallOther=NULL)
+{
+	otherAnnotation <- 'other'
+	if (! is.null(waterfallOther))
+	{  otherAnnotation <- waterfallOther  }
+	
+    peakAnnotations$Motif <- gsub(pattern = "-", replacement = ".", x = peakAnnotations$Motif) # hack to ensure that matching occurs
+    lookupIDs <- as.character(plotDat$feature)
+    TF_IDs    <- {}
+    for(i in 1:length(lookupIDs))
+    {
+		if (lookupIDs[i] == "other")
+		{	
+			TF_IDs <- c(TF_IDs,otherAnnotation)
+		}
+		else
+        { 	idx    <- which(peakAnnotations$Motif %in% lookupIDs[i]) 
+			if(length(idx) > 0)
+			{  TF_IDs <- c(TF_IDs, paste0(unlist(peakAnnotations$Factor[idx]), collapse=",")) }
+			else  
+			{ 	TF_IDs <- c(TF_IDs, lookupIDs[i]) }
+		}
+    }
+
+	if (makeUnique)
+	{ 	plotDat$feature <- substr(make.unique(TF_IDs), 1, annotLength) } 
+	else
+	{	plotDat$feature <- substr(TF_IDs, 1, annotLength) }
+    
+    sum_by_feature <- aggregate(value ~ feature, data = plotDat, sum)
+    sum_by_feature_ordered <- sum_by_feature[order(sum_by_feature$value, decreasing = FALSE),]
+    sum_by_feature_ordered
+
+	newFeatures <- factor(plotDat$feature, levels= unique(sum_by_feature_ordered$feature))
+	
+
+    return(newFeatures)
+
+}
 
 
 
