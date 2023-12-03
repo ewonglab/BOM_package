@@ -46,16 +46,23 @@ adjust_CREs <- function(x, N, chrom_sizes){
 
 #############################################################
 #' filterCREs
-#' @description Function to filter Cis Regulatory Elements (CRE)
+#' @description Function to filter a bed file of Cis 
+#' Regulatory Elements (CRE). Will create output bed files.
+#'
 #' @param inputBedFile  input bed filename
 #' @param annotFile     annotation file name
 #' @param u number of basepairs upstream of transcriptional start sites
 #' @param d number of basepairs downstream of transcriptional start site
 #' @param nbp  number of base pairs
+#' @param chrSizesFile  File name of chromsome sizes ( tab 
+#' delimited file with no header: first column chromosome ID, second column size)
 #' @param keep_proximal  boolean. Only keep proximal regions (defined by u and d) relative to transcription start sites
 #' @param remove_proximal  Boolean: Remove proximal regions (defined by u and d) relative to transcriptional start sites
 #' @param non_exonic Boolean - defines if non exonic regions should ONLY be considered.
-#' @param out_bed   name of output bed file
+#' @param out_bed   filename of output bed file after filtering.
+#' @param inputBedZeroBased Boolean (default TRUE). Add 1 to start position of input bed file.
+#' @param celloutputDir  directory name (will create) where individual BED files will be populated. If NULL this step is ommited.
+#' @param minCellPercent Each cell population must make up this percent of all cells (default 1 percent). Will notify what cells are removed
 #'
 #' @examples 
 #' \dontrun{
@@ -68,34 +75,50 @@ adjust_CREs <- function(x, N, chrom_sizes){
 #'  filterCRE(inputBedFile = input.bed, annotFile = annot.file, 
 #'                     remove_proximal = TRUE,  non_exonic = TRUE,
 #' 					   u =  1000, d=1000, nbp=500,
-#'                     chrSizes = mouseChrSizes, 
+#'                     chrSizesFile = mouseChrSizes, 
 #'                     out_bed =  'mouseE8.25_peaks_filt.bed')
 #' }
 #' @export
-filterCREs <- function(input_bed = NULL, 
-				annot = NULL,
-				chr_sizes = NULL,
+filterCREs <- function(inputBedFile = NULL, 
+				annotFile = NULL,
+				chrSizesFile = NULL,
 				u = NULL,
 				d = NULL,
 				nbp = NULL,
 				keep_proximal = FALSE,
 				remove_proximal = FALSE,
 				non_exonic = FALSE,
-				out_bed = NULL)
+				out_bed = NULL, inputBedZeroBased=TRUE,
+				celloutputDir = NULL, minCellPercent = 1
+				)
 {
+	if (is.null(celloutputDir))
+    {
+		message("No work_path directory name set. Therefore output for next step (motif searching) will not bee prepared")
+	}
+
 	message("Reading CREs...\n")
-	cres <- read.table(file = input_bed, header = F, stringsAsFactors = F, sep = '\t')
-	cres_gr <- with(cres, GenomicRanges::GRanges(V1, IRanges::IRanges(V2+1, V3)))
+	addToBed = 0
+	if (inputBedZeroBased == TRUE)
+	{ addToBed = 1 } 
+
+	cres <- read.table(file = inputBedFile, header = F, stringsAsFactors = F, sep = '\t')
+	
+	# Clean up 4th column by removing spaces an slashes
+	cres$V4 <- sub("/", "_", cres$V4)
+	cres$V4 <- sub(" ", "_", cres$V4)
+	
+	cres_gr <- with(cres, GenomicRanges::GRanges(V1, IRanges::IRanges(V2+addToBed, V3)))
 
 	if(keep_proximal | remove_proximal | non_exonic){
 
 	  message("Reading genome annotation...\n")
-	  txdb_obj <- makeTxDbFromGFF(file = annot, format = "gtf")
+	  txdb_obj <- suppressWarnings(GenomicFeatures::makeTxDbFromGFF(file = annotFile, format = "gtf"))
 
 	  if(non_exonic){
 		message("Removing exonic regions...\n")
-		exons <- exons(txdb_obj)
-		x <- as.data.frame(findOverlaps(cres_gr, exons))
+		exons <- GenomicFeatures::exons(txdb_obj)
+		x <- as.data.frame(GenomicRanges::findOverlaps(cres_gr, exons))
 		if(nrow(x) > 0){
 		  cres <- cres[-unique(x$queryHits),]
 		} 
@@ -106,9 +129,9 @@ filterCREs <- function(input_bed = NULL,
 	  }
 	  if(keep_proximal){
 		message("Keeping proximal regions to TSSs...\n")
-		proximal <- promoters(x = txdb_obj, upstream = u, downstream = d)
-		cres_gr <- with(cres, GRanges(V1, IRanges(V2+1, V3)))
-		x <- as.data.frame(findOverlaps(cres_gr, proximal))
+		proximal <- GenomicFeatures::promoters(x = txdb_obj, upstream = u, downstream = d)
+		cres_gr <- with(cres, GenomicRanges::GRanges(V1, IRanges::IRanges(V2+1, V3)))
+		x <- as.data.frame(GenomicRanges::findOverlaps(cres_gr, proximal))
 		if(nrow(x) > 0){
 		  cres <- cres[unique(x$queryHits),]
 		} else {
@@ -117,9 +140,9 @@ filterCREs <- function(input_bed = NULL,
 	  }
 	  if(remove_proximal){
 		message("Removing proximal regions to TSSs...\n")
-		proximal <- promoters(x = txdb_obj, upstream = u, downstream = d)
-		cres_gr <- with(cres, GRanges(V1, IRanges(V2+1, V3)))
-		x <- as.data.frame(findOverlaps(cres_gr, proximal))
+		proximal <- GenomicFeatures::promoters(x = txdb_obj, upstream = u, downstream = d)
+		cres_gr <- with(cres, GenomicRanges::GRanges(V1, IRanges::IRanges(V2+1, V3)))
+		x <- as.data.frame(GenomicRanges::findOverlaps(cres_gr, proximal))
 		if(nrow(x) > 0){
 		  cres <- cres[-unique(x$queryHits),]
 		} 
@@ -131,13 +154,15 @@ filterCREs <- function(input_bed = NULL,
 	#  stop(paste("u AND d should be provided to adjust CREs"))
 	if (exists("nbp") && !is.null(nbp)) {
 	  cat("Reading chromosome sizes...\n")
-	  chrom_sizes <- read.table(file = chr_sizes, header = F, stringsAsFactors = F, sep ='\t')
+	  chrom_sizes <- read.table(file = chrSizesFile, header = F, stringsAsFactors = F, sep ='\t')
 	  colnames(chrom_sizes) <- c("chr", "chr_size")
 	  
 	  # Adjust CREs
 	  cat("Adjusting CRE length...\n")
 	  cres <- adjust_CREs(cres, nbp, chrom_sizes)
 	}
+	
+	
 
 	# Save filtered regions
 	message("Saving CREs...\n")
@@ -149,6 +174,41 @@ filterCREs <- function(input_bed = NULL,
 	write.table(x = cres, file = out_bed, quote = F, col.names = F
 				, row.names = F, sep ='\t')
 
+
+
+	if (! is.null(celloutputDir))
+	{	# Generate BED files for each cell type
+		# split into bed files
+		message("Preparing output directories and files so that everything is set for motif searching")
+		colnames(cres) <- c('chrom', 'start','end', 'cellType')
+		
+		# Filter out low proportion of cells
+		cellnumbers <- table(cres$cellType)
+		idx.toRemove <- which(cellnumbers/sum(cellnumbers) <  (minCellPercent/100) ) 
+		idx.toRemove <- names(cellnumbers)[idx.toRemove]
+		if (length(idx.toRemove) > 0)
+		{
+			cres <- cres[!cres$cellType %in% idx.toRemove, ]
+			message(paste0("\nThe following cell(s) represent less than ",minCellPercent,
+				"% of all cells.", 
+				"\nThis is the predefined cutoff as defined by parameter minCellPercent.",
+				"\nOutputs for following cell(s) will therefore not be generated:\n", 
+				paste0(idx.toRemove, collapse="\n"),"\n"))
+		}
+		
+		mkidir_command <- paste0("mkdir -p ", celloutputDir)
+		system(mkidir_command)
+
+		for(i in unique(cres$cellType))
+		{
+			fn <- paste0(celloutputDir, i, ".bed")
+			write.table(x = cres[cres$cellType == i, ], file = fn, 
+              quote = F, col.names = F, row.names = F, sep ='\t')
+		}
+		cellNames <- paste0(unique(cres$cellType),".bed", collapse="\n")
+		message(paste0("The following files have been prepared: \n",cellNames))
+	}
+	
 
 }
 

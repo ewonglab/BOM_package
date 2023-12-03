@@ -19,6 +19,8 @@
 #' @param feval Customized evaluation metric (default: NULL)
 #' @param Verbose How much details on the progress to print (default: 1)
 #' @param print_every_n Print evaluation messages each n-th iterations (default: 1)
+#' @param training Proportion of data that will be split for training and test. 
+#' Default is 0.6 which leaves 0.2 and 0.2 for validation and testing respectively.
 #'      
 #' @examples 
 #' \dontrun{
@@ -38,8 +40,12 @@ train_binary <- function(input_data = NULL, nrounds = 10000
                          , params = list(), feval = NULL, verbose = 1
                          , print_every_n = 1L, save_period = NULL
                          , save_name = "xgboost.model", xgb_model = NULL
-                         , callbacks = list())
+                         , callbacks = list()
+						 , training = 0.6)
 {
+	if ((training > 1) | (training < 0) )
+	{ error("Parameter training has to be between 0 and 1") }
+
   nrounds <- as.integer(nrounds)
   max_depth <- as.integer(max_depth)
   
@@ -79,12 +85,12 @@ train_binary <- function(input_data = NULL, nrounds = 10000
   # Split dataset into training, validation and test sets
   message("Splitting data into training, validation and test sets...\n")
   set.seed(123)
-  motifs_split <- rsample::initial_split(counts.tab, prop = .6)
+  motifs_split <- rsample::initial_split(counts.tab, prop = training)
   motifs_train <- rsample::training(motifs_split)
   motifs_test <- rsample::testing(motifs_split)
   
   set.seed(123)
-  motifs_split2 <- rsample::initial_split(motifs_test, prop = .5)
+  motifs_split2 <- rsample::initial_split(motifs_test, prop = (1-training)/2)
   motifs_val <- rsample::training(motifs_split2)
   motifs_test <- rsample::testing(motifs_split2)
 

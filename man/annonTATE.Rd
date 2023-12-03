@@ -4,7 +4,13 @@
 \alias{annonTATE}
 \title{Re-annotates a ggplot created from shapviz}
 \usage{
-annonTATE(plotDat, peakAnnotations, annotLength = 30)
+annonTATE(
+  plotDat,
+  peakAnnotations,
+  annotLength = 30,
+  makeUnique = FALSE,
+  waterfallOther = NULL
+)
 }
 \arguments{
 \item{plotDat}{Data slot from a ggplot object}
@@ -12,6 +18,10 @@ annonTATE(plotDat, peakAnnotations, annotLength = 30)
 \item{peakAnnotations}{}
 
 \item{annotLength}{Number of characters to truncate annotation to. Default 30 character.}
+
+\item{makeUnique}{Make sure every MOTIF converts to a unique entry. Default FALSE. When false multiple TF entries are collapsed}
+
+\item{waterfallOther}{Annotation for waterfall plots "other" category}
 }
 \description{
 Re-annotates a ggplot created from shapviz

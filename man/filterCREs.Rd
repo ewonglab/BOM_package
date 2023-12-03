@@ -5,19 +5,29 @@
 \title{filterCREs}
 \usage{
 filterCREs(
-  input_bed = NULL,
-  annot = NULL,
-  chr_sizes = NULL,
+  inputBedFile = NULL,
+  annotFile = NULL,
+  chrSizesFile = NULL,
   u = NULL,
   d = NULL,
   nbp = NULL,
   keep_proximal = FALSE,
   remove_proximal = FALSE,
   non_exonic = FALSE,
-  out_bed = NULL
+  out_bed = NULL,
+  inputBedZeroBased = TRUE,
+  celloutputDir = NULL,
+  minCellPercent = 1
 )
 }
 \arguments{
+\item{inputBedFile}{input bed filename}
+
+\item{annotFile}{annotation file name}
+
+\item{chrSizesFile}{File name of chromsome sizes ( tab 
+delimited file with no header: first column chromosome ID, second column size)}
+
 \item{u}{number of basepairs upstream of transcriptional start sites}
 
 \item{d}{number of basepairs downstream of transcriptional start site}
@@ -30,14 +40,17 @@ filterCREs(
 
 \item{non_exonic}{Boolean - defines if non exonic regions should ONLY be considered.}
 
-\item{out_bed}{name of output bed file}
+\item{out_bed}{filename of output bed file after filtering.}
 
-\item{inputBedFile}{input bed filename}
+\item{inputBedZeroBased}{Boolean (default TRUE). Add 1 to start position of input bed file.}
 
-\item{annotFile}{annotation file name}
+\item{celloutputDir}{directory name (will create) where individual BED files will be populated. If NULL this step is ommited.}
+
+\item{minCellPercent}{Each cell population must make up this percent of all cells (default 1 percent). Will notify what cells are removed}
 }
 \description{
-Function to filter Cis Regulatory Elements (CRE)
+Function to filter a bed file of Cis 
+Regulatory Elements (CRE). Will create output bed files.
 }
 \examples{
 \dontrun{
@@ -50,7 +63,7 @@ mouseChrSizes <- paste0(extdata_path,"/mouse_sizes_primary_genome_tab.txt")
  filterCRE(inputBedFile = input.bed, annotFile = annot.file, 
                     remove_proximal = TRUE,  non_exonic = TRUE,
 					   u =  1000, d=1000, nbp=500,
-                    chrSizes = mouseChrSizes, 
+                    chrSizesFile = mouseChrSizes, 
                     out_bed =  'mouseE8.25_peaks_filt.bed')
 }
 }

@@ -23,7 +23,8 @@ train_binary(
   save_period = NULL,
   save_name = "xgboost.model",
   xgb_model = NULL,
-  callbacks = list()
+  callbacks = list(),
+  training = 0.6
 )
 }
 \arguments{
@@ -56,6 +57,9 @@ train_binary(
 \item{save_period}{Save the model for every given number of rounds (default: NULL)}
 
 \item{save_name}{Name of the saved model file (default: xgboost.model)}
+
+\item{training}{Proportion of data that will be split for training and test. 
+Default is 0.6 which leaves 0.2 and 0.2 for validation and testing respectively.}
 
 \item{training_set}{File name to output training counts (optional)}
 

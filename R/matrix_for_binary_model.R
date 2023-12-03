@@ -38,23 +38,16 @@ matrix_binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL ,nthr
 	
 	read_and_update <- function(fn, pb) 
 		{  
-			setTxtProgressBar(pb, getTxtProgressBar(pb)+1)
 			cat("=")
 			as.data.frame(read.table(fn, sep='\t', header=TRUE))
 		}
-	
-	pb <- txtProgressBar(min = 0,      # Minimum value of the progress bar
-                     max = length(celltypes), # Maximum value of the progress bar
-                     style = 3,    				# Progress bar style (also available style = 1 and style = 2)
-                     width = 50,   			# Progress bar width. Defaults to getOption("width")
-                     char = "=")   			# Character used to create the bar	
+
 	
 	suppressWarnings({
-    #counts <- lapply(counts_files, data.table::fread)
-		counts <- parallel::parLapply(cl, counts_files, read_and_update, pb)
-		#lapply(counts_files, read.table,  sep="\t")
+		counts <- parallel::parLapply(cl, counts_files, read_and_update)
+		
 	})
-	close(pb)
+#	close(pb)
   
 	counts <- lapply(counts, as.data.frame)
 	counts <- lapply(counts, function(x) x[x[,9] <= qval_thresh,])

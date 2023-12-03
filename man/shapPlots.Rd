@@ -9,7 +9,9 @@ shapPlots(
   plotType = "bar",
   annotDat = NULL,
   annotLength = 30,
-  order = "decreasing"
+  order = "decreasing",
+  show_numbers = FALSE,
+  ...
 )
 }
 \arguments{

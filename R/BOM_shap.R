@@ -14,8 +14,9 @@
 #'  
 #'
 #' @export
-shapPlots <- function(shp,plotType="bar", annotDat=NULL, annotLength=30, order="decreasing",...)
-{	p <- {}
+shapPlots <- function(shp,plotType="bar", annotDat=NULL, annotLength=30, order="decreasing",show_numbers=FALSE,...)
+{	require(ggplot2)
+	p <- {}
 	if (plotType == "bar")
 	{
 		p <- shapviz::sv_importance(shp, kind="bar",fill="red", ...) + 
