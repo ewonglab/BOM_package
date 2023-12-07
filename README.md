@@ -1,2 +1,2 @@
 # BOM_package
-Bag of motifs in R package format (temporary)
+An R package for BAG of Motifs. More details soon.
