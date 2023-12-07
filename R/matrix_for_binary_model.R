@@ -70,9 +70,32 @@ matrix_binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL ,nthr
 	{	message("Processing all cell types")
 
 		parallel::parLapply(cl, celltypes, binModel_oneVsOthers, counts, n_CREs_by_ct, celltypes, outDir)
+		# Train
+		
+		
+		message("training....")
+		inputData <- paste0(outDir,"/",celltypes,"_vs_Others.txt")
+		outputFileNames <- paste0(outDir,"/",celltypes,"_vs_Others.rds")
+		
+	#	mapply(train_binary, inputData, save_name = outputFileNames, nthread = nthreads, verbose = 0)
+		for ( i in 1:length(inputData))
+		{
+			message(paste0("Preparing training for ",celltypes[i]))
+			train_binary(input_data=inputData[i], save_name=outputFileNames[i], 
+								early_stopping_rounds=100,   verbose=0, nthread=nthreads)
+
+		}
+		
+		
 		
 	}
 	parallel::stopCluster(cl)
+	
+	
+	
+	
+	
+	
 	message("Complete")
 }
 

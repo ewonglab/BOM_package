@@ -2,14 +2,15 @@
 % Please edit documentation in R/BOM_shap.R
 \name{annonTATE}
 \alias{annonTATE}
-\title{Re-annotates a ggplot created from shapviz}
+\title{Re-annotates a ggplot created from shapviz. 
+Appends gene annotation onto exsiting annotation.}
 \usage{
 annonTATE(
   plotDat,
   peakAnnotations,
   annotLength = 30,
-  makeUnique = FALSE,
-  waterfallOther = NULL
+  waterfallOther = NULL,
+  decreasing = FALSE
 )
 }
 \arguments{
@@ -19,10 +20,11 @@ annonTATE(
 
 \item{annotLength}{Number of characters to truncate annotation to. Default 30 character.}
 
-\item{makeUnique}{Make sure every MOTIF converts to a unique entry. Default FALSE. When false multiple TF entries are collapsed}
-
 \item{waterfallOther}{Annotation for waterfall plots "other" category}
+
+\item{decreasing}{Plot in decreasing order (default FALSE).}
 }
 \description{
-Re-annotates a ggplot created from shapviz
+Re-annotates a ggplot created from shapviz. 
+Appends gene annotation onto exsiting annotation.
 }

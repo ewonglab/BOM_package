@@ -213,7 +213,82 @@ filterCREs <- function(inputBedFile = NULL,
 }
 
 
+#############################################################
+#' textToBED
+#' @description converts a text file to BED format for peak data 
+#'
+#' @param inputtextFile  input bed filename
+#' @param annotFile     annotation file name
+#' @param u number of basepairs upstream of transcriptional start sites
+#' @param d number of basepairs downstream of transcriptional start site
+#' @param nbp  number of base pairs
+#' @param chrSizesFile  File name of chromsome sizes ( tab 
+#' delimited file with no header: first column chromosome ID, second column size)
+#' @param keep_proximal  boolean. Only keep proximal regions (defined by u and d) relative to transcription start sites
+#' @param remove_proximal  Boolean: Remove proximal regions (defined by u and d) relative to transcriptional start sites
+#' @param non_exonic Boolean - defines if non exonic regions should ONLY be considered.
+#' @param out_bed   filename of output bed file after filtering.
+#' @param inputBedZeroBased Boolean (default TRUE). Add 1 to start position of input bed file.
+#' @param celloutputDir  directory name (will create) where individual BED files will be populated. If NULL this step is ommited.
+#' @param minCellPercent Each cell population must make up this percent of all cells (default 1 percent). Will notify what cells are removed
+#'
+#' @examples 
+#' \dontrun{
+#' extdata_path <- system.file("extdata",package = "BagOfMotifs")
+#' filename <- paste0(extdata_path,'/Pijuan_etal_table_S6.csv.gz')
+#' 
+#' 
+#'  textToBed(inputTextFile = filename, outputFileName =  'mouseE8.25_peaks_filt.bed')
+#' }
+#'
+#' @export
+#'
+textToBED <- function(inputTextFile = NULL, 
+				header = TRUE,
+				inputcolnames = c("peak_chr", "peak_start", "peak_end", "celltype_specificity"),
+				sep = ",",
+				outputFileName = "out.bed",
+				removeDuplicatePeaks = TRUE,
+				removeMultiAnnotatedPeaks = TRUE,
+				removeUnnanotatedPeaks = TRUE
+				)
+{
+	cnameLength <- length(inputcolnames)
+	if (cnameLength != 4)
+	{ error(paste0("Only ", cnameLength, " column names provided. Must be 4 column names defined.") )
+	}
+
+	txtData <- read.table(file = inputTextFile, header = header, sep=sep, stringsAsFactors = F)
+
+	if (header == FALSE)
+	{	colnames(txtData)[1:4] <- inputcolnames
+	}
 
 
+
+	if (removeUnnanotatedPeaks)
+	{# removing all the peaks that were not annotated to a cell type
+		txtData <- txtData[!is.na(txtData[,inputcolnames[4]]),]  # celltype_specificity
+	}
+
+	
+	if (removeMultiAnnotatedPeaks)
+	{  # only the peaks annotated to a single cell type
+		txtData <- txtData[!grepl(pattern = ";", x = txtData[,inputcolnames[4]]),]  
+	}
+
+
+	if(removeDuplicatePeaks)
+	{		# remove any duplicated peaks (only keep the peak coordinates and cell type annotation)
+		txtData <- unique(txtData[,inputcolnames]) 
+	}
+
+
+	# Save processed peak into a bed file
+
+	write.table(x = txtData, file = outputFileName, col.names = F, row.names = F, quote = F, sep = '\t')
+
+	
+}
 
 

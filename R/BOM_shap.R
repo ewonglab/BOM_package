@@ -7,6 +7,8 @@
 #' @param plotType  Plottype, can be "bar" (default), "beeswarm", or "waterfall"
 #' @param annotData Dataframe with columns "Motif" and "Factor". The values in "Motif" should match what was used 
 #' @param numTF  Number of transcription factors to plot. The remaining transcriptions factors are plotted under other 
+#' @param order  Ïf set to "decreasing" then plots the highest value first through to lowest value.
+#' @param show_numbers  Boolean. If set to TRUE will display numbers on plot.
 #' 
 #' @example
 #'	ts <- read.table(training_set,header = TRUE)
@@ -16,6 +18,11 @@
 #' @export
 shapPlots <- function(shp,plotType="bar", annotDat=NULL, annotLength=30, order="decreasing",show_numbers=FALSE,...)
 {	require(ggplot2)
+
+	decreasing=TRUE
+	if (order=="decreasing")
+	{	decreasing = FALSE } 
+
 	p <- {}
 	if (plotType == "bar")
 	{
@@ -23,13 +30,13 @@ shapPlots <- function(shp,plotType="bar", annotDat=NULL, annotLength=30, order="
 				theme(panel.background = element_blank(), axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black")) +
 				geom_vline(xintercept = 0, linetype = "solid", color = "grey")
 		if (! is.null(annotDat))
-		{  p$data$feature <- annonTATE(p$data, annotDat)  }
+		{  p$data$feature <- annonTATE(p$data, annotDat, annotLength=annotLength, decreasing=decreasing)  }
 	}
 	else if (plotType == "beeswarm")
 	{  	p <- shapviz::sv_importance(shp, kind="beeswarm",...) +
 				theme(panel.background = element_blank(), axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black"))
 		if (! is.null(annotDat))
-		{ p$data$feature <- annonTATE(p$data, annotDat)   }
+		{ p$data$feature <- annonTATE(p$data, annotDat, annotLength=annotLength,decreasing=decreasing)   }
 	}
 	else if (plotType =="waterfall")
 	{	p <- shapviz::sv_waterfall(shp,...) + theme(panel.background = element_blank(),panel.grid.major.y = element_blank()) + 
@@ -37,7 +44,7 @@ shapPlots <- function(shp,plotType="bar", annotDat=NULL, annotLength=30, order="
 		if (! is.null(annotDat))
 		{	p$data
 			df <- data.frame(feature=row.names(p$data), value=0)
-			p$data$label <- annonTATE(df,gimme_annot,makeUnique=TRUE, waterfallOther=p$data["other","label"])
+			p$data$label <- annonTATE(df,gimme_annot, waterfallOther=p$data["other","label"], annotLength=annotLength,decreasing=decreasing)
 		}
 	}
 	
@@ -49,15 +56,16 @@ shapPlots <- function(shp,plotType="bar", annotDat=NULL, annotLength=30, order="
 
 ##############################################################################
 ## annonTATE
-#' Re-annotates a ggplot created from shapviz
+#' Re-annotates a ggplot created from shapviz. 
+#' Appends gene annotation onto exsiting annotation.
 #'
 #' @param plotDat  			Data slot from a ggplot object
 #' @param peakAnnotations  	
 #' @param annotLength       Number of characters to truncate annotation to. Default 30 character.
-#' @param makeUnique        Make sure every MOTIF converts to a unique entry. Default FALSE. When false multiple TF entries are collapsed
 #' @param waterfallOther  	Annotation for waterfall plots "other" category
+#' @param decreasing     	Plot in decreasing order (default FALSE).
 #'
-annonTATE <- function(plotDat, peakAnnotations, annotLength = 30, makeUnique=FALSE, waterfallOther=NULL)
+annonTATE <- function(plotDat, peakAnnotations, annotLength = 30, waterfallOther=NULL, decreasing=FALSE)
 {
 	otherAnnotation <- 'other'
 	if (! is.null(waterfallOther))
@@ -81,13 +89,10 @@ annonTATE <- function(plotDat, peakAnnotations, annotLength = 30, makeUnique=FAL
 		}
     }
 
-	if (makeUnique)
-	{ 	plotDat$feature <- substr(make.unique(TF_IDs), 1, annotLength) } 
-	else
-	{	plotDat$feature <- substr(TF_IDs, 1, annotLength) }
+	plotDat$feature <- substr(paste0(plotDat$feature,"_", TF_IDs), 1, annotLength)
     
     sum_by_feature <- aggregate(value ~ feature, data = plotDat, sum)
-    sum_by_feature_ordered <- sum_by_feature[order(sum_by_feature$value, decreasing = FALSE),]
+    sum_by_feature_ordered <- sum_by_feature[order(sum_by_feature$value, decreasing = decreasing),]
     sum_by_feature_ordered
 
 	newFeatures <- factor(plotDat$feature, levels= unique(sum_by_feature_ordered$feature))
@@ -116,7 +121,6 @@ annonTATE <- function(plotDat, peakAnnotations, annotLength = 30, makeUnique=FAL
 #'
 #' 
 #'
-#' @export
 plotShapWaterFall <- function(scores,peakAnnotations,numTF=10, annotLength=30)
 {
   
@@ -183,7 +187,6 @@ plotShapWaterFall <- function(scores,peakAnnotations,numTF=10, annotLength=30)
 #'
 #' 
 #'
-#' @export
 ShapBarPlot <- function(scores,peakAnnotations=NULL,numTF=10, annotLength=30)
 {
 	scores = (data.frame(colMeans(abs(scores))))

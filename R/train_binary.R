@@ -69,7 +69,8 @@ train_binary <- function(input_data = NULL, nrounds = 10000
   maximize <- as.logical(maximize)
   
   # Reading table of motif counts
-  cat("Reading motif counts...\n")
+  if (verbose)
+  {  cat("Reading motif counts...\n")  }
   counts.tab <- read.table(file = input_data, header =T
                            , stringsAsFactors = F, sep = '\t')
   counts.tab$celltype <- NULL
@@ -83,7 +84,8 @@ train_binary <- function(input_data = NULL, nrounds = 10000
   counts.tab$binary_celltype <- as.numeric(counts.tab$binary_celltype)
   
   # Split dataset into training, validation and test sets
-  message("Splitting data into training, validation and test sets...\n")
+  if (verbose)
+  {  message("Splitting data into training, validation and test sets...\n")  }
   set.seed(123)
   motifs_split <- rsample::initial_split(counts.tab, prop = training)
   motifs_train <- rsample::training(motifs_split)
@@ -103,13 +105,13 @@ train_binary <- function(input_data = NULL, nrounds = 10000
   dtrain <- xgboost::xgb.DMatrix(label = as.numeric(motifs_train$binary_celltype)
                         , data = as.matrix(motifs_train[, colnames(motifs_train)[colnames(motifs_train)!="binary_celltype"]]))
   dvalid <- xgboost::xgb.DMatrix(label = as.numeric(motifs_val$binary_celltype)
-                        , data = as.matrix(motifs_val[, colnames(motifs_val)[colnames(motifs_val)!="binary_celltype"]]))
+                    , data = as.matrix(motifs_val[, colnames(motifs_val)[colnames(motifs_val)!="binary_celltype"]]))
   
   # params$data <- dtrain
   watchlist <- list(train = dtrain, validation = dvalid) 
   
-  
-  message("Training binary classification model...\n")
+  if (verbose)
+  { message("Training binary classification model...\n") }
   set.seed(123) 
   model <- xgboost::xgb.train(
     data = dtrain,
@@ -133,10 +135,10 @@ train_binary <- function(input_data = NULL, nrounds = 10000
     xgb_model = xgb_model,
     callbacks = callbacks
   )
+	if(verbose)
+	{	message("Saving model...\n")  }
   
-  message("Saving model...\n")
-  
-  #xgb.save(model, params$save_name)
-  saveRDS(model, save_name)
+	#xgb.save(model, params$save_name)
+	saveRDS(model, save_name)
 }
 

@@ -19,6 +19,10 @@ shapPlots(
 
 \item{plotType}{Plottype, can be "bar" (default), "beeswarm", or "waterfall"}
 
+\item{order}{Ïf set to "decreasing" then plots the highest value first through to lowest value.}
+
+\item{show_numbers}{Boolean. If set to TRUE will display numbers on plot.}
+
 \item{annotData}{Dataframe with columns "Motif" and "Factor". The values in "Motif" should match what was used}
 
 \item{numTF}{Number of transcription factors to plot. The remaining transcriptions factors are plotted under other}
