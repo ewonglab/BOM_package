@@ -10,17 +10,23 @@ predict_binary_multi(
   outputTrain_dir = NULL,
   ncol = 3,
   nrow = 3,
-  outputFile = NULL
+  outputFile = NULL,
+  width = 12,
+  height = 12
 )
 }
 \arguments{
-\item{motifs}{File containing motif counts}
+\item{inputMotif_dir}{Directory of motif counts (named <celltype>_vs_Others.txt)}
 
-\item{xgb_model}{File name of model}
+\item{inputXGB_dir}{Directory of XGBoost files (names <celltype>_vs_Others.rds)}
 
-\item{pred}{File name to output predicted values (default "predictions.txt")}
+\item{outputTrain_dir}{Directory where to save training text output files}
 
-\item{training_set}{File name to output training counts (optional)}
+\item{ncol}{Number of columns of plots per page}
+
+\item{nrow}{Number of rows of plots per page}
+
+\item{outputFile}{Output pdf file name for plots}
 }
 \description{
 Wrapper function for predict_binary. Will run 
@@ -34,4 +40,5 @@ motif_counts <- paste0(extdata_path, "/tutorial/motifs/Cardiomyocytes_vs_other_c
 
 predict_binary(motifs = motif_counts, xgb_model = paste0(extdata_path, "/tutorial/motifs/Cardiomyocytes_vs_other.rds")
 }
+
 }

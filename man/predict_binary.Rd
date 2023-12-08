@@ -4,7 +4,7 @@
 \alias{predict_binary}
 \title{predict_binary}
 \usage{
-predict_binary(motifs, xgb_model, training_set = NULL)
+predict_binary(motifs, xgb_model, training_set = NULL, title = NULL)
 }
 \arguments{
 \item{motifs}{File containing motif counts}

@@ -110,19 +110,34 @@ filterCREs <- function(inputBedFile = NULL,
 	
 	cres_gr <- with(cres, GenomicRanges::GRanges(V1, IRanges::IRanges(V2+addToBed, V3)))
 
-	if(keep_proximal | remove_proximal | non_exonic){
+	if(keep_proximal | remove_proximal | non_exonic)
+	{
 
-	  message("Reading genome annotation...\n")
-	  txdb_obj <- suppressWarnings(GenomicFeatures::makeTxDbFromGFF(file = annotFile, format = "gtf"))
+		message("Reading genome annotation...\n")
+		txdb_obj <- suppressWarnings(GenomicFeatures::makeTxDbFromGFF(file = annotFile, format = "gtf"))
+	  
+		matchingChromosomes <- intersect(GenomeInfoDb::seqlevels(txdb_obj), GenomeInfoDb::seqlevels(cres_gr))
+		if (length(matchingChromosomes) == 0)
+		{ 	# No chromosomes align - Change style and try again
+			GenomeInfoDb::seqlevelsStyle(cres_gr) <- "NCBI"
+			matchingChromosomes <- intersect(GenomeInfoDb::seqlevels(txdb_obj), GenomeInfoDb::seqlevels(cres_gr))
+			if (length(matchingChromosomes) == 0)
+			{
+				warning("Seqence levels do not match to reference")
+				warning(seqlevels(txdb_obj))
+				warning(seqlevels(cres_gr))
+			}
+		}
+	  
 
-	  if(non_exonic){
-		message("Removing exonic regions...\n")
-		exons <- GenomicFeatures::exons(txdb_obj)
-		x <- as.data.frame(GenomicRanges::findOverlaps(cres_gr, exons))
-		if(nrow(x) > 0){
-		  cres <- cres[-unique(x$queryHits),]
-		} 
-	  }
+		if(non_exonic){
+			message("Removing exonic regions...\n")
+			exons <- GenomicFeatures::exons(txdb_obj)
+			x <- as.data.frame(GenomicRanges::findOverlaps(cres_gr, exons))
+			if(nrow(x) > 0){
+				cres_gr <- cres_gr[-unique(x$queryHits)]
+			} 
+		}
 	  
 	  if(keep_proximal & remove_proximal){
 		stop(paste("'keep_proximal' and 'remove_proximal' are mutually exclusive"))
@@ -130,10 +145,9 @@ filterCREs <- function(inputBedFile = NULL,
 	  if(keep_proximal){
 		message("Keeping proximal regions to TSSs...\n")
 		proximal <- GenomicFeatures::promoters(x = txdb_obj, upstream = u, downstream = d)
-		cres_gr <- with(cres, GenomicRanges::GRanges(V1, IRanges::IRanges(V2+1, V3)))
 		x <- as.data.frame(GenomicRanges::findOverlaps(cres_gr, proximal))
 		if(nrow(x) > 0){
-		  cres <- cres[unique(x$queryHits),]
+		  cres_gr <- cres_gr[unique(x$queryHits)]
 		} else {
 		  stop(paste("No remaining CREs"))
 		}
@@ -141,10 +155,9 @@ filterCREs <- function(inputBedFile = NULL,
 	  if(remove_proximal){
 		message("Removing proximal regions to TSSs...\n")
 		proximal <- GenomicFeatures::promoters(x = txdb_obj, upstream = u, downstream = d)
-		cres_gr <- with(cres, GenomicRanges::GRanges(V1, IRanges::IRanges(V2+1, V3)))
 		x <- as.data.frame(GenomicRanges::findOverlaps(cres_gr, proximal))
 		if(nrow(x) > 0){
-		  cres <- cres[-unique(x$queryHits),]
+		  cres_gr <- cres_gr[-unique(x$queryHits)]
 		} 
 		
 	  }
@@ -159,17 +172,28 @@ filterCREs <- function(inputBedFile = NULL,
 	  
 	  # Adjust CREs
 	  cat("Adjusting CRE length...\n")
-	  cres <- adjust_CREs(cres, nbp, chrom_sizes)
+	  #cres <- adjust_CREs(cres, nbp, chrom_sizes)
+	  
+		idx <- which(chrom_sizes$chr %in% names(GenomeInfoDb::seqlengths(cres_gr)))
+		if (length(idx) == length(names(GenomeInfoDb::seqlengths(cres_gr))))
+		{
+			suppressWarnings(GenomeInfoDb::seqlengths(cres_gr) <- chrom_sizes$chr_size[idx])
+			cres_gr <- IRanges::trim(cres_gr)
+		}
+		else 
+		{	browser()
+			warning("Cannot check out of bound granges as chromosome names between peaks and reference did not match")
+		}
+	  
+	  
 	}
 	
-	
+	if(nrow(cres) == 0){
+	  stop(paste("No remaining CREs after applying filters."))
+	}	
 
 	# Save filtered regions
-	message("Saving CREs...\n")
-
-	if(nrow(cres) == 0){
-	  stop(paste("No remaining CREs"))
-	}
+	message(paste0("Saving ",  length(cres_gr)," CREs...\n"))
 
 	write.table(x = cres, file = out_bed, quote = F, col.names = F
 				, row.names = F, sep ='\t')
@@ -196,8 +220,7 @@ filterCREs <- function(inputBedFile = NULL,
 				paste0(idx.toRemove, collapse="\n"),"\n"))
 		}
 		
-		mkidir_command <- paste0("mkdir -p ", celloutputDir)
-		system(mkidir_command)
+		dir.create(celloutputDir)
 
 		for(i in unique(cres$cellType))
 		{

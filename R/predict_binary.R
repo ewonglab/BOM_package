@@ -32,7 +32,7 @@ add.missing.vars_xgb <- function(xgb.model, testSet)
 #' predict_binary(motifs = motif_counts, xgb_model = paste0(extdata_path, "/tutorial/motifs/Cardiomyocytes_vs_other.rds")
 #' }
 #' @export
-predict_binary <- function(motifs, xgb_model, training_set = NULL)
+predict_binary <- function(motifs, xgb_model, training_set = NULL, title=NULL)
 {
 	message("Reading classification model...")
   
@@ -104,6 +104,7 @@ predict_binary <- function(motifs, xgb_model, training_set = NULL)
 	
 	
 	roc_pred_tab <- roc(actual.vs.predicted$true_class, actual.vs.predicted$prob, direction="<")
+	roc_auc <- auc(roc_pred_tab)
   
 	rocs.list <- list(roc_pred_tab)
 	# Plot ROC curves
@@ -120,11 +121,15 @@ predict_binary <- function(motifs, xgb_model, training_set = NULL)
                                         , axis.text.y=element_text(colour="black")
                                         , legend.text=element_text(size=24)
                                         , axis.ticks = element_line(colour = "black")) +
-	guides(linetype = guide_legend(override.aes = list(size = 3))) +
-	geom_abline(slope=1, intercept = 1, linetype = "dashed", alpha=0.8, color = "grey") + coord_equal() +
-	scale_colour_manual(values=c("#B39EB5"), aesthetics = c("colour", "fill")) +
-	labs(y= "Sensitivity", x = "Specificity")
+					guides(linetype = guide_legend(override.aes = list(size = 3))) +
+					geom_abline(slope=1, intercept = 1, linetype = "dashed", alpha=0.8, color = "grey") + coord_equal() +
+					scale_colour_manual(values=c("#B39EB5"), aesthetics = c("colour", "fill")) +
+					labs(y= "Sensitivity", x = "Specificity") + 
+					annotate("text", x = .5, y = .25,label = paste("AUC =", round(auc(roc_pred_tab), 2)))
   
+	if (! is.null(title))
+	{	p <- p + ggtitle(title)
+	}
 
 	return(p)
 }
@@ -161,7 +166,7 @@ predict_binary_multi <- function(inputMotif_dir=NULL, inputXGB_dir=NULL, outputT
 		return(-1)
 	}
 	
-
+	
 	fl.motifs <- list.files(path=inputMotif_dir, pattern="*_vs_Others.txt")
 	fl.xgb    <- list.files(path=inputXGB_dir, pattern="*_vs_Others.rds")
 	
@@ -176,11 +181,10 @@ predict_binary_multi <- function(inputMotif_dir=NULL, inputXGB_dir=NULL, outputT
 		allPlots[[i]] <- suppressMessages(
 							predict_binary(motifs = paste0(inputMotif_dir,  "/", candidates[i], ".txt"),
 							xgb_model = paste0(inputXGB_dir,    "/", candidates[i], '.rds'), 
-						training_set  = paste0(outputTrain_dir, "/", candidates[i], '_train.txt'))
-							) 
+						training_set  = paste0(outputTrain_dir, "/", candidates[i], '_train.txt'),
+						title=gsub(pattern='_vs_Others', replacement='', x=candidates[i])
+							))
 	}
-	require(cowplot)
-	
 	nsamples <- ncol * nrow
 	currentSample <- 1
 	pages <- ceiling(length(candidates)/nsamples)
