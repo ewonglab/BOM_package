@@ -493,7 +493,7 @@ BagOfMotifs::predict_binary(motifs = paste0(working_path,"/Cardiomyocytes_vs_Oth
 
 
     
-![png](output_20_1.png)
+![png](images/output_20_1.png)
     
 
 
@@ -595,7 +595,7 @@ BagOfMotifs::shapPlots(shp, plotType="bar", annotDat = gimme_annot)
 
 
     
-![png](output_25_0.png)
+![png](images/output_25_0.png)
     
 
 
@@ -606,7 +606,7 @@ BagOfMotifs::shapPlots(shp, plotType="beeswarm", annotDat = gimme_annot)
 
 
     
-![png](output_26_0.png)
+![png](images/output_26_0.png)
     
 
 
@@ -618,7 +618,7 @@ BagOfMotifs::shapPlots(shp, plotType="waterfall", annotDat = gimme_annot)
 
 
     
-![png](output_27_0.png)
+![png](images/output_27_0.png)
     
 
 
