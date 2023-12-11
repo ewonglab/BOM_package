@@ -8,9 +8,9 @@ We present a walkthough using snATAC-seq data of whole mouse embryos resolved to
 Document shortcut links:
 <ul><li><a href="#BAGofMotif_Installation">Installation information</a></li>
     <li><a href="#BagOfMotif_QuickStart">Quick start</li>
-    <li><a href="#Step1Data Input">Step1 Prepare BED file</a></li>
+    <li><a href="#Step1">Step1 Prepare BED file</a></li>
     <li><a href="#Step2PeakFilter">Step2 Peak Filter</a></li>
-    <li><a href="#Step3Motif Identification">Step3 Motif Searching</a></li>
+    <li><a href="#Step3MotifSearching">Step3 Motif Searching</a></li>
     <li><a href="#Step4Motif Counting">Step4 Motif Counting</a></li>
     <li><a href="#Step5Predicting">Step5 Model Predicting</a></li>
     <li><a href="#Step7SHAP_interpretations">Step6 Shap interpretations</a></li>
