@@ -11,7 +11,7 @@ Document shortcut links:
     <li><a href="#Step1DataProcess">Step1 Prepare BED file</a></li>
     <li><a href="#Step2PeakFilter">Step2 Peak Filter</a></li>
     <li><a href="#Step3MotifSearching">Step3 Motif Searching</a></li>
-    <li><a href="#Step4Motif Counting">Step4 Motif Counting</a></li>
+    <li><a href="#Step4MotifCounting">Step4 Motif Counting</a></li>
     <li><a href="#Step5Predicting">Step5 Model Predicting</a></li>
     <li><a href="#Step7SHAP_interpretations">Step6 Shap interpretations</a></li>
     <li><a href="#BOM_references">References</a></li>
