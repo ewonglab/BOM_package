@@ -25,28 +25,16 @@ Document shortcut links:
 
 
 ```R
-# If you havn't done so already install the BagOfMotifs R package. 
-# You will need to adjust you local directory for where BagOfMotifs was downloaded.
 
-# setwd("c:/Users/d.humphreys/Documents/GitHub/BOM_package/")
-# devtools::build()  # Cannot do this via jupyterlab 
-
-install.packages("~/capsule/data/BagOfMotifs_0.0.2.tar.gz", repos = NULL, type = "source")
-install.packages("cowplot")
-install.packages("cvAUC")
+devtools::install_github("ewonglab/BOM_package")
 ```
 
-    Updating HTML index of packages in '.Library'
-    
-    Making 'packages.html' ...
-     done
-    
-    Updating HTML index of packages in '.Library'
-    
-    Making 'packages.html' ...
-     done
-    
-    
+Downloading GitHub repo ewonglab/BOM_package@HEAD
+	v  checking DESCRIPTION meta-information ...
+	-  excluding invalid files
+    -  building 'BagOfMotifs_0.0.2.tar.gz'
+    -  checking for LF line-endings in source and make files and shell scripts
+	-  checking for empty or unneeded directories
 
 
 ```R
