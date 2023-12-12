@@ -308,11 +308,11 @@ In this step, the motif counts matrix will be prepared for binary classification
 
 Required arguments for this function include
 
-- 'target_ct'   : Target cell type condition
+- 'target_ct'   : Target cell type condition. If null then will search in data_path for motif outputs and will process all.
 - 'data_path'   : Path to directoy containing motifs
 - 'qval_thresh' : q value threshold
 - 'outDir'      : Name of directory to save output files. Output files will be named cellType_vs_Others
-
+- 'nthreads'    : number of threads to utoise for processing. default = 1.
 <a href="#TopofBAGofMotifsTutorial_v1">Back to top of document</a>
 
 
