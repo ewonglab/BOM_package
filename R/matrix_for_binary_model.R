@@ -1,12 +1,12 @@
 #############################################################
-#' matrix_binModel
+#' binModel
 #' @description Function to produce a matrix of motif frequency. Motif instances will be filtered using the q-value threshold provided. 
 #' The regions annotated to the target cell type/condition will be coded as 1. Background regions will be coded as 0.
 #' The outpud matrix will contain a balanced number of positive (target) and negative (background) instances.
 #' 
-#' @param target_ct  Name of the target cell type/condition
-#' @param data_path Path to the data directory
-#' @param qval_thresh q-value threshold for motif filtering
+#' @param target_ct  Name of the target cell type/condition. If target_ct is NULL, the function will produce a matrix for each cell type in the input directory. 
+#' @param data_path Path to the input data directory.
+#' @param qval_thresh q-value threshold for motif filtering. Default to 0.5 (q-value <= 0.5).
 #' @param outDir Name of directory to save output files. Output files will be named cellType_vsOthers.
 #' @param nthreads The number of threads to use
 #' 
@@ -14,12 +14,11 @@
 #' \dontrun{
 #' extdata_path <- system.file("extdata",package = "BagOfMotifs")
 #' data_path <- paste0(extdata_path, "/tutorial/motifs") 
-#' binPredictions <- paste0(extdata_path, "/tutorial/Cardiomyocytes_vs_other_pred.txt")
 #' 
-#' mat <- matrix_binModel(data_path=data_path, qval_thresh=0.5, outDir='results/', target_ct= 'Cardiomyocytes')
+#' binModel(data_path=data_path, qval_thresh=0.5, outDir='results/', target_ct= 'Cardiomyocytes')
 #' }
 #' @export
-matrix_binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL ,nthreads=1)
+binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL ,nthreads=1)
 {
 	# Check requested threads is available
 	coresAvailable <- parallel::detectCores()
