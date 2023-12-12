@@ -221,7 +221,7 @@ filterCREs <- function(inputBedFile = NULL,
 		}
 		
 		if(file.exists(celloutputDir) & !ovr_dir){
-			stop(paste(celloutputDir, "already exists. Set ovr_dir to TRUE"))
+			stop(paste("The directory", celloutputDir, "already exists. Set ovr_dir to TRUE"))
 		}else{
 			dir.create(celloutputDir)  
 		}
