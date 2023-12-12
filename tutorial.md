@@ -26,14 +26,11 @@ Document shortcut links:
 
 ```R
 # If you havn't done so already install the BagOfMotifs R package. 
-# You will need to adjust you local directory for where BagOfMotifs was downloaded.
+# You will need to install using the following command
 
-# setwd("c:/Users/d.humphreys/Documents/GitHub/BOM_package/")
-# devtools::build()  # Cannot do this via jupyterlab 
+ 
+devtools::install_github("ewonglab/BOM_package")
 
-install.packages("~/capsule/data/BagOfMotifs_0.0.2.tar.gz", repos = NULL, type = "source")
-install.packages("cowplot")
-install.packages("cvAUC")
 ```
 
     Updating HTML index of packages in '.Library'
@@ -112,14 +109,6 @@ BagOfMotifs::predict_binary(motifs = "/results/Cardiomyocytes_vs_other_counts.tx
 # explain and plot 
 # add in command in for visualization
 ```
-
-
-    Error in parse(text = x, srcfile = src): <text>:9:8: unexpected symbol
-    8: # Generate BED files for each cell type
-    9: simple command
-              ^
-    Traceback:
-    
 
 
 ---
