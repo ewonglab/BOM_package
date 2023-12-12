@@ -223,7 +223,7 @@ filterCREs <- function(inputBedFile = NULL,
 
 		for(i in unique(cres$cellType))
 		{
-			fn <- paste0(celloutputDir, i, ".bed")
+			fn <- paste0(celloutputDir, "/", i, ".bed")
 			write.table(x = cres[cres$cellType == i, ], file = fn, 
               quote = F, col.names = F, row.names = F, sep ='\t')
 		}
