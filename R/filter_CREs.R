@@ -62,6 +62,7 @@ adjust_CREs <- function(x, N, chrom_sizes){
 #' @param inputBedZeroBased Boolean (default TRUE). Add 1 to start position of input bed file.
 #' @param celloutputDir  directory name (will create) where individual BED files will be populated. If NULL this step is ommited.
 #' @param minCellPercent Each cell population must make up this percent of all cells (default 1 percent). Will notify what cells are removed
+#' @param ovr_dir Boolean (default FALSE). Whether to overwrite output directory
 #'
 #' @examples 
 #' \dontrun{
@@ -78,18 +79,18 @@ adjust_CREs <- function(x, N, chrom_sizes){
 #'                     out_bed =  'mouseE8.25_peaks_filt.bed')
 #' }
 #' @export
-filterCREs <- function(inputBedFile = NULL, 
-				annotFile = NULL,
-				chrSizesFile = NULL,
-				u = NULL,
-				d = NULL,
-				nbp = NULL,
-				keep_proximal = FALSE,
-				remove_proximal = FALSE,
-				non_exonic = FALSE,
-				out_bed = NULL, inputBedZeroBased=TRUE,
-				celloutputDir = NULL, minCellPercent = 1
-				)
+filterCREs <- function(inputBedFile = NULL,
+		       annotFile = NULL,
+		       chrSizesFile = NULL,
+		       u = NULL,
+		       d = NULL,
+		       nbp = NULL,
+		       keep_proximal = FALSE,
+		       remove_proximal = FALSE,
+		       non_exonic = FALSE,
+		       out_bed = NULL, inputBedZeroBased=TRUE,
+		       celloutputDir = NULL, minCellPercent = 1,
+		       ovr_dir = FALSE)
 {
 	if (is.null(celloutputDir))
     {
@@ -219,7 +220,12 @@ filterCREs <- function(inputBedFile = NULL,
 				paste0(idx.toRemove, collapse="\n"),"\n"))
 		}
 		
-		dir.create(celloutputDir)
+		if(file.exists(celloutputDir) & !ovr_dir){
+			stop(paste(celloutputDir, "already exists. Set ovr_dir to TRUE"))
+		}else{
+			dir.create(celloutputDir)  
+		}
+
 
 		for(i in unique(cres$cellType))
 		{
