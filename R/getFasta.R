@@ -44,7 +44,7 @@ getFasta <- function(bed = NULL, genome, FastaFile = NULL){
 ## generateAllFasta
 #' Wrapper for getFasta function. Will generate fasta files from bed files located within a specified directory
 #' 
-#' @param bedDir    Data frame containing CRE coordinates. The first three columns should correspond to chromosome, start and end positions. The fourth column should contain cell type/condition annotation.
+#' @param bedDir    Path to directory containing celltype/state specific BED files. The first three columns in the BED files should correspond to chromosome, start and end positions. The fourth column should contain cell type/state annotation.
 #' @param genome    Genome as a BSgenome object
 #' @param fastaDir  Directory to where fasta files are written to 
 #'      
@@ -58,11 +58,11 @@ getFasta <- function(bed = NULL, genome, FastaFile = NULL){
 #' library("BSgenome.Mmusculus.UCSC.mm10")
 #' Mmusculus <- BSgenome.Mmusculus.UCSC.mm10::BSgenome.Mmusculus.UCSC.mm10
 #' 
-#' generateAllFasta(bed = bed_path, genome = Mmusculus, FastaFile = fasta_path)
+#' generateAllFasta(bedDir = bed_path, genome = Mmusculus, fastaDir = fasta_path)
 #
 #' @export
 #' 
-generateAllFasta <- function(bedDir = NULL, genome=NULL, fastaDir = NULL){
+generateAllFasta <- function(bedDir = NULL, genome = NULL, fastaDir = NULL){
 	if(is.null(bedDir))
 	{	stop("Bed input directory not provided.")  }
 	if(is.null(genome))
