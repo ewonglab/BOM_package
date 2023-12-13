@@ -17,7 +17,7 @@
 #' train_set <- "cardiom_trainSet.txt"
 #' ts <- read.table(train_set, header = TRUE)
 #' 
-#' p <- shapPlots_test(xgb_model = xgb_model, ts = ts, CRE_id = "12:98725135-98725635", plotType = "waterfall", annotDat = NULL, annotLength = 30, order = "decreasing",show_numbers = FALSE)
+#' p <- shapPlots(xgb_model = xgb_model, ts = ts, CRE_id = "12:98725135-98725635", plotType = "waterfall", annotDat = NULL, annotLength = 30, order = "decreasing",show_numbers = FALSE)
 #'  
 #'
 #' @export
