@@ -6,7 +6,7 @@
 #' @param ts training set for the model provided to xgb_model.
 #' @param plotType  Plottype, can be "bar" (default), "beeswarm", or "waterfall".
 #' @param annotData Dataframe with columns "Motif" and "Factor". The values in "Motif" should match what was used 
-#' @param max_display  Number of transcription factors to plot. The remaining transcriptions factors are plotted under other 
+#' @param max_display  Number of transcription factors to plot (Default 15). The remaining transcriptions factors are plotted under other 
 #' @param order  Ïf set to "decreasing" then plots the highest value first through to lowest value.
 #' @param show_numbers  Boolean. If set to TRUE will display numbers on plot.
 #' @param average_shap Boolean. Whether to average shap values across the specified CREs in waterfall plots (default TRUE).
@@ -125,7 +125,7 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids
 #' @param train_sets	List of file names for training sets (same order as models).
 #' @param plotType  Plottype, can be "bar" (default), "beeswarm", or "waterfall"
 #' @param annotData Dataframe with columns "Motif" and "Factor". The values in "Motif" should match what was used 
-#' @param max_display  Number of transcription factors to plot (Fefault 15). The remaining transcriptions factors are plotted under other 
+#' @param max_display  Number of transcription factors to plot (Default 15). The remaining transcriptions factors are plotted under other 
 #' @param order  Ïf set to "decreasing" then plots the highest value first through to lowest value.
 #' @param show_numbers  Boolean. If set to TRUE will display numbers on plot.
 #' @param average_shap Boolean. Whether to average shap values across the specified CREs in waterfall plots (default TRUE).
