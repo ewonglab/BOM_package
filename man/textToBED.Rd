@@ -16,43 +16,31 @@ textToBED(
 )
 }
 \arguments{
-\item{inputtextFile}{input bed filename}
+\item{inputTextFile}{Input bed filename}
 
-\item{annotFile}{annotation file name}
+\item{header}{Boolean (default TRUE). Whether the input file has a header.}
 
-\item{u}{number of basepairs upstream of transcriptional start sites}
+\item{inputcolnames}{Column names corresponding to CRE coordinates and cell type/state annotation. Default to 'c("peak_chr","peak_start", "peak_end", "celltype_specificity")'.}
 
-\item{d}{number of basepairs downstream of transcriptional start site}
+\item{sep}{Character separating columns. Default to ','.}
 
-\item{nbp}{number of base pairs}
+\item{outputFileName}{Output file name. Default to "out.bed".}
 
-\item{chrSizesFile}{File name of chromsome sizes ( tab 
-delimited file with no header: first column chromosome ID, second column size)}
+\item{removeDuplicatePeaks}{Boolean (default TRUE). Whether to remove duplicated CREs.}
 
-\item{keep_proximal}{boolean. Only keep proximal regions (defined by u and d) relative to transcription start sites}
+\item{removeMultiAnnotatedPeaks}{Boolean (default TRUE). Whether to remove CREs annotated to multiple cell types/states.}
 
-\item{remove_proximal}{Boolean: Remove proximal regions (defined by u and d) relative to transcriptional start sites}
-
-\item{non_exonic}{Boolean - defines if non exonic regions should ONLY be considered.}
-
-\item{out_bed}{filename of output bed file after filtering.}
-
-\item{inputBedZeroBased}{Boolean (default TRUE). Add 1 to start position of input bed file.}
-
-\item{celloutputDir}{directory name (will create) where individual BED files will be populated. If NULL this step is ommited.}
-
-\item{minCellPercent}{Each cell population must make up this percent of all cells (default 1 percent). Will notify what cells are removed}
+\item{removeUnnanotatedPeaks}{Boolean (default TRUE). Whether to remove CREs not annotated to a cell type/state.}
 }
 \description{
-converts a text file to BED format for peak data
+Converts a text file to BED format for peak data
 }
 \examples{
 \dontrun{
 extdata_path <- system.file("extdata",package = "BagOfMotifs")
 filename <- paste0(extdata_path,'/Pijuan_etal_table_S6.csv.gz')
 
-
- textToBed(inputTextFile = filename, outputFileName =  'mouseE8.25_peaks_filt.bed')
+textToBed(inputTextFile = filename, outputFileName =  'mouseE8.25_peaks_filt.bed')
 }
 
 }

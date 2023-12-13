@@ -17,13 +17,12 @@ filterCREs(
   out_bed = NULL,
   inputBedZeroBased = TRUE,
   celloutputDir = NULL,
-  minCellPercent = 1
+  minCellPercent = 1,
+  ovr_dir = FALSE
 )
 }
 \arguments{
 \item{inputBedFile}{input bed filename}
-
-\item{annotFile}{annotation file name}
 
 \item{chrSizesFile}{File name of chromsome sizes ( tab 
 delimited file with no header: first column chromosome ID, second column size)}
@@ -47,6 +46,8 @@ delimited file with no header: first column chromosome ID, second column size)}
 \item{celloutputDir}{directory name (will create) where individual BED files will be populated. If NULL this step is ommited.}
 
 \item{minCellPercent}{Each cell population must make up this percent of all cells (default 1 percent). Will notify what cells are removed}
+
+\item{ovr_dir}{Boolean (default FALSE). Whether to overwrite output directory}
 }
 \description{
 Function to filter a bed file of Cis 

@@ -7,7 +7,7 @@
 generateAllFasta(bedDir = NULL, genome = NULL, fastaDir = NULL)
 }
 \arguments{
-\item{bedDir}{Data frame containing CRE coordinates. The first three columns should correspond to chromosome, start and end positions. The fourth column should contain cell type/condition annotation.}
+\item{bedDir}{Path to directory containing celltype/state specific BED files. The first three columns in the BED files should correspond to chromosome, start and end positions. The fourth column should contain cell type/state annotation.}
 
 \item{genome}{Genome as a BSgenome object}
 
@@ -26,5 +26,5 @@ fasta_path <- paste0(extdata_path, "/tutorial/fasta_files/")
 library("BSgenome.Mmusculus.UCSC.mm10")
 Mmusculus <- BSgenome.Mmusculus.UCSC.mm10::BSgenome.Mmusculus.UCSC.mm10
 
-generateAllFasta(bed = bed_path, genome = Mmusculus, FastaFile = fasta_path)
+generateAllFasta(bedDir = bed_path, genome = Mmusculus, fastaDir = fasta_path)
 }
