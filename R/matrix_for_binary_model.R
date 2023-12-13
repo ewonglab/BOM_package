@@ -20,6 +20,7 @@
 #' @export
 binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL ,nthreads=1)
 {
+	require(foreach)
   # Set up multiple workers
   system.name <- Sys.info()['sysname']
   new_cl <- FALSE
