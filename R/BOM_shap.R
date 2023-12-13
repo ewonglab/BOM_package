@@ -6,7 +6,7 @@
 #' @param ts training set for the model provided to xgb_model.
 #' @param plotType  Plottype, can be "bar" (default), "beeswarm", or "waterfall".
 #' @param annotData Dataframe with columns "Motif" and "Factor". The values in "Motif" should match what was used 
-#' @param numTF  Number of transcription factors to plot. The remaining transcriptions factors are plotted under other 
+#' @param max_display  Number of transcription factors to plot. The remaining transcriptions factors are plotted under other 
 #' @param order  Ïf set to "decreasing" then plots the highest value first through to lowest value.
 #' @param show_numbers  Boolean. If set to TRUE will display numbers on plot.
 #' @param average_shap Boolean. Whether to average shap values across the specified CREs in waterfall plots (default TRUE).
@@ -21,7 +21,7 @@
 #'  
 #'
 #' @export
-shapPlots <- function(xgb_model, ts, plotType = "bar", CRE_ids = NULL, annotDat = NULL, annotLength = 30
+shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids = NULL, annotDat = NULL, annotLength = 30
                            , order = "decreasing", show_numbers = FALSE, average_shap = TRUE,  ...)
 {	
   require(ggplot2)
@@ -40,7 +40,7 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", CRE_ids = NULL, annotDat 
   p <- {}
   if (plotType == "bar")
   {
-    p <- shapviz::sv_importance(shp, kind="bar",fill="red", ...) + 
+    p <- shapviz::sv_importance(shp, kind="bar",fill="red", max_display = max_display, ...) + 
       theme(panel.background = element_blank(), axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black")) +
       geom_vline(xintercept = 0, linetype = "solid", color = "grey")
     if (! is.null(annotDat))
@@ -48,7 +48,7 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", CRE_ids = NULL, annotDat 
     return(p)
   }
   else if (plotType == "beeswarm")
-  {  	p <- shapviz::sv_importance(shp, kind="beeswarm",...) +
+  {  	p <- shapviz::sv_importance(shp, kind="beeswarm", max_display = max_display, ...) +
     scale_color_gradient(low = "blue", high = "red") +
     theme(panel.background = element_blank()
           , axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black"))
@@ -70,7 +70,7 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", CRE_ids = NULL, annotDat 
         }
       CRE_idx <- which(rownames(ts) %in% CRE_ids)
       if(average_shap){
-        p <- shapviz::sv_waterfall(shp, row_id = CRE_idx, fill_colors = c("blue", "red"),...) + theme(panel.background = element_blank(),panel.grid.major.y = element_blank()) + 
+        p <- shapviz::sv_waterfall(shp, row_id = CRE_idx, fill_colors = c("blue", "red"), max_display = max_display, ...) + theme(panel.background = element_blank(),panel.grid.major.y = element_blank()) + 
           theme(panel.background = element_blank(),panel.grid.major.y = element_blank())
         if (! is.null(annotDat))
         {	p$data
@@ -162,3 +162,50 @@ shapPlots_multi <- function(xgb_models, train_sets, plotType = "bar", CRE_ids = 
   return(p_list)
 }
 
+##############################################################################
+## annonTATE
+#' Re-annotates a ggplot created from shapviz. 
+#' Appends gene annotation onto exsiting annotation.
+#'
+#' @param plotDat              Data slot from a ggplot object
+#' @param peakAnnotations      Motif annotation containing columns called "Motif" and "Factor"
+#' @param annotLength       Number of characters to truncate annotation to. Default 30 characters.
+#' @param waterfallOther      Annotation for waterfall plots "other" category
+#' @param decreasing         Plot in decreasing order (default FALSE).
+#'
+annonTATE <- function(plotDat, peakAnnotations, annotLength = 30, waterfallOther=NULL, decreasing=FALSE)
+{
+    otherAnnotation <- 'other'
+    if (! is.null(waterfallOther))
+    {  otherAnnotation <- waterfallOther  }
+    
+    peakAnnotations$Motif <- gsub(pattern = "-", replacement = ".", x = peakAnnotations$Motif) # hack to ensure that matching occurs
+    lookupIDs <- as.character(plotDat$feature)
+    TF_IDs    <- {}
+    for(i in 1:length(lookupIDs))
+    {
+        if (lookupIDs[i] == "other")
+        {    
+            TF_IDs <- c(TF_IDs,otherAnnotation)
+        }
+        else
+        {     idx    <- which(peakAnnotations$Motif %in% lookupIDs[i]) 
+            if(length(idx) > 0)
+            {  TF_IDs <- c(TF_IDs, paste0(unlist(peakAnnotations$Factor[idx]), collapse=",")) }
+            else  
+            {     TF_IDs <- c(TF_IDs, lookupIDs[i]) }
+        }
+    }
+
+    plotDat$feature <- substr(paste0(plotDat$feature,"_", TF_IDs), 1, annotLength)
+    
+    sum_by_feature <- aggregate(value ~ feature, data = plotDat, sum)
+    sum_by_feature_ordered <- sum_by_feature[order(sum_by_feature$value, decreasing = decreasing),]
+    sum_by_feature_ordered
+
+    newFeatures <- factor(plotDat$feature, levels= unique(sum_by_feature_ordered$feature))
+    
+
+    return(newFeatures)
+
+}
