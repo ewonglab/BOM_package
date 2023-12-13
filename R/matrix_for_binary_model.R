@@ -26,7 +26,7 @@ binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL ,nthreads=1)
   new_cl <- FALSE
   if (system.name == "Windows") {
     new_cl <- TRUE
-    cluster <- parallel::makePSOCKcluster(rep("localhost", ncores))
+    cluster <- parallel::makePSOCKcluster(rep("localhost", nthreads))
     doParallel::registerDoParallel(cluster)
   } else {
     doParallel::registerDoParallel(cores=nthreads)
@@ -182,7 +182,14 @@ binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, out
   tmp <- tidyr::spread(tmp, motif_id, Freq)
   tmp <- merge(tmp, unique(negative_set.df[,2:3]), by="sequence_name")
 #browser()
-  rownames(tmp) <- tmp$sequence_name
+  if (length(unique(tmp$sequence_name)) != nrow(tmp))
+  { 	warning("Unexpectedly Input data has duplicate peaks for ",target_ct,"! (when generating background)") 
+		rownames(tmp) <- make.unique(tmp$sequence_name)
+  }
+  else
+  {
+	rownames(tmp) <- tmp$sequence_name 
+  } 
   tmp$sequence_name <- NULL
 
   ### Preparing positive (target) set
@@ -194,8 +201,14 @@ binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, out
   tmp2 <- tidyr::spread(tmp2, motif_id, Freq)
   tmp2 <- merge(tmp2, unique(positive[,2:3]), by="sequence_name")
   #enhancer IDs as rownames
-  rownames(tmp2) <-tmp2$sequence_name
-  tmp2$sequence_name <- NULL
+  if (length(unique(tmp2$sequence_name)) != nrow(tmp2))
+  { 	warning("Unexpectedly Input data has duplicate peaks for ",target_ct,"! (when generating background)") 
+		rownames(tmp2) <- make.unique(tmp2$sequence_name)
+  }
+  else
+  {
+	rownames(tmp2) <- tmp2$sequence_name 
+  } 
   
   ## Combine target and background sets
 
