@@ -20,11 +20,26 @@
 #' @export
 binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL ,nthreads=1)
 {
+  # Set up multiple workers
+  system.name <- Sys.info()['sysname']
+  new_cl <- FALSE
+  if (system.name == "Windows") {
+    new_cl <- TRUE
+    cluster <- parallel::makePSOCKcluster(rep("localhost", ncores))
+    doParallel::registerDoParallel(cluster)
+  } else {
+    doParallel::registerDoParallel(cores=nthreads)
+  }
+
+
+
+
+
 	# Check requested threads is available
-	coresAvailable <- parallel::detectCores()
-	if (coresAvailable < nthreads)
-	{	nthreads <- coresAvailable }
-	cl <- parallel::makeCluster(nthreads)
+#	coresAvailable <- parallel::detectCores()
+#	if (coresAvailable < nthreads)
+#	{	nthreads <- coresAvailable }
+#	cl <- parallel::makeCluster(nthreads)
 
 
 	# list directories containing FIMO output
@@ -41,14 +56,24 @@ binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL ,nthreads=1)
 			as.data.frame(read.table(fn, sep='\t', header=TRUE))
 		}
 
-	
-	suppressWarnings({
-		counts <- parallel::parLapply(cl, counts_files, read_and_update)
-		
-	})
+	counts <- foreach::foreach(thisSample=counts_files) %dopar% {
+		read_and_update(thisSample)
+	}
+#	suppressWarnings({
+#		counts <- parallel::parLapply(cl, counts_files, read_and_update)
+#	})
 #	close(pb)
   
 	counts <- lapply(counts, as.data.frame)
+  for(i in 1:length(counts))
+  {
+    if (nrow(counts[[i]]) == 0)
+    {
+      stop(paste0("No data for ",countfiles[i]))
+    }
+  }
+
+
 	counts <- lapply(counts, function(x) x[x[,9] <= qval_thresh,])
 	names(counts) <- celltypes
 
@@ -68,7 +93,12 @@ binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL ,nthreads=1)
 	else  # Do all comparisons
 	{	message("Processing all cell types")
 
-		parallel::parLapply(cl, celltypes, binModel_oneVsOthers, counts, n_CREs_by_ct, celltypes, outDir)
+	#	parallel::parLapply(cl, celltypes, binModel_oneVsOthers, counts, n_CREs_by_ct, celltypes, outDir)
+#browser()
+	outputforDebug <-foreach::foreach(thisCellType=celltypes) %dopar% {
+		binModel_oneVsOthers(thisCellType, counts, n_CREs_by_ct, celltypes, outDir)
+	} 
+
 		# Train
 		
 		
@@ -88,10 +118,13 @@ binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL ,nthreads=1)
 		
 		
 	}
-	parallel::stopCluster(cl)
+#	parallel::stopCluster(cl)
 	
 	
-	
+	if (new_cl) { ## Shut down cluster if on Windows
+    ## stop cluster
+		parallel::stopCluster(cluster)
+	}
 	
 	
 	
@@ -147,6 +180,7 @@ binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, out
   
   tmp <- tidyr::spread(tmp, motif_id, Freq)
   tmp <- merge(tmp, unique(negative_set.df[,2:3]), by="sequence_name")
+#browser()
   rownames(tmp) <- tmp$sequence_name
   tmp$sequence_name <- NULL
 
@@ -159,7 +193,7 @@ binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, out
   tmp2 <- tidyr::spread(tmp2, motif_id, Freq)
   tmp2 <- merge(tmp2, unique(positive[,2:3]), by="sequence_name")
   #enhancer IDs as rownames
-  rownames(tmp2) <- tmp2$sequence_name
+  rownames(tmp2) <-tmp2$sequence_name
   tmp2$sequence_name <- NULL
   
   ## Combine target and background sets
