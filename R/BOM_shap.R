@@ -85,7 +85,7 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids
           p_watterfall <- list()
           for(i in 1:length(CRE_idx)){
             print(CRE_idx[i])
-            p <- shapviz::sv_waterfall(shp, row_id = CRE_idx[i], fill_colors = c("blue", "red"),...) + theme(panel.background = element_blank(),panel.grid.major.y = element_blank()) + 
+            p <- shapviz::sv_waterfall(shp, row_id = CRE_idx[i], fill_colors = c("blue", "red"), max_display = max_display,...) + theme(panel.background = element_blank(),panel.grid.major.y = element_blank()) + 
               theme(panel.background = element_blank(),panel.grid.major.y = element_blank()) +
               ggtitle(rownames(ts)[CRE_idx[i]])
             if (! is.null(annotDat))
@@ -103,7 +103,7 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids
     {
       CRE_idx <- which(rownames(ts) == CRE_ids)
       print(CRE_idx)
-      p <- shapviz::sv_waterfall(shp, row_id = CRE_idx, fill_colors = c("blue", "red"),...) + theme(panel.background = element_blank(),panel.grid.major.y = element_blank()) + 
+      p <- shapviz::sv_waterfall(shp, row_id = CRE_idx, fill_colors = c("blue", "red"), max_display = max_display,...) + theme(panel.background = element_blank(),panel.grid.major.y = element_blank()) + 
         theme(panel.background = element_blank(),panel.grid.major.y = element_blank()) +
         ggtitle(CRE_id)       
       if (! is.null(annotDat))
@@ -125,7 +125,7 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids
 #' @param train_sets	List of file names for training sets (same order as models).
 #' @param plotType  Plottype, can be "bar" (default), "beeswarm", or "waterfall"
 #' @param annotData Dataframe with columns "Motif" and "Factor". The values in "Motif" should match what was used 
-#' @param numTF  Number of transcription factors to plot. The remaining transcriptions factors are plotted under other 
+#' @param max_display  Number of transcription factors to plot (Fefault 15). The remaining transcriptions factors are plotted under other 
 #' @param order  Ïf set to "decreasing" then plots the highest value first through to lowest value.
 #' @param show_numbers  Boolean. If set to TRUE will display numbers on plot.
 #' @param average_shap Boolean. Whether to average shap values across the specified CREs in waterfall plots (default TRUE).
@@ -141,8 +141,8 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids
 #'  
 #'
 #' @export
-shapPlots_multi <- function(xgb_models, train_sets, plotType = "bar", CRE_ids = NULL
-                            , annotDat = NULL, annotLength = 30, order = "decreasing"
+shapPlots_multi <- function(xgb_models, train_sets, plotType = "bar", max_display = 15
+                            , CRE_ids = NULL, annotDat = NULL, annotLength = 30, order = "decreasing"
                             , show_numbers = FALSE, average_shap = TRUE, ...)
 {
   xgb.models <- lapply(xgb_models, readRDS)
@@ -155,7 +155,7 @@ shapPlots_multi <- function(xgb_models, train_sets, plotType = "bar", CRE_ids = 
   p_list <- list()
   for(i in 1:length(xgb_models)){
     
-    p_list[[i]] <- shapPlots_test(xgb_model = xgb.models[[i]], ts = train.sets[[i]], plotType = plotType
+    p_list[[i]] <- shapPlots(xgb_model = xgb.models[[i]], ts = train.sets[[i]], plotType = plotType, max_display = max_display
                                   , CRE_ids = CRE_ids, annotDat = annotDat, annotLength = annotLength
                                   , order = order, show_numbers = show_numbers, average_shap = average_shap)
   }
