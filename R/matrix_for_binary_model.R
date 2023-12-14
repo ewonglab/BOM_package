@@ -147,7 +147,7 @@ binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, out
   n_bkg <- round(n/(length(celltypes) -1))
   
   # check whether the number of CREs of every context is enough to make a balanced set
-
+  
   if(n_bkg > min(n_CREs_by_ct)){
     warning("The number of CREs for a background set is lower than the required number. Reducing the number of CREs from each context.")
     n_bkg <- min(n_CREs_by_ct)
@@ -162,7 +162,7 @@ binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, out
   
   negative_set <- lapply(celltypes[celltypes != target_ct], function(ct) {
     tmp <- counts[[ct]]
-
+    
     set.seed(123)
     ct_sample <- sample(unique(tmp$sequence_name), size = n_bkg, replace = FALSE)
     tmp[tmp$sequence_name %in% ct_sample, ]
@@ -181,17 +181,16 @@ binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, out
   
   tmp <- tidyr::spread(tmp, motif_id, Freq)
   tmp <- merge(tmp, unique(negative_set.df[,2:3]), by="sequence_name")
-#browser()
+  #browser()
   if (length(unique(tmp$sequence_name)) != nrow(tmp))
   { 	warning("Unexpectedly Input data has duplicate peaks for ",target_ct,"! (when generating background)") 
-		rownames(tmp) <- make.unique(tmp$sequence_name)
-  }
-  else
+    rownames(tmp) <- make.unique(tmp$sequence_name)
+  }else
   {
-	rownames(tmp) <- tmp$sequence_name 
+    rownames(tmp) <- tmp$sequence_name 
   } 
   tmp$sequence_name <- NULL
-
+  
   ### Preparing positive (target) set
   
   positive <- counts[[target_ct]]
@@ -202,22 +201,21 @@ binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, out
   tmp2 <- merge(tmp2, unique(positive[,2:3]), by="sequence_name")
   #enhancer IDs as rownames
   if (length(unique(tmp2$sequence_name)) != nrow(tmp2))
-  { 	warning("Unexpectedly Input data has duplicate peaks for ",target_ct,"! (when generating positive)") 
-		rownames(tmp2) <- make.unique(tmp2$sequence_name)
-  }
-  else
+  { 	warning("Unexpectedly Input data has duplicate peaks for ",target_ct,"! (when generating background)") 
+    rownames(tmp2) <- make.unique(tmp2$sequence_name)
+  }else
   {
-	rownames(tmp2) <- tmp2$sequence_name 
+    rownames(tmp2) <- tmp2$sequence_name 
   } 
-  
+  tmp2$sequence_name <- NULL
   ## Combine target and background sets
-
+  
   final_set <- dplyr::bind_rows(tmp, tmp2)
   final_set[is.na(final_set)] <- 0
   final_set <- final_set[,c(colnames(final_set)[colnames(final_set)!="celltype"],"celltype")]
   final_set$binary_celltype <- ifelse(final_set$celltype==target_ct, 1, 0)
   
-#  if()
+  #  if()
   message(paste("Saving matrix of motif counts for binary classification...\n"))
   write.table(x = final_set, file = paste0(outDir,"/",target_ct,"_vs_Others.txt"), quote = F, sep = '\t')
   
@@ -227,7 +225,8 @@ binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, out
   print(out_content)
   message(paste0("Processed ", target_ct))
 }
-
+				      
+				      
 #############################################################
 #' train_binary
 #' @description Function to train a binary classification model. 
