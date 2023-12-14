@@ -202,7 +202,7 @@ binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, out
   tmp2 <- merge(tmp2, unique(positive[,2:3]), by="sequence_name")
   #enhancer IDs as rownames
   if (length(unique(tmp2$sequence_name)) != nrow(tmp2))
-  { 	warning("Unexpectedly Input data has duplicate peaks for ",target_ct,"! (when generating background)") 
+  { 	warning("Unexpectedly Input data has duplicate peaks for ",target_ct,"! (when generating positive)") 
 		rownames(tmp2) <- make.unique(tmp2$sequence_name)
   }
   else

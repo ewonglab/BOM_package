@@ -284,26 +284,33 @@ textToBED <- function(inputTextFile = NULL,
 	if (header == FALSE)
 	{	colnames(txtData)[1:4] <- inputcolnames
 	}
+	message("Input text file has ", nrow(txtData)," entries")
 
 
 
 	if (removeUnnanotatedPeaks)
 	{# removing all the peaks that were not annotated to a cell type
+		message("Removing ",length(which(is.na(txtData[,inputcolnames[4]])))," entries that are not annotated with cell type")
 		txtData <- txtData[!is.na(txtData[,inputcolnames[4]]),]  # celltype_specificity
 	}
 
 	
 	if (removeMultiAnnotatedPeaks)
 	{  # only the peaks annotated to a single cell type
+		message("Removing ",length(! grep(pattern = ";", x = txtData[,inputcolnames[4]]))," entries that are annotated to multiple cell types")
 		txtData <- txtData[!grepl(pattern = ";", x = txtData[,inputcolnames[4]]),]  
 	}
 
 
 	if(removeDuplicatePeaks)
 	{		# remove any duplicated peaks (only keep the peak coordinates and cell type annotation)
-		txtData <- unique(txtData[,inputcolnames]) 
+		idx <- c((anyDuplicated(txtData[,inputcolnames[1:3]])), anyDuplicated(txtData[,inputcolnames[1:3]], fromLast=TRUE))
+		message("Removing ",length(which(idx > 0))," duplicated entries")
+		
+		txtData <- txtData[idx * -1,] 
 	}
 
+	message("Creating bed file with ",nrow(txtData), " entries")
 
 	# Save processed peak into a bed file
 
