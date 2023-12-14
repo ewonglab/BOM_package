@@ -165,7 +165,7 @@ predict_binary_multi <- function(inputMotif_dir=NULL, inputXGB_dir=NULL, outputT
 	{ 	warning("Please provide output file name") 
 		return(-1)
 	}
-	
+        require(cowplot)	
 	
 	fl.motifs <- list.files(path=inputMotif_dir, pattern="*_vs_Others.txt")
 	fl.xgb    <- list.files(path=inputXGB_dir, pattern="*_vs_Others.rds")
