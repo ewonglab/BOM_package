@@ -18,9 +18,20 @@
 #' binModel(data_path=data_path, qval_thresh=0.5, outDir='results/', target_ct= 'Cardiomyocytes')
 #' }
 #' @export
-binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL ,nthreads=1)
+binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL, nthreads=1
+                     , nrounds = 10000
+                     , eta = 0.01, max_depth = 6, subsample = 0.5
+                     , colsample_bytree = 0.5, objective = "binary:logistic"
+                     , early_stopping_rounds = NULL
+                     , eval_metric = "error", maximize = F
+                     , params = list(), feval = NULL, verbose = 0
+                     , print_every_n = 1L, save_period = NULL
+                     , xgb_model = NULL
+                     , callbacks = list()
+                     , training = 0.6)
 {
-	require(foreach)
+  require(foreach)
+  require(doParallel)
   # Set up multiple workers
   system.name <- Sys.info()['sysname']
   new_cl <- FALSE
@@ -32,40 +43,36 @@ binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL ,nthreads=1)
     doParallel::registerDoParallel(cores=nthreads)
   }
 
-
-
-
-
-	# Check requested threads is available
-#	coresAvailable <- parallel::detectCores()
-#	if (coresAvailable < nthreads)
-#	{	nthreads <- coresAvailable }
-#	cl <- parallel::makeCluster(nthreads)
-
-
-	# list directories containing FIMO output
-	directories <- list.dirs(path = data_path, full.names = T, recursive=F)
-	celltypes <- basename(directories)
+  # Check requested threads is available
+  #	coresAvailable <- parallel::detectCores()
+  #	if (coresAvailable < nthreads)
+  #	{	nthreads <- coresAvailable }
+  #	cl <- parallel::makeCluster(nthreads)
   
-	counts_files <- list.files(path=data_path, full.names =T, recursive=T, pattern='fimo.tsv*')
-	# Read results of motif search
-	message(paste0("Reading input data from ",data_path,".\nThere are ", length(directories), " directories found."))
-	
-	read_and_update <- function(fn, pb) 
-		{  
-			cat("=")
-			as.data.frame(read.table(fn, sep='\t', header=TRUE))
-		}
-
-	counts <- foreach::foreach(thisSample=counts_files) %dopar% {
-		read_and_update(thisSample)
-	}
-#	suppressWarnings({
-#		counts <- parallel::parLapply(cl, counts_files, read_and_update)
-#	})
-#	close(pb)
   
-	counts <- lapply(counts, as.data.frame)
+  # list directories containing FIMO output
+  directories <- list.dirs(path = data_path, full.names = T, recursive=F)
+  celltypes <- basename(directories)
+  
+  counts_files <- list.files(path=data_path, full.names =T, recursive=T, pattern='fimo.tsv*')
+  # Read results of motif search
+  message(paste0("Reading input data from ",data_path,".\nThere are ", length(directories), " directories found."))
+  
+  read_and_update <- function(fn, pb) 
+  {  
+    cat("=")
+    as.data.frame(read.table(fn, sep='\t', header=TRUE))
+  }
+  
+  counts <- foreach::foreach(thisSample=counts_files) %dopar% {
+    read_and_update(thisSample)
+  }
+  #	suppressWarnings({
+  #		counts <- parallel::parLapply(cl, counts_files, read_and_update)
+  #	})
+  #	close(pb)
+  
+  counts <- lapply(counts, as.data.frame)
   for(i in 1:length(counts))
   {
     if (nrow(counts[[i]]) == 0)
@@ -73,65 +80,87 @@ binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL ,nthreads=1)
       stop(paste0("No data for ",countfiles[i]))
     }
   }
-
-
-	counts <- lapply(counts, function(x) x[x[,9] <= qval_thresh,])
-	names(counts) <- celltypes
-
   
-	## count the number of unique CREs per condition
-	n_CREs_by_ct <- unlist(lapply(counts, function(x) length(unique(x$sequence_name))))
-	names(n_CREs_by_ct) <- celltypes
-	message("Writing output")
-	if (! is.null(target_ct)) # Do one requested comparison
-	{   message(paste0("Doing selected comparison on ", target_ct))
-		## define the number of CREs from target and background conditions
-		if(! target_ct %in% names(n_CREs_by_ct)){
-			stop(paste(target_ct, "is not among the contexts provided. Please check the spelling and case."))
-		}
-		binModel_oneVsOthers(target_ct, counts, n_CREs_by_ct, celltypes, outDir)
-	}
-	else  # Do all comparisons
-	{	message("Processing all cell types")
+  
+  counts <- lapply(counts, function(x) x[x[,9] <= qval_thresh,])
+  names(counts) <- celltypes
+  
+  
+  ## count the number of unique CREs per condition
+  n_CREs_by_ct <- unlist(lapply(counts, function(x) length(unique(x$sequence_name))))
+  names(n_CREs_by_ct) <- celltypes
+  message("Writing output")
+  if (! is.null(target_ct)) # Do one requested comparison
+  {   message(paste0("Doing selected comparison on ", target_ct))
+    ## define the number of CREs from target and background conditions
+    if(! target_ct %in% names(n_CREs_by_ct)){
+      stop(paste(target_ct, "is not among the contexts provided. Please check the spelling and case."))
+    }
+    binModel_oneVsOthers(target_ct, counts, n_CREs_by_ct, celltypes, outDir)
+    
+    message("Training....")
+    inputData <- paste0(outDir,"/", target_ct,"_vs_Others.txt")
+    outputFileNames <- paste0(outDir,"/",target_ct,"_vs_Others.rds")
+    
+    message(paste0("Preparing training for ", target_ct))
+    train_binary(input_data = inputData, save_name = outputFileNames, 
+                 early_stopping_rounds = early_stopping_rounds, nthread = nthreads
+                 , nrounds = nrounds, eta = eta, max_depth = max_depth
+                 , subsample = subsample, colsample_bytree = colsample_bytree
+                 , objective = objective, eval_metric = eval_metric
+                 , maximize = maximize, params = params, feval = feval
+                 , verbose = verbose, print_every_n = print_every_n
+                 , save_period = save_period, callbacks = callbacks
+                 , training = training)
+    
+  }
+  else  # Do all comparisons
+  {	message("Processing all cell types")
+    
+    #	parallel::parLapply(cl, celltypes, binModel_oneVsOthers, counts, n_CREs_by_ct, celltypes, outDir)
+    #browser()
+    outputforDebug <-foreach::foreach(thisCellType=celltypes) %dopar% {
+      binModel_oneVsOthers(thisCellType, counts, n_CREs_by_ct, celltypes, outDir)
+    } 
+    
+    # Training
+    
+    message("Training....")
+    inputData <- paste0(outDir,"/",celltypes,"_vs_Others.txt")
+    outputFileNames <- paste0(outDir,"/",celltypes,"_vs_Others.rds")
+    
+    #	mapply(train_binary, inputData, save_name = outputFileNames, nthread = nthreads, verbose = 0)
+    for ( i in 1:length(inputData))
+    {
+      message(paste0("Preparing training for ", celltypes[i]))
+      train_binary(input_data=inputData[i], save_name=outputFileNames[i], 
+                   early_stopping_rounds=early_stopping_rounds, nthread=nthreads
+                   , nrounds = nrounds, eta = eta, max_depth = max_depth
+                   , subsample = subsample, colsample_bytree = colsample_bytree
+                   , objective = objective, eval_metric = eval_metric
+                   , maximize = maximize, params = params, feval = feval
+                   , verbose = verbose, print_every_n = print_every_n
+                   , save_period = save_period
+                   , xgb_model = xgb_model, callbacks = callbacks
+                   , training = training)
+    }  
+    
 
-	#	parallel::parLapply(cl, celltypes, binModel_oneVsOthers, counts, n_CREs_by_ct, celltypes, outDir)
-#browser()
-	outputforDebug <-foreach::foreach(thisCellType=celltypes) %dopar% {
-		binModel_oneVsOthers(thisCellType, counts, n_CREs_by_ct, celltypes, outDir)
-	} 
-
-		# Train
-		
-		
-		message("training....")
-		inputData <- paste0(outDir,"/",celltypes,"_vs_Others.txt")
-		outputFileNames <- paste0(outDir,"/",celltypes,"_vs_Others.rds")
-		
-	#	mapply(train_binary, inputData, save_name = outputFileNames, nthread = nthreads, verbose = 0)
-		for ( i in 1:length(inputData))
-		{
-			message(paste0("Preparing training for ",celltypes[i]))
-			train_binary(input_data=inputData[i], save_name=outputFileNames[i], 
-								early_stopping_rounds=100,   verbose=0, nthread=nthreads)
-
-		}
-		
-		
-		
-	}
-#	parallel::stopCluster(cl)
-	
-	
-	if (new_cl) { ## Shut down cluster if on Windows
+  }
+  #	parallel::stopCluster(cl)
+  # Train
+  
+  if (new_cl) { ## Shut down cluster if on Windows
     ## stop cluster
-		parallel::stopCluster(cluster)
-	}
-	
-	
-	
-	message("Complete")
+    parallel::stopCluster(cluster)
+  }
+  
+  
+  
+  message("Complete")
 }
 
+				
 ################################################################################
 ## binModel_oneVsOthers
 #'
@@ -208,6 +237,7 @@ binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, out
     rownames(tmp2) <- tmp2$sequence_name 
   } 
   tmp2$sequence_name <- NULL
+	
   ## Combine target and background sets
   
   final_set <- dplyr::bind_rows(tmp, tmp2)
