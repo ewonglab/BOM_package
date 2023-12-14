@@ -37,6 +37,7 @@ adjust_CREs <- function(x, N, chrom_sizes){
   x <- x[with(x, order(ord)), ]
   x <- x[,colnames(x)[!colnames(x) %in% c("chr_size", "centre", "width", "V2", "V3", "ord")]]
   x <- x[,c("V1", "start", "end", setdiff(colnames(x), c("V1", "start", "end")))]
+  colnames(x)[2:3] <- c("V2", "V3")
   return(x)
   
 }
@@ -175,7 +176,7 @@ filterCREs <- function(inputBedFile = NULL,
     
     # Adjust CREs
     cat("Adjusting CRE length...\n")
-    #cres <- adjust_CREs(cres, nbp, chrom_sizes)
+    cres <- adjust_CREs(cres, nbp, chrom_sizes)
     
     idx <- which(chrom_sizes$chr %in% names(GenomeInfoDb::seqlengths(cres_gr)))
     if (length(idx) == length(names(GenomeInfoDb::seqlengths(cres_gr))))
