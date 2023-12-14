@@ -141,26 +141,38 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids
 #'  
 #'
 #' @export
-shapPlots_multi <- function(xgb_models, train_sets, plotType = "bar", max_display = 15
-                            , CRE_ids = NULL, annotDat = NULL, annotLength = 30, order = "decreasing"
-                            , show_numbers = FALSE, average_shap = TRUE, ...)
+shapPlots_multi <- function(dataDir = NULL, xgb_models, train_sets, plotType = "bar"
+                            , max_display = 15, CRE_ids = NULL, annotDat = NULL
+                            , annotLength = 30, order = "decreasing", show_numbers = FALSE
+                            , average_shap = TRUE, ...)
 {
-  xgb.models <- lapply(xgb_models, readRDS)
-  train.sets <- lapply(train_sets, read.table, header = TRUE)
-  
+  if(!is.null(xgb_models)){
+    xgb.models <- lapply(xgb_models, readRDS)
+  }else{
+    xgb_models <- list.files(path = dataDir, pattern = "(.*)_vs_Others.rds$")
+    xgb.models <- lapply(xgb_models, readRDS)
+  }
+  if(!is.null(train_sets)){
+    train.sets <- lapply(train_sets, read.table, header = TRUE)
+  }else{
+    train_sets <- list.files(path = dataDir, pattern = "(.*)_vs_Others_train.txt$") 
+    train.sets <- lapply(train_sets, read.table, header = TRUE)
+  }
+
   if(length(xgb_models) != length(train_sets)){
     stop("The number of models and training sets is different.")
   }
   
   p_list <- list()
-  for(i in 1:length(xgb_models)){
-    
+  for(i in 1:length(train_sets)){
+
     p_list[[i]] <- shapPlots(xgb_model = xgb.models[[i]], ts = train.sets[[i]], plotType = plotType, max_display = max_display
-                                  , CRE_ids = CRE_ids, annotDat = annotDat, annotLength = annotLength
-                                  , order = order, show_numbers = show_numbers, average_shap = average_shap)
+                             , CRE_ids = CRE_ids, annotDat = annotDat, annotLength = annotLength
+                             , order = order, show_numbers = show_numbers, average_shap = average_shap)
   }
   return(p_list)
 }
+
 
 ##############################################################################
 ## annonTATE
@@ -208,4 +220,67 @@ annonTATE <- function(plotDat, peakAnnotations, annotLength = 30, waterfallOther
 
     return(newFeatures)
 
+}
+
+## save_shap
+#' Saves SHAP values to a file
+#'
+#' @param 
+#' 
+#' @example
+#' 
+#' 
+#'  
+#'
+#' @export
+#' 
+save_shap <-function(xgb_model = NULL, ts = NULL, shap_file){
+  require(shapviz)
+  ts$binary_celltype <- NULL
+  shp <- shapviz::shapviz(object = xgb_model, data.matrix(ts))
+  shap <- as.data.frame(shp$S)
+  rownames(shap) <- rownames(shp$X)
+  write.table(x = shap, file = shap_file, sep ='\t', quote = F)
+}
+
+
+## save_shap
+#' Saves SHAP values to a file
+#'
+#' @param 
+#' 
+#' @example
+#' 
+#' 
+#'  
+#'
+#' @export
+#' 
+save_shap_multi <-function(dataDir = NULL, xgb_models, train_sets, outDir = NULL){
+  require(shapviz)
+  if(!is.null(xgb_models)){
+    xgb.models <- lapply(xgb_models, readRDS)
+  }else{
+    xgb_models <- list.files(path = dataDir, pattern = "(.*)_vs_Others.rds$")
+    xgb.models <- lapply(xgb_models, readRDS)
+  }
+  if(!is.null(train_sets)){
+    train.sets <- lapply(train_sets, read.table, header = TRUE)
+  }else{
+    train_sets <- list.files(path = dataDir, pattern = "(.*)_vs_Others_train.txt$") 
+    train.sets <- lapply(train_sets, read.table, header = TRUE)
+  }
+  
+  if(length(xgb_models) != length(train_sets)){
+    stop("The number of models and training sets is different.")
+  }
+  
+  celltype_model <- sub("_train.txt", "", train_sets)
+  for(i in 1:length(celltype_model)){
+    shap_out_f <- paste0(celltype_model, "_shap.txt")
+    if(!is.null(outDir)){
+      shap_out_f <- paste0(outDir, '/', shap_out_f)
+    }
+    save_shap(xgb_model = xgb.models[[i]], ts = train.sets[[i]], shap_file = shap_out_f)
+  }
 }
