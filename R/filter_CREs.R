@@ -80,164 +80,167 @@ adjust_CREs <- function(x, N, chrom_sizes){
 #' }
 #' @export
 filterCREs <- function(inputBedFile = NULL,
-		       annotFile = NULL,
-		       chrSizesFile = NULL,
-		       u = NULL,
-		       d = NULL,
-		       nbp = NULL,
-		       keep_proximal = FALSE,
-		       remove_proximal = FALSE,
-		       non_exonic = FALSE,
-		       out_bed = NULL, inputBedZeroBased=TRUE,
-		       celloutputDir = NULL, minCellPercent = 1,
-		       ovr_dir = FALSE)
+                       annotFile = NULL,
+                       chrSizesFile = NULL,
+                       u = NULL,
+                       d = NULL,
+                       nbp = NULL,
+                       keep_proximal = FALSE,
+                       remove_proximal = FALSE,
+                       non_exonic = FALSE,
+                       out_bed = NULL, inputBedZeroBased=TRUE,
+                       celloutputDir = NULL, minCellPercent = 1,
+                       ovr_dir = FALSE)
 {
-	if (is.null(celloutputDir))
+  if (is.null(celloutputDir))
+  {
+    message("No work_path directory name set. Therefore output for next step (motif searching) will not bee prepared")
+  }
+  
+  message("Reading CREs...\n")
+  addToBed = 0
+  if (inputBedZeroBased == TRUE)
+  { addToBed = 1 } 
+  
+  cres <- read.table(file = inputBedFile, header = F, stringsAsFactors = F, sep = '\t')
+  
+  # Clean up 4th column by removing spaces an slashes
+  cres$V4 <- sub("/", "_", cres$V4)
+  cres$V4 <- sub(" ", "_", cres$V4)
+  
+  cres_gr <- with(cres, GenomicRanges::GRanges(V1, IRanges::IRanges(V2+addToBed, V3)))
+  
+  if(keep_proximal | remove_proximal | non_exonic)
+  {
+    
+    message("Reading genome annotation...\n")
+    txdb_obj <- suppressWarnings(GenomicFeatures::makeTxDbFromGFF(file = annotFile, format = "gtf"))
+    
+    matchingChromosomes <- intersect(GenomeInfoDb::seqlevels(txdb_obj), GenomeInfoDb::seqlevels(cres_gr))
+    if (length(matchingChromosomes) == 0)
+    { 	# No chromosomes align - Change style and try again
+      GenomeInfoDb::seqlevelsStyle(cres_gr) <- "NCBI"
+      matchingChromosomes <- intersect(GenomeInfoDb::seqlevels(txdb_obj), GenomeInfoDb::seqlevels(cres_gr))
+      if (length(matchingChromosomes) == 0)
+      {
+        warning("Seqence levels do not match to reference")
+        warning(seqlevels(txdb_obj))
+        warning(seqlevels(cres_gr))
+      }
+    }
+    
+    
+    if(non_exonic){
+      message("Removing exonic regions...\n")
+      exons <- GenomicFeatures::exons(txdb_obj)
+      x <- as.data.frame(GenomicRanges::findOverlaps(cres_gr, exons))
+      if(nrow(x) > 0){
+        cres <- cres[-unique(x$queryHits),]
+        cres_gr <- with(cres, GenomicRanges::GRanges(V1, IRanges::IRanges(V2+addToBed, V3)))
+      } 
+    }
+    
+    if(keep_proximal & remove_proximal){
+      stop(paste("'keep_proximal' and 'remove_proximal' are mutually exclusive"))
+    }
+    if(keep_proximal){
+      message("Keeping proximal regions to TSSs...\n")
+      proximal <- GenomicFeatures::promoters(x = txdb_obj, upstream = u, downstream = d)
+      x <- as.data.frame(GenomicRanges::findOverlaps(cres_gr, proximal))
+      if(nrow(x) > 0){
+        cres <- cres[unique(x$queryHits),]
+        cres_gr <- with(cres, GenomicRanges::GRanges(V1, IRanges::IRanges(V2+addToBed, V3)))
+      } else {
+        stop(paste("No remaining CREs"))
+      }
+    }
+    if(remove_proximal){
+      message("Removing proximal regions to TSSs...\n")
+      proximal <- GenomicFeatures::promoters(x = txdb_obj, upstream = u, downstream = d)
+      x <- as.data.frame(GenomicRanges::findOverlaps(cres_gr, proximal))
+      if(nrow(x) > 0){
+        cres <- cres[-unique(x$queryHits),]
+        cres_gr <- with(cres, GenomicRanges::GRanges(V1, IRanges::IRanges(V2+addToBed, V3)))
+      } 
+      
+    }
+  }
+  
+  #if((u == NULL & d != NULL) | (d == NULL & u != NULL)){
+  #  stop(paste("u AND d should be provided to adjust CREs"))
+  if (exists("nbp") && !is.null(nbp)) {
+    cat("Reading chromosome sizes...\n")
+    chrom_sizes <- read.table(file = chrSizesFile, header = F, stringsAsFactors = F, sep ='\t')
+    colnames(chrom_sizes) <- c("chr", "chr_size")
+    
+    # Adjust CREs
+    cat("Adjusting CRE length...\n")
+    #cres <- adjust_CREs(cres, nbp, chrom_sizes)
+    
+    idx <- which(chrom_sizes$chr %in% names(GenomeInfoDb::seqlengths(cres_gr)))
+    if (length(idx) == length(names(GenomeInfoDb::seqlengths(cres_gr))))
     {
-		message("No work_path directory name set. Therefore output for next step (motif searching) will not bee prepared")
-	}
+      suppressWarnings(GenomeInfoDb::seqlengths(cres_gr) <- chrom_sizes$chr_size[idx])
+      cres_gr <- IRanges::trim(cres_gr)
+    }
+    else 
+    {	browser()
+      warning("Cannot check out of bound granges as chromosome names between peaks and reference did not match")
+    }
+    
+    
+  }
+  
+  if(nrow(cres) == 0){
+    stop(paste("No remaining CREs after applying filters."))
+  }	
+  
+  # Save filtered regions
+  message(paste0("Saving ",  nrow(cres) ," CREs...\n"))
 
-	message("Reading CREs...\n")
-	addToBed = 0
-	if (inputBedZeroBased == TRUE)
-	{ addToBed = 1 } 
-
-	cres <- read.table(file = inputBedFile, header = F, stringsAsFactors = F, sep = '\t')
-	
-	# Clean up 4th column by removing spaces an slashes
-	cres$V4 <- sub("/", "_", cres$V4)
-	cres$V4 <- sub(" ", "_", cres$V4)
-	
-	cres_gr <- with(cres, GenomicRanges::GRanges(V1, IRanges::IRanges(V2+addToBed, V3)))
-
-	if(keep_proximal | remove_proximal | non_exonic)
-	{
-
-		message("Reading genome annotation...\n")
-		txdb_obj <- suppressWarnings(GenomicFeatures::makeTxDbFromGFF(file = annotFile, format = "gtf"))
-	  
-		matchingChromosomes <- intersect(GenomeInfoDb::seqlevels(txdb_obj), GenomeInfoDb::seqlevels(cres_gr))
-		if (length(matchingChromosomes) == 0)
-		{ 	# No chromosomes align - Change style and try again
-			GenomeInfoDb::seqlevelsStyle(cres_gr) <- "NCBI"
-			matchingChromosomes <- intersect(GenomeInfoDb::seqlevels(txdb_obj), GenomeInfoDb::seqlevels(cres_gr))
-			if (length(matchingChromosomes) == 0)
-			{
-				warning("Seqence levels do not match to reference")
-				warning(seqlevels(txdb_obj))
-				warning(seqlevels(cres_gr))
-			}
-		}
-	  
-
-		if(non_exonic){
-			message("Removing exonic regions...\n")
-			exons <- GenomicFeatures::exons(txdb_obj)
-			x <- as.data.frame(GenomicRanges::findOverlaps(cres_gr, exons))
-			if(nrow(x) > 0){
-				cres_gr <- cres_gr[-unique(x$queryHits)]
-			} 
-		}
-	  
-	  if(keep_proximal & remove_proximal){
-		stop(paste("'keep_proximal' and 'remove_proximal' are mutually exclusive"))
-	  }
-	  if(keep_proximal){
-		message("Keeping proximal regions to TSSs...\n")
-		proximal <- GenomicFeatures::promoters(x = txdb_obj, upstream = u, downstream = d)
-		x <- as.data.frame(GenomicRanges::findOverlaps(cres_gr, proximal))
-		if(nrow(x) > 0){
-		  cres_gr <- cres_gr[unique(x$queryHits)]
-		} else {
-		  stop(paste("No remaining CREs"))
-		}
-	  }
-	  if(remove_proximal){
-		message("Removing proximal regions to TSSs...\n")
-		proximal <- GenomicFeatures::promoters(x = txdb_obj, upstream = u, downstream = d)
-		x <- as.data.frame(GenomicRanges::findOverlaps(cres_gr, proximal))
-		if(nrow(x) > 0){
-		  cres_gr <- cres_gr[-unique(x$queryHits)]
-		} 
-		
-	  }
-	}
-
-	#if((u == NULL & d != NULL) | (d == NULL & u != NULL)){
-	#  stop(paste("u AND d should be provided to adjust CREs"))
-	if (exists("nbp") && !is.null(nbp)) {
-	  cat("Reading chromosome sizes...\n")
-	  chrom_sizes <- read.table(file = chrSizesFile, header = F, stringsAsFactors = F, sep ='\t')
-	  colnames(chrom_sizes) <- c("chr", "chr_size")
-	  
-	  # Adjust CREs
-	  cat("Adjusting CRE length...\n")
-	  #cres <- adjust_CREs(cres, nbp, chrom_sizes)
-	  
-		idx <- which(chrom_sizes$chr %in% names(GenomeInfoDb::seqlengths(cres_gr)))
-		if (length(idx) == length(names(GenomeInfoDb::seqlengths(cres_gr))))
-		{
-			suppressWarnings(GenomeInfoDb::seqlengths(cres_gr) <- chrom_sizes$chr_size[idx])
-			cres_gr <- IRanges::trim(cres_gr)
-		}
-		else 
-		{	browser()
-			warning("Cannot check out of bound granges as chromosome names between peaks and reference did not match")
-		}
-	  
-	  
-	}
-	
-	if(nrow(cres) == 0){
-	  stop(paste("No remaining CREs after applying filters."))
-	}	
-
-	# Save filtered regions
-	message(paste0("Saving ",  length(cres_gr)," CREs...\n"))
-
-	write.table(x = cres, file = out_bed, quote = F, col.names = F
-				, row.names = F, sep ='\t')
-
-
-
-	if (! is.null(celloutputDir))
-	{	# Generate BED files for each cell type
-		# split into bed files
-		message("Preparing output directories and files so that everything is set for motif searching")
-		colnames(cres) <- c('chrom', 'start','end', 'cellType')
-		
-		# Filter out low proportion of cells
-		cellnumbers <- table(cres$cellType)
-		idx.toRemove <- which(cellnumbers/sum(cellnumbers) <  (minCellPercent/100) ) 
-		idx.toRemove <- names(cellnumbers)[idx.toRemove]
-		if (length(idx.toRemove) > 0)
-		{
-			cres <- cres[!cres$cellType %in% idx.toRemove, ]
-			message(paste0("\nThe following cell(s) represent less than ",minCellPercent,
-				"% of all cells.", 
-				"\nThis is the predefined cutoff as defined by parameter minCellPercent.",
-				"\nOutputs for following cell(s) will therefore not be generated:\n", 
-				paste0(idx.toRemove, collapse="\n"),"\n"))
-		}
-		
-		if(file.exists(celloutputDir) & !ovr_dir){
-			stop(paste("The directory", celloutputDir, "already exists. Set ovr_dir to TRUE"))
-		}else{
-			dir.create(celloutputDir)  
-		}
-
-
-		for(i in unique(cres$cellType))
-		{
-			fn <- paste0(celloutputDir, "/", i, ".bed")
-			write.table(x = cres[cres$cellType == i, ], file = fn, 
-              quote = F, col.names = F, row.names = F, sep ='\t')
-		}
-		cellNames <- paste0(unique(cres$cellType),".bed", collapse="\n")
-		message(paste0("The following files have been prepared: \n",cellNames))
-	}
-	
-
+  write.table(x = cres, file = out_bed, quote = F, col.names = F
+              , row.names = F, sep ='\t')
+  
+  
+  
+  if (! is.null(celloutputDir))
+  {	# Generate BED files for each cell type
+    # split into bed files
+    message("Preparing output directories and files so that everything is set for motif searching")
+    colnames(cres) <- c('chrom', 'start','end', 'cellType')
+    
+    # Filter out low proportion of cells
+    cellnumbers <- table(cres$cellType)
+    idx.toRemove <- which(cellnumbers/sum(cellnumbers) <  (minCellPercent/100) ) 
+    idx.toRemove <- names(cellnumbers)[idx.toRemove]
+    if (length(idx.toRemove) > 0)
+    {
+      cres <- cres[!cres$cellType %in% idx.toRemove, ]
+      message(paste0("\nThe following cell(s) represent less than ",minCellPercent,
+                     "% of all cells.", 
+                     "\nThis is the predefined cutoff as defined by parameter minCellPercent.",
+                     "\nOutputs for following cell(s) will therefore not be generated:\n", 
+                     paste0(idx.toRemove, collapse="\n"),"\n"))
+    }
+    
+    if(file.exists(celloutputDir) & !ovr_dir){
+      stop(paste("The directory", celloutputDir, "already exist. Set ovr_dir to TRUE"))
+    }else{
+      suppressWarnings(dir.create(celloutputDir))
+    }
+    
+    
+    for(i in unique(cres$cellType))
+    {
+      fn <- paste0(celloutputDir, "/", i, ".bed")
+      write.table(x = cres[cres$cellType == i, ], file = fn, 
+                  quote = F, col.names = F, row.names = F, sep ='\t')
+    }
+    cellNames <- paste0(unique(cres$cellType),".bed", collapse="\n")
+    message(paste0("The following files have been prepared: \n",cellNames))
+  }
+  
+  
 }
 
 
