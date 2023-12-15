@@ -273,7 +273,6 @@ textToBED <- function(inputTextFile = NULL,
 				sep = ",",
 				outputFileName = "out.bed",
 				removeDuplicatePeaks = TRUE,
-				removeMultiAnnotatedPeaks = TRUE,
 				removeUnnanotatedPeaks = TRUE
 				)
 {
