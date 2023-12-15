@@ -254,8 +254,7 @@ filterCREs <- function(inputBedFile = NULL,
 #' @param inputcolnames Column names corresponding to CRE coordinates and cell type/state annotation. Default to 'c("peak_chr","peak_start", "peak_end", "celltype_specificity")'.
 #' @param sep Character separating columns. Default to ','.
 #' @param outputFileName Output file name. Default to "out.bed".
-#' @param removeDuplicatePeaks Boolean (default TRUE). Whether to remove duplicated CREs.
-#' @param removeMultiAnnotatedPeaks Boolean (default TRUE). Whether to remove CREs annotated to multiple cell types/states.
+#' @param removeDuplicatePeaks Boolean (default TRUE). Whether to remove CREs annotated to multiple cell types/states.
 #' @param removeUnnanotatedPeaks Boolean (default TRUE). Whether to remove CREs not annotated to a cell type/state.
 
 #' @examples 
@@ -297,14 +296,6 @@ textToBED <- function(inputTextFile = NULL,
 		message("Removing ",length(which(is.na(txtData[,inputcolnames[4]])))," entries that are not annotated with cell type")
 		txtData <- txtData[!is.na(txtData[,inputcolnames[4]]),]  # celltype_specificity
 	}
-
-	
-	if (removeMultiAnnotatedPeaks)
-	{  # only the peaks annotated to a single cell type
-		message("Removing ",length(! grep(pattern = ";", x = txtData[,inputcolnames[4]]))," entries that are annotated to multiple cell types")
-		txtData <- txtData[!grepl(pattern = ";", x = txtData[,inputcolnames[4]]),]  
-	}
-
 
 	if(removeDuplicatePeaks)
 	{		# remove any duplicated peaks (only keep the peak coordinates and cell type annotation)
