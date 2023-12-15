@@ -111,7 +111,7 @@ binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL, nthreads=1
                  , maximize = maximize, params = params, feval = feval
                  , verbose = verbose, print_every_n = print_every_n
                  , save_period = save_period, callbacks = callbacks
-                 , training = training, ids_pfx = paste0(outDir,"/", inputData))
+                 , training = training, ids_pfx = paste0(outDir,"/", target_ct))
     
   }
   else  # Do all comparisons
@@ -142,7 +142,7 @@ binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL, nthreads=1
                    , verbose = verbose, print_every_n = print_every_n
                    , save_period = save_period
                    , xgb_model = xgb_model, callbacks = callbacks
-                   , training = training, ids_pfx = paste0(outDir,"/", inputData[i]))
+                   , training = training, ids_pfx = paste0(outDir,"/", celltypes[i]))
     }  
     
 
