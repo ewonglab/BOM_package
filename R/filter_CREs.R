@@ -312,7 +312,7 @@ textToBED <- function(inputTextFile = NULL,
   
   # Save processed peak into a bed file
   
-  write.table(x = txtData, file = outputFileName, col.names = F, row.names = F, quote = F, sep = '\t')
+  write.table(x = txtData[,inputcolnames], file = outputFileName, col.names = F, row.names = F, quote = F, sep = '\t')
   
   
 }
