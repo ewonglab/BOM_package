@@ -111,7 +111,7 @@ binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL, nthreads=1
                  , maximize = maximize, params = params, feval = feval
                  , verbose = verbose, print_every_n = print_every_n
                  , save_period = save_period, callbacks = callbacks
-                 , training = training)
+                 , training = training, ids_pfx = paste0(outDir,"/", inputData))
     
   }
   else  # Do all comparisons
@@ -142,7 +142,7 @@ binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL, nthreads=1
                    , verbose = verbose, print_every_n = print_every_n
                    , save_period = save_period
                    , xgb_model = xgb_model, callbacks = callbacks
-                   , training = training)
+                   , training = training, ids_pfx = paste0(outDir,"/", inputData[i])
     }  
     
 
@@ -299,8 +299,7 @@ train_binary <- function(input_data = NULL, nrounds = 10000
                          , params = list(), feval = NULL, verbose = 1
                          , print_every_n = 1L, save_period = NULL
                          , save_name = "xgboost.model", xgb_model = NULL
-                         , callbacks = list()
-						 , training = 0.6)
+                         , callbacks = list(), training = 0.6, ids_pfx = NULL)
 {
 	if ((training > 1) | (training < 0) )
 	{ error("Parameter training has to be between 0 and 1") }
@@ -359,7 +358,18 @@ train_binary <- function(input_data = NULL, nrounds = 10000
   motifs_train.sd <- apply(motifs_train, 2, sd)
   motifs_train <- motifs_train[, names(which(motifs_train.sd != 0)), drop = F]
   motifs_val <- motifs_val[,colnames(motifs_train), drop = F]
-  
+
+  message("Saving CRE ids of training, validation and test sets...")
+  write.table(x = as.data.frame(rownames(motifs_train))
+              , file = paste0(ids_pfx, "_training_CREs"), quote = F, sep = '\t'
+              , col.names = F, row.names = F)
+  write.table(x = as.data.frame(rownames(motifs_val))
+              , file = paste0(ids_pfx, "_val_CREs"), quote = F, sep = '\t'
+              , col.names = F, row.names = F)
+  write.table(x = as.data.frame(rownames(motifs_test))
+              , file = paste0(ids_pfx, "_test_CREs"), quote = F, sep = '\t'
+              , col.names = F, row.names = F)
+
   # Prepare training and validation DMatrix objects
   dtrain <- xgboost::xgb.DMatrix(label = as.numeric(motifs_train$binary_celltype)
                         , data = as.matrix(motifs_train[, colnames(motifs_train)[colnames(motifs_train)!="binary_celltype"]]))
