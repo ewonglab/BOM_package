@@ -254,7 +254,7 @@ filterCREs <- function(inputBedFile = NULL,
 #' @param inputcolnames Column names corresponding to CRE coordinates and cell type/state annotation. Default to 'c("peak_chr","peak_start", "peak_end", "celltype_specificity")'.
 #' @param sep Character separating columns. Default to ','.
 #' @param outputFileName Output file name. Default to "out.bed".
-#' @param removeDuplicatePeaks Boolean (default TRUE). Whether to remove CREs annotated to multiple cell types/states.
+#' @param removeMultiAnnotatedPeaks Boolean (default TRUE). Whether to remove CREs annotated to multiple cell types/states.
 #' @param removeUnnanotatedPeaks Boolean (default TRUE). Whether to remove CREs not annotated to a cell type/state.
 
 #' @examples 
@@ -268,49 +268,54 @@ filterCREs <- function(inputBedFile = NULL,
 #' @export
 #'
 textToBED <- function(inputTextFile = NULL, 
-				header = TRUE,
-				inputcolnames = c("peak_chr", "peak_start", "peak_end", "celltype_specificity"),
-				sep = ",",
-				outputFileName = "out.bed",
-				removeDuplicatePeaks = TRUE,
-				removeUnnanotatedPeaks = TRUE
-				)
+                      header = TRUE,
+                      inputcolnames = c("peak_chr", "peak_start", "peak_end", "celltype_specificity"),
+                      sep = ",",
+                      outputFileName = "out.bed",
+                      removeMultiAnnotatedPeaks = TRUE,
+                      removeUnnanotatedPeaks = TRUE
+)
 {
-	cnameLength <- length(inputcolnames)
-	if (cnameLength != 4)
-	{ error(paste0("Only ", cnameLength, " column names provided. Must be 4 column names defined.") )
-	}
-
-	txtData <- read.table(file = inputTextFile, header = header, sep=sep, stringsAsFactors = F)
-
-	if (header == FALSE)
-	{	colnames(txtData)[1:4] <- inputcolnames
-	}
-	message("Input text file has ", nrow(txtData)," entries")
-
-
-
-	if (removeUnnanotatedPeaks)
-	{# removing all the peaks that were not annotated to a cell type
-		message("Removing ",length(which(is.na(txtData[,inputcolnames[4]])))," entries that are not annotated with cell type")
-		txtData <- txtData[!is.na(txtData[,inputcolnames[4]]),]  # celltype_specificity
-	}
-
-	if(removeDuplicatePeaks)
-	{		# remove any duplicated peaks (only keep the peak coordinates and cell type annotation)
-		idx <- c((anyDuplicated(txtData[,inputcolnames[1:3]])), anyDuplicated(txtData[,inputcolnames[1:3]], fromLast=TRUE))
-		message("Removing ",length(which(idx > 0))," duplicated entries")
-		
-		txtData <- txtData[idx * -1,] 
-	}
-
-	message("Creating bed file with ",nrow(txtData), " entries")
-
-	# Save processed peak into a bed file
-
-	write.table(x = txtData, file = outputFileName, col.names = F, row.names = F, quote = F, sep = '\t')
-
-	
+  cnameLength <- length(inputcolnames)
+  if (cnameLength != 4)
+  { error(paste0("Only ", cnameLength, " column names provided. Must be 4 column names defined.") )
+  }
+  
+  txtData <- read.table(file = inputTextFile, header = header, sep=sep, stringsAsFactors = F)
+  
+  if (header == FALSE)
+  {	colnames(txtData)[1:4] <- inputcolnames
+  }
+  message("Input text file has ", nrow(txtData)," entries")
+  
+  
+  
+  if (removeUnnanotatedPeaks)
+  {# removing all the peaks that were not annotated to a cell type
+    message("Removing ",length(which(is.na(txtData[,inputcolnames[4]])))," entries that are not annotated with cell type")
+    txtData <- txtData[!is.na(txtData[,inputcolnames[4]]),]  # celltype_specificity
+  }
+  
+  if(removeMultiAnnotatedPeaks)
+  {		# remove peaks annotated to multiple cell types
+    idx <- paste(txtData[,inputcolnames[1]]
+                 , paste(txtData[,inputcolnames[2]]
+                         , txtData[,inputcolnames[3]], sep = "-")
+                 , sep = ':')
+    dup_idx <- (idx[duplicated(idx)])
+    message("Removing ",length(dup_idx)," unique entries annotated to multiple cell types")
+    remove_idx <- which(idx %in% dup_idx)
+    txtData <- txtData[-remove_idx,]
+    
+    txtData <- txtData[idx * -1,] 
+  }
+  
+  message("Creating bed file with ",nrow(txtData), " entries")
+  
+  # Save processed peak into a bed file
+  
+  write.table(x = txtData, file = outputFileName, col.names = F, row.names = F, quote = F, sep = '\t')
+  
+  
 }
-
 
