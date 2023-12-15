@@ -306,8 +306,6 @@ textToBED <- function(inputTextFile = NULL,
     message("Removing ",length(dup_idx)," unique entries annotated to multiple cell types")
     remove_idx <- which(idx %in% dup_idx)
     txtData <- txtData[-remove_idx,]
-    
-    txtData <- txtData[idx * -1,] 
   }
   
   message("Creating bed file with ",nrow(txtData), " entries")
