@@ -4,16 +4,23 @@
 \alias{predict_binary}
 \title{predict_binary}
 \usage{
-predict_binary(motifs, xgb_model, training_set = NULL, title = NULL)
+predict_binary(
+  motifs,
+  xgb_model,
+  celltype_prefix = NULL,
+  pred = NULL,
+  training_set = NULL,
+  title = NULL
+)
 }
 \arguments{
 \item{motifs}{File containing motif counts}
 
 \item{xgb_model}{File name of model}
 
-\item{training_set}{File name to output training counts (optional)}
-
 \item{pred}{File name to output predicted values (default "predictions.txt")}
+
+\item{training_set}{File name to output training counts (optional)}
 }
 \description{
 Function to predict a set of test CREs using a binary classification model

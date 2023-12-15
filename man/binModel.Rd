@@ -4,7 +4,30 @@
 \alias{binModel}
 \title{binModel}
 \usage{
-binModel(data_path, qval_thresh, outDir, target_ct = NULL, nthreads = 1)
+binModel(
+  data_path,
+  qval_thresh,
+  outDir,
+  target_ct = NULL,
+  nthreads = 1,
+  nrounds = 10000,
+  eta = 0.01,
+  max_depth = 6,
+  subsample = 0.5,
+  colsample_bytree = 0.5,
+  objective = "binary:logistic",
+  early_stopping_rounds = NULL,
+  eval_metric = "error",
+  maximize = F,
+  params = list(),
+  feval = NULL,
+  verbose = 0,
+  print_every_n = 1L,
+  save_period = NULL,
+  xgb_model = NULL,
+  callbacks = list(),
+  training = 0.6
+)
 }
 \arguments{
 \item{data_path}{Path to the input data directory.}

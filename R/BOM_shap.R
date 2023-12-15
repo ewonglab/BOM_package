@@ -141,6 +141,7 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids
 #'  
 #'
 #' @export
+#'
 shapPlots_multi <- function(dataDir = NULL, xgb_models, train_sets, plotType = "bar"
                             , max_display = 15, CRE_ids = NULL, annotDat = NULL
                             , annotLength = 30, order = "decreasing", show_numbers = FALSE
@@ -225,7 +226,9 @@ annonTATE <- function(plotDat, peakAnnotations, annotLength = 30, waterfallOther
 ## save_shap
 #' Saves SHAP values to a file
 #'
-#' @param 
+#' @param xgb_model   xgb_model prepared from xgboost
+#' @param ts          training set (matrix)
+#' @param shap_file   filename to save shap values to. Will create a tab delimited text file 
 #' 
 #' @example
 #' 

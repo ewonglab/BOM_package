@@ -16,9 +16,9 @@ annonTATE(
 \arguments{
 \item{plotDat}{Data slot from a ggplot object}
 
-\item{peakAnnotations}{}
+\item{peakAnnotations}{Motif annotation containing columns called "Motif" and "Factor"}
 
-\item{annotLength}{Number of characters to truncate annotation to. Default 30 character.}
+\item{annotLength}{Number of characters to truncate annotation to. Default 30 characters.}
 
 \item{waterfallOther}{Annotation for waterfall plots "other" category}
 

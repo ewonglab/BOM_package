@@ -8,6 +8,7 @@ predict_binary_multi(
   inputMotif_dir = NULL,
   inputXGB_dir = NULL,
   outputTrain_dir = NULL,
+  pred_dir = NULL,
   ncol = 3,
   nrow = 3,
   outputFile = NULL,
