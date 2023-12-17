@@ -237,7 +237,7 @@ filterCREs <- function(inputBedFile = NULL,
       write.table(x = cres[cres$cellType == i, ], file = fn, 
                   quote = F, col.names = F, row.names = F, sep ='\t')
     }
-    cellNames <- paste0(unique(cres$cellType),".bed", collapse="\n")
+    cellNames <- paste0(gsub(" ", "_", unique(cres$cellType)),".bed", collapse="\n")
     message(paste0("The following files have been prepared: \n",cellNames))
   }
   
