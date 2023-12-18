@@ -74,7 +74,7 @@ save_binStats <- function(pred_dir = NULL, pred_files = NULL, out_file, digits =
       
   }
   
-  celltypes <- sub("_pred.txt", "", pred_files)
+  celltypes <- sub("_pred.txt", "", basename(pred_files))
   pred_li <- lapply(pred_files, read.table, header = T, stringsAsFactors = F)
 
   pred_stats <- lapply(1:length(pred_li)
