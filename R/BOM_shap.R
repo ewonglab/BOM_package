@@ -170,6 +170,9 @@ shapPlots_multi <- function(dataDir = NULL, xgb_models = NULL, train_sets = NULL
     p_list[[i]] <- shapPlots(xgb_model = xgb.models[[i]], ts = train.sets[[i]], plotType = plotType, max_display = max_display
                              , CRE_ids = CRE_ids, annotDat = annotDat, annotLength = annotLength
                              , order = order, show_numbers = show_numbers, average_shap = average_shap)
+    #if(plotType %in% c("bar", "beeswarm")){
+    #      p_list[[i]] + ggplot2::ggtitle(sub("_train.txt", "", basename(train_sets[[i]])))
+    #      }
   }
   return(p_list)
 }
