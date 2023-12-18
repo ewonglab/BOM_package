@@ -142,7 +142,7 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids
 #'
 #' @export
 #'
-shapPlots_multi <- function(dataDir = NULL, xgb_models, train_sets, plotType = "bar"
+shapPlots_multi <- function(dataDir = NULL, xgb_models = NULL, train_sets = NULL, plotType = "bar"
                             , max_display = 15, CRE_ids = NULL, annotDat = NULL
                             , annotLength = 30, order = "decreasing", show_numbers = FALSE
                             , average_shap = TRUE, ...)
@@ -150,13 +150,13 @@ shapPlots_multi <- function(dataDir = NULL, xgb_models, train_sets, plotType = "
   if(!is.null(xgb_models)){
     xgb.models <- lapply(xgb_models, readRDS)
   }else{
-    xgb_models <- list.files(path = dataDir, pattern = "(.*)_vs_Others.rds$")
+    xgb_models <- list.files(path = dataDir, pattern = "(.*)_vs_Others.rds$", full.names = T)
     xgb.models <- lapply(xgb_models, readRDS)
   }
   if(!is.null(train_sets)){
     train.sets <- lapply(train_sets, read.table, header = TRUE)
   }else{
-    train_sets <- list.files(path = dataDir, pattern = "(.*)_vs_Others_train.txt$") 
+    train_sets <- list.files(path = dataDir, pattern = "(.*)_vs_Others_train.txt$", full.names = T) 
     train.sets <- lapply(train_sets, read.table, header = TRUE)
   }
 
