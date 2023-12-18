@@ -67,9 +67,9 @@ save_binStats <- function(pred_dir = NULL, pred_files = NULL, out_file, digits =
     message("Using files ending with pattern 'pred.txt'")
     
     if(is.null(pred_dir)){
-      pred_files <- list.files(path = ".", pattern = "(.*)pred.txt$")
+      pred_files <- list.files(path = ".", pattern = "(.*)pred.txt$", full.names = T)
     }else{
-      pred_files <- list.files(path = pred_dir, pattern = "(.*)pred.txt$")
+      pred_files <- list.files(path = pred_dir, pattern = "(.*)pred.txt$", full.names = T)
     }
       
   }
