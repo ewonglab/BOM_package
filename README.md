@@ -11,6 +11,7 @@ install.packages("cvAUC")
 ```
 Install FIMO 
 See <a href="https://meme-suite.org/meme/doc/install.html"> here </a> 
+<a href="tutorial.html"> How to use BOM to analyze single cell ATAC data </a>  
 
 ## Quick start
 
