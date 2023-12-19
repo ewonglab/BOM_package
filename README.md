@@ -30,7 +30,7 @@ Input is a text file with four columns (chromosome, start, stop, condition)
 
 ```
 library(BOM_package)
-BiocManager::install("BSgenome.Mmusculus.UCSC.mm10")
+library("BSgenome.Mmusculus.UCSC.mm10")
 
 motifs_path <- "./extdata/gimme.vertebrate.v5.0.meme"
 chr_sizes <- './extdata/mm10.chrom.sizes'
