@@ -383,7 +383,7 @@ prcurve_multi <- function(inputMotif_dir=NULL, inputXGB_dir=NULL
   allPlots <- list()
   
   for (i in 1: length(candidates))
-  {	message(paste0( "Preparing ", candidates[i], " predict binary output") )	
+  {	message(paste0( "Preparing ", candidates[i], " PR curve") )	
     allPlots[[i]] <- suppressMessages(
       prcurve_binary(motifs = paste0(inputMotif_dir,  "/", candidates[i], ".txt"),
                      xgb_model = paste0(inputXGB_dir,    "/", candidates[i], '.rds'), 
