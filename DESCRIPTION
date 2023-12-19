@@ -11,7 +11,8 @@ License: file LICENSE
 Encoding: UTF-8
 LazyData: true
 Depends: R (>= 3.4.0)
-Imports: GenomicFeatures,  GenomicRanges, rsample, xgboost, knitr, cowplot, cvAUC, doParallel, withr, shades, gggenes, shapviz
+biocViews: GenomicRanges, GenomicFeatures
+Imports: rsample, xgboost, knitr, cowplot, cvAUC, doParallel, withr, shades, gggenes, shapviz
 RoxygenNote: 7.2.3
 VignetteBuilder: knitr
 
