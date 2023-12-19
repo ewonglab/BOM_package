@@ -9,12 +9,62 @@ install.packages("~/capsule/data/BagOfMotifs_0.0.2.tar.gz", repos = NULL, type =
 install.packages("cowplot")
 install.packages("cvAUC")
 ```
+Install FIMO 
+See https://meme-suite.org/meme/doc/install.html
+
 ## Quick start
+
+```
+
+
+#motifs_path <- "./data/gimme.vertebrate.v5.0.meme"
+#chr_sizes <- './data/mm10.chrom.sizes'
+#annot <- './data/mm10.knownGene.gtf.gz'
+
+# Generates BED file for each cell type
+BagOfMotifs::filterCREs(inputBedFile = input_bed, annotFile = annot, chrSizes = chr_sizes)
+                        
+# Generate FASTA 
+generateAllFasta(bedDir = "./bed/", genome = "Mmusculus")
+
+# Annotate motifs 
+BagOfMotifs::runFIMO(input_path = ./fasta/, motifs_path = motifs_path, 
+                    FIMO_path = '/path/to/fimo')
+
+# Motif count and model training
+BagOfMotifs::binModel(target_ct = NULL,
+                      data_path = motif_out,
+                      qval_thresh = 0.5, 
+                      outDir = "/results/", nthreads = 2)
+
+# Prediction and plots
+BagOfMotifs::predict_binary_multi(inputMotif_dir = "./results/"
+                                  , inputXGB_dir = "./results/"
+                                  , outputTrain_dir = "./results/"
+                                  , pred_dir = "./results/"
+                                  , outputFile = out_file
+                                  )
+
+# Estimate SHAP 
+save_shap_multi(dataDir = "./results/", outDir = "./results/")
+
+# Bar plots
+shapPlots_multi(dataDir = "./results/")
+
+# Beeswarm plots
+shapPlots_multi(dataDir = "./results/", plotType = "beeswarm")
+
+# Waterfall plots
+shapPlots_multi(dataDir = "./results/", plotType = "watterfall"
+                , = CRE_ids = )
+
+```
+
 
 ## Tutorial
 
-Please follow <a href="tutorial.md"> this vignette </a> instructions for a demonstration on how to use this softare. Alternative you can follow same instructions via this <a href="tutorial.ipynb">jupyter notebook</a> link.
+<a href="tutorial.html"> How to use BOM to analyze single cell ATAC data </a>  
 
 
-Alternatively the tutorial can be run via <a href="https://codeocean.com/capsule/4079053/tree">this code ocean capsule</a> where all the software is preinstalled and ready to go. 
+Alternatively, an example can be run via <a href="https://codeocean.com/capsule/4079053/tree">this code ocean capsule</a> where all the software is preinstalled and ready to go. 
 Clone the capsule and then run the jupyternotebook called tutorial_model_EW_20231201.ipynb
