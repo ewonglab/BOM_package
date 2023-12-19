@@ -15,6 +15,8 @@ See <a href="https://meme-suite.org/meme/doc/install.html"> here </a>
 
 ## Quick start
 
+Input is a text file with a minimum of four columns (chromosome, start, stop, condition)
+
 ```
 motifs_path <- "./data/gimme.vertebrate.v5.0.meme"
 chr_sizes <- './data/mm10.chrom.sizes'
