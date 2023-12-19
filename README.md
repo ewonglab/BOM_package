@@ -53,7 +53,7 @@ save_shap_multi()
 # Plots (bar/beeswarm/waterfall)
 shapPlots_multi()
 shapPlots_multi(plotType = "beeswarm")
-shapPlots_multi(plotType = "watterfall")
+shapPlots_multi(plotType = "waterfall")
 
 ```
 
