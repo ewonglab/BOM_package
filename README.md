@@ -36,13 +36,9 @@ BagOfMotifs::predict_binary_multi()
 # Estimate SHAP 
 save_shap_multi()
 
-# Bar plots
+# Plots (bar/beeswarm/waterfall)
 shapPlots_multi()
-
-# Beeswarm plots
 shapPlots_multi(plotType = "beeswarm")
-
-# Waterfall plots
 shapPlots_multi(plotType = "watterfall")
 
 ```
