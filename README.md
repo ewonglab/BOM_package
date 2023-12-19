@@ -46,5 +46,6 @@ shapPlots_multi(plotType = "watterfall")
 <a href="tutorial.html"> How to use BOM to analyze single cell ATAC data </a>  
 
 
-Alternatively, an example can be run via <a href="https://codeocean.com/capsule/4079053/tree">this code ocean capsule</a> where all the software is preinstalled and ready to go. 
-Clone the capsule and then run the jupyternotebook called tutorial_model_EW_20231201.ipynb
+A CodeOcean example is available where all the software is preinstalled and ready to go.
+<a href="https://codeocean.com/capsule/4079053/tree"> code ocean capsule</a>  
+To use, clone the capsule and run the jupyternotebook "tutorial_model_EW_20231201.ipynb"
