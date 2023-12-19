@@ -1,4 +1,4 @@
-# BOM: predictive models to study motif composition of cis-regulatory sequences 
+# BOM: predictive models to find important motifs at cis-regulatory sequences 
 BAG-of-Motifs (BOM) is an R package that uses XGBoost to construct predictive models of cis-regulatory sequences between cell states. It then interprets the importance of each motif in the model using SHAP scores.
 
 ## Installation
