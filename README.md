@@ -11,7 +11,6 @@ install.packages("cvAUC")
 
 if (!require("BiocManager", quietly = TRUE))
     install.packages("BiocManager")
-
 BiocManager::install("BSgenome.Mmusculus.UCSC.mm10") # or your genome of choice
 ```
 Install FIMO 
