@@ -102,7 +102,6 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids
     else if(length(CRE_ids) == 1)
     {
       CRE_idx <- which(rownames(ts) == CRE_ids)
-      print(CRE_idx)
       p <- shapviz::sv_waterfall(shp, row_id = CRE_idx, fill_colors = c("blue", "red"), max_display = max_display,...) + theme(panel.background = element_blank(),panel.grid.major.y = element_blank()) + 
         theme(panel.background = element_blank(),panel.grid.major.y = element_blank()) +
         ggtitle(CRE_ids)       
