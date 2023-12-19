@@ -8,7 +8,7 @@ For installing and loading BOM, run:
 devtools::install_github("ewonglab/BOM_package")
 library(BOM_package)
 
-# Genome of choice using BSgenome
+
 # The tutorial uses mouse mm10 genome
 BiocManager::install("BSgenome.Mmusculus.UCSC.mm10") 
 ```
