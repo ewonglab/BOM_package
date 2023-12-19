@@ -14,7 +14,7 @@ BiocManager::install("BSgenome.Mmusculus.UCSC.mm10")
 ```
 Install FIMO 
 
-For FIMO installation information <a href="https://meme-suite.org/meme/doc/install.html"> here </a> 
+FIMO installation information is found <a href="https://meme-suite.org/meme/doc/install.html"> here </a> 
 
 ## Quick start
 
