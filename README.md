@@ -20,8 +20,7 @@ Our tutorial requires the mouse mm10 genome
 BiocManager::install("BSgenome.Mmusculus.UCSC.mm10")
 ```
 
-
-### Install FIMO 
+If FIMO is not installed:
 
 FIMO installation information is found <a href="https://meme-suite.org/meme/doc/install.html"> here </a> 
 
