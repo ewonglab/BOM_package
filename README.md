@@ -21,42 +21,30 @@ See https://meme-suite.org/meme/doc/install.html
 #chr_sizes <- './data/mm10.chrom.sizes'
 #annot <- './data/mm10.knownGene.gtf.gz'
 
-# Generates BED file for each cell type
-BagOfMotifs::filterCREs(inputBedFile = input_bed, annotFile = annot, chrSizes = chr_sizes)
                         
 # Generate FASTA 
 generateAllFasta(bedDir = "./bed/", genome = "Mmusculus")
 
-# Annotate motifs 
-BagOfMotifs::runFIMO(input_path = ./fasta/, motifs_path = motifs_path, 
-                    FIMO_path = '/path/to/fimo')
+# Annotate  
+BagOfMotifs::runFIMO(motifs_path = motifs_path, FIMO_path = '/path/to/fimo')
 
 # Motif count and model training
-BagOfMotifs::binModel(target_ct = NULL,
-                      data_path = motif_out,
-                      qval_thresh = 0.5, 
-                      outDir = "/results/", nthreads = 2)
+BagOfMotifs::binModel()
 
-# Prediction and plots
-BagOfMotifs::predict_binary_multi(inputMotif_dir = "./results/"
-                                  , inputXGB_dir = "./results/"
-                                  , outputTrain_dir = "./results/"
-                                  , pred_dir = "./results/"
-                                  , outputFile = out_file
-                                  )
+# Prediction and performance
+BagOfMotifs::predict_binary_multi()
 
 # Estimate SHAP 
-save_shap_multi(dataDir = "./results/", outDir = "./results/")
+save_shap_multi()
 
 # Bar plots
-shapPlots_multi(dataDir = "./results/")
+shapPlots_multi()
 
 # Beeswarm plots
-shapPlots_multi(dataDir = "./results/", plotType = "beeswarm")
+shapPlots_multi(plotType = "beeswarm")
 
 # Waterfall plots
-shapPlots_multi(dataDir = "./results/", plotType = "watterfall"
-                , = CRE_ids = )
+shapPlots_multi(plotType = "watterfall")
 
 ```
 
