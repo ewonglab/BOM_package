@@ -5,11 +5,14 @@ BAG-of-Motifs (BOM) is an R package that uses XGBoost to construct predictive mo
 
 For installing and loading BOM, run:
 ```
-devtools::install_github("ewonglab/BOM_package")
-library(BOM_package)
+BiocManager::install("GenomicRanges")
+BiocManager::install("GenomicFeatures")
 
 # Our tutorial uses mouse mm10 genome
-BiocManager::install("BSgenome.Mmusculus.UCSC.mm10") 
+BiocManager::install("BSgenome.Mmusculus.UCSC.mm10")
+
+devtools::install_github("ewonglab/BOM_package")
+library(BOM_package)
 ```
 Install FIMO 
 
