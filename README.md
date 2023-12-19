@@ -32,10 +32,11 @@ Input is a text file with four columns (chromosome, start, stop, condition)
 motifs_path <- "./extdata/gimme.vertebrate.v5.0.meme"
 chr_sizes <- './extdata/mm10.chrom.sizes'
 annot <- './extdata/mm10.knownGene.gtf.gz'
+FIMO_path <- '/path/to/fimo'
                     
 # Generate FASTA and annotate motifs
 generateAllFasta(bedDir = "./bed/", genome = "Mmusculus")
-BagOfMotifs::runFIMO(motifs_path = motifs_path, FIMO_path = '/path/to/fimo')
+BagOfMotifs::runFIMO(motifs_path = motifs_path, FIMO_path = FIMO_path)
 
 # Motif count and model training
 BagOfMotifs::binModel()
