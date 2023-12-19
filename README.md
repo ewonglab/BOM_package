@@ -5,7 +5,15 @@ BAG-of-Motifs (BOM) is an R package that uses XGBoost to construct predictive mo
 
 For installing and loading BOM, run:
 ```
-install.packages("~/capsule/data/BagOfMotifs_0.0.2.tar.gz", repos = NULL, type = "source")
+
+devtools::install_github("ewonglab/BOM_package")
+#install.packages("cowplot")
+#install.packages("cvAUC")
+
+if (!require("BiocManager", quietly = TRUE))
+    install.packages("BiocManager")
+
+BiocManager::install("BSgenome.Mmusculus.UCSC.mm10") # or your genome of choice
 install.packages("cowplot")
 install.packages("cvAUC")
 
