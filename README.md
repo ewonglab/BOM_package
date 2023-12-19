@@ -17,9 +17,9 @@ See https://meme-suite.org/meme/doc/install.html
 ```
 
 
-#motifs_path <- "./data/gimme.vertebrate.v5.0.meme"
-#chr_sizes <- './data/mm10.chrom.sizes'
-#annot <- './data/mm10.knownGene.gtf.gz'
+motifs_path <- "./data/gimme.vertebrate.v5.0.meme"
+chr_sizes <- './data/mm10.chrom.sizes'
+annot <- './data/mm10.knownGene.gtf.gz'
 
                         
 # Generate FASTA 
