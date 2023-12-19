@@ -29,6 +29,9 @@ FIMO installation information is found <a href="https://meme-suite.org/meme/doc/
 Input is a text file with four columns (chromosome, start, stop, condition)
 
 ```
+library(BOM_package)
+BiocManager::install("BSgenome.Mmusculus.UCSC.mm10")
+
 motifs_path <- "./extdata/gimme.vertebrate.v5.0.meme"
 chr_sizes <- './extdata/mm10.chrom.sizes'
 annot <- './extdata/mm10.knownGene.gtf.gz'
