@@ -19,12 +19,9 @@ See <a href="https://meme-suite.org/meme/doc/install.html"> here </a>
 motifs_path <- "./data/gimme.vertebrate.v5.0.meme"
 chr_sizes <- './data/mm10.chrom.sizes'
 annot <- './data/mm10.knownGene.gtf.gz'
-
-                        
-# Generate FASTA 
+                    
+# Generate FASTA and annotate motifs
 generateAllFasta(bedDir = "./bed/", genome = "Mmusculus")
-
-# Annotate  
 BagOfMotifs::runFIMO(motifs_path = motifs_path, FIMO_path = '/path/to/fimo')
 
 # Motif count and model training
