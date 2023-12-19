@@ -15,7 +15,7 @@ BiocManager::install("GenomicRanges")
 BiocManager::install("GenomicFeatures")
 ```
 
-Our tutorial uses mouse mm10 genome
+Our tutorial requires the mouse mm10 genome
 ```
 BiocManager::install("BSgenome.Mmusculus.UCSC.mm10")
 ```
