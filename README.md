@@ -11,7 +11,6 @@ library(BOM_package)
 
 BiocManager::install("BSgenome.Mmusculus.UCSC.mm10") # or your genome of choice
 
-
 ```
 Install FIMO 
 
