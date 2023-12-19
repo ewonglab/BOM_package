@@ -10,13 +10,11 @@ install.packages("cowplot")
 install.packages("cvAUC")
 ```
 Install FIMO 
-See https://meme-suite.org/meme/doc/install.html
+See <a href="https://meme-suite.org/meme/doc/install.html"> here </a> 
 
 ## Quick start
 
 ```
-
-
 motifs_path <- "./data/gimme.vertebrate.v5.0.meme"
 chr_sizes <- './data/mm10.chrom.sizes'
 annot <- './data/mm10.knownGene.gtf.gz'
