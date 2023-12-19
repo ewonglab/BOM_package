@@ -7,19 +7,11 @@ For installing and loading BOM, run:
 ```
 
 devtools::install_github("ewonglab/BOM_package")
-#install.packages("cowplot")
-#install.packages("cvAUC")
-
-if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
+library(BOM_package)
 
 BiocManager::install("BSgenome.Mmusculus.UCSC.mm10") # or your genome of choice
-install.packages("cowplot")
-install.packages("cvAUC")
 
-if (!require("BiocManager", quietly = TRUE))
-    install.packages("BiocManager")
-BiocManager::install("BSgenome.Mmusculus.UCSC.mm10") # or your genome of choice
+
 ```
 Install FIMO 
 
