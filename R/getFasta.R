@@ -29,6 +29,7 @@ getFasta <- function(bed = NULL, genome, FastaFile = NULL){
   }
   colnames(bed) <- c("chr", "start", "end")
   gRangesBed <-  with(bed, GenomicRanges::GRanges(chr, IRanges::IRanges(start+1, end)))
+  GenomeInfoDb::seqlevelsStyle(gRangesBed) <- 'ucsc' 
   sequences <- Biostrings::getSeq(genome, gRangesBed)
   names(sequences) <- with(bed, paste(chr, paste(start, end, sep = "-"), sep = ":"))
   if(!is.null(FastaFile)){
