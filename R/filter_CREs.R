@@ -190,8 +190,8 @@ filterCREs <- function(inputBedFile = NULL,
 	  # remove occurances that do not have a significant width
 	  idx.small <- which(GenomicRanges::width(cres_gr) < min_width)
 	  if (length(idx.small) > 0)
-	  {	message(paste0("Removing ", length(idx), " regions as they are smaller than ", min_width, " nt"))
-		cres_gr <- cres_gr[idx * -1]
+	  {	message(paste0("Removing ", length(idx.small), " regions as they are smaller than ", min_width, " nt"))
+		cres_gr <- cres_gr[idx.small * -1]
 	  }
     }
     else 
