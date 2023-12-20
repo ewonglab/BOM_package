@@ -95,7 +95,12 @@ filterCREs <- function(inputBedFile = NULL,
 {
   if (is.null(celloutputDir))
   {
-    message("No work_path directory name set. Therefore output for next step (motif searching) will not bee prepared")
+    stop("celloutputDir is not set.")
+  }
+  else if(file.exists(celloutputDir) & !ovr_dir){
+      stop(paste("The directory", celloutputDir, "already exist. Set ovr_dir to TRUE"))
+  }else{
+      suppressWarnings(dir.create(celloutputDir))
   }
   
   message("Reading CREs...\n")
@@ -109,7 +114,7 @@ filterCREs <- function(inputBedFile = NULL,
   cres$V4 <- sub("/", "_", cres$V4)
   cres$V4 <- sub(" ", "_", cres$V4)
   
-  cres_gr <- with(cres, GenomicRanges::GRanges(V1, IRanges::IRanges(V2+addToBed, V3)))
+  cres_gr <- with(cres, GenomicRanges::GRanges(V1, IRanges::IRanges(V2+addToBed, V3), cellType=cres$V4))
   
   if(keep_proximal | remove_proximal | non_exonic)
   {
@@ -173,7 +178,7 @@ filterCREs <- function(inputBedFile = NULL,
     
     # Adjust CREs
     cat("Adjusting CRE length...\n")
-    cres <- adjust_CREs(cres, nbp, chrom_sizes)
+    #cres <- adjust_CREs(cres, nbp, chrom_sizes)
     
     idx <- which(chrom_sizes$chr %in% names(GenomeInfoDb::seqlengths(cres_gr)))
     if (length(idx) == length(names(GenomeInfoDb::seqlengths(cres_gr))))
@@ -189,15 +194,19 @@ filterCREs <- function(inputBedFile = NULL,
     
   }
   
-  if(nrow(cres) == 0){
+  if(length(cres_gr) == 0){
     stop(paste("No remaining CREs after applying filters."))
   }	
+  cres <- as.data.frame(cres_gr)[,c('seqnames','start','end','cellType')] 
+  
   
   # Save filtered regions
-  message(paste0("Saving ",  nrow(cres) ," CREs...\n"))
+  if (! is.null(out_bed))
+  {   message(paste0("Saving ",  length(cres_gr) ," CREs...\n"))
 
-  write.table(x = cres, file = out_bed, quote = F, col.names = F
+		write.table(x = cres, file = out_bed, quote = F, col.names = F
               , row.names = F, sep ='\t')
+  }
   
   
   
@@ -221,11 +230,7 @@ filterCREs <- function(inputBedFile = NULL,
                      paste0(idx.toRemove, collapse="\n"),"\n"))
     }
     
-    if(file.exists(celloutputDir) & !ovr_dir){
-      stop(paste("The directory", celloutputDir, "already exist. Set ovr_dir to TRUE"))
-    }else{
-      suppressWarnings(dir.create(celloutputDir))
-    }
+ 
     
     
     for(i in unique(cres$cellType))
