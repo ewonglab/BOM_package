@@ -136,8 +136,7 @@ filterCREs <- function(inputBedFile = NULL,
       exons <- GenomicFeatures::exons(txdb_obj)
       x <- as.data.frame(GenomicRanges::findOverlaps(cres_gr, exons))
       if(nrow(x) > 0){
-        cres <- cres[-unique(x$queryHits),]
-        cres_gr <- with(cres, GenomicRanges::GRanges(V1, IRanges::IRanges(V2+addToBed, V3)))
+			cres_gr <- cres_gr[-unique(x$queryHits)]
       } 
     }
     
@@ -149,8 +148,7 @@ filterCREs <- function(inputBedFile = NULL,
       proximal <- GenomicFeatures::promoters(x = txdb_obj, upstream = u, downstream = d)
       x <- as.data.frame(GenomicRanges::findOverlaps(cres_gr, proximal))
       if(nrow(x) > 0){
-        cres <- cres[unique(x$queryHits),]
-        cres_gr <- with(cres, GenomicRanges::GRanges(V1, IRanges::IRanges(V2+addToBed, V3)))
+        cres_gr <- cres_gr[unique(x$queryHits)]
       } else {
         stop(paste("No remaining CREs"))
       }
@@ -160,8 +158,7 @@ filterCREs <- function(inputBedFile = NULL,
       proximal <- GenomicFeatures::promoters(x = txdb_obj, upstream = u, downstream = d)
       x <- as.data.frame(GenomicRanges::findOverlaps(cres_gr, proximal))
       if(nrow(x) > 0){
-        cres <- cres[-unique(x$queryHits),]
-        cres_gr <- with(cres, GenomicRanges::GRanges(V1, IRanges::IRanges(V2+addToBed, V3)))
+        cres_gr <- cres_gr[-unique(x$queryHits)]
       } 
       
     }
@@ -185,7 +182,7 @@ filterCREs <- function(inputBedFile = NULL,
       cres_gr <- IRanges::trim(cres_gr)
     }
     else 
-    {	browser()
+    {	
       warning("Cannot check out of bound granges as chromosome names between peaks and reference did not match")
     }
     
