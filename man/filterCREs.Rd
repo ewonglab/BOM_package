@@ -11,6 +11,7 @@ filterCREs(
   u = NULL,
   d = NULL,
   nbp = NULL,
+  min_width = 10,
   keep_proximal = FALSE,
   remove_proximal = FALSE,
   non_exonic = FALSE,
@@ -32,6 +33,8 @@ delimited file with no header: first column chromosome ID, second column size)}
 \item{d}{number of basepairs downstream of transcriptional start site}
 
 \item{nbp}{number of base pairs}
+
+\item{min_width}{minimum width of a input range to accept (10nt is default)}
 
 \item{keep_proximal}{boolean. Only keep proximal regions (defined by u and d) relative to transcription start sites}
 

@@ -4,7 +4,12 @@
 \alias{save_shap_multi}
 \title{Saves SHAP values to a file}
 \usage{
-save_shap_multi(dataDir = NULL, xgb_models, train_sets, outDir = NULL)
+save_shap_multi(
+  dataDir = NULL,
+  xgb_models = NULL,
+  train_sets = NULL,
+  outDir = NULL
+)
 }
 \description{
 Saves SHAP values to a file

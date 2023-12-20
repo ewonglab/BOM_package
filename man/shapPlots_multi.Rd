@@ -6,8 +6,8 @@
 \usage{
 shapPlots_multi(
   dataDir = NULL,
-  xgb_models,
-  train_sets,
+  xgb_models = NULL,
+  train_sets = NULL,
   plotType = "bar",
   max_display = 15,
   CRE_ids = NULL,

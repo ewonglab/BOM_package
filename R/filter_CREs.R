@@ -180,7 +180,8 @@ filterCREs <- function(inputBedFile = NULL,
     
     # Adjust CREs
     cat("Adjusting CRE length...\n")
-    #cres <- adjust_CREs(cres, nbp, chrom_sizes)
+	
+    #cres <- adjust_CREs(cres, nbp, chrom_sizes)  # This is redundant as IRanges::trim does this functionality 
     
     idx <- which(chrom_sizes$chr %in% names(GenomeInfoDb::seqlengths(cres_gr)))
     if (length(idx) == length(names(GenomeInfoDb::seqlengths(cres_gr))))

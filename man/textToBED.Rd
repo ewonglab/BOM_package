@@ -10,7 +10,6 @@ textToBED(
   inputcolnames = c("peak_chr", "peak_start", "peak_end", "celltype_specificity"),
   sep = ",",
   outputFileName = "out.bed",
-  removeDuplicatePeaks = TRUE,
   removeMultiAnnotatedPeaks = TRUE,
   removeUnnanotatedPeaks = TRUE
 )
@@ -25,8 +24,6 @@ textToBED(
 \item{sep}{Character separating columns. Default to ','.}
 
 \item{outputFileName}{Output file name. Default to "out.bed".}
-
-\item{removeDuplicatePeaks}{Boolean (default TRUE). Whether to remove duplicated CREs.}
 
 \item{removeMultiAnnotatedPeaks}{Boolean (default TRUE). Whether to remove CREs annotated to multiple cell types/states.}
 
