@@ -15,14 +15,13 @@ BiocManager::install("GenomicRanges")
 BiocManager::install("GenomicFeatures")
 ```
 
-Our tutorial requires the mouse mm10 genome
+Our tutorial requires the mouse mm10 genome. If you don't have this already:
 ```
 BiocManager::install("BSgenome.Mmusculus.UCSC.mm10")
 ```
 
 FIMO is required:
-
-FIMO installation information is found <a href="https://meme-suite.org/meme/doc/install.html"> here </a> 
+Installation information can be found <a href="https://meme-suite.org/meme/doc/install.html"> here </a> 
 
 ## Quick start
 
