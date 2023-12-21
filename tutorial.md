@@ -352,7 +352,7 @@ BagOfMotifs::predict_binary_multi(inputMotif_dir = './mouse_4ct/'
 
 
 
-<strong>png:</strong> 2
+![png](images/ROC.png)
 
 
 The output file contains 3 columns. The first column indicates the true class of the CRE, 1 representing cardiomyocyte CRE and 0 representing background CRE. The second column represents the predicted classes coded as a binary with a threshold of > 0.5. The last column represents the predicted probability by the model. We can use these values to calculate some metrics of performance. 
@@ -381,7 +381,7 @@ prcurve_multi(inputMotif_dir = "./mouse_4ct/"
 
 
 
-<strong>png:</strong> 2
+![png](images/PRcurvess.png)
 
 
 We can save the prediction statistics across all the models.
