@@ -466,7 +466,7 @@ p
     
     Loading required package: shades
 
-
+<br>
     
 <table>
   <tr>
@@ -479,7 +479,7 @@ p
   </tr>
 </table>
     
-
+<br>
 
 
 ```R
@@ -493,7 +493,7 @@ models <- list.files(path = "./mouse_4ct/", pattern="(.*)rds$")
 for(i in 1:length(p)){p[[i]] <- p[[i]] + ggtitle(sub(".rds", "", models[i]))}
 p
 ```
-
+<br>
 
 <table>
   <tr>
@@ -506,7 +506,7 @@ p
   </tr>
 </table>
 
-
+<br>
 
 
 ```R
