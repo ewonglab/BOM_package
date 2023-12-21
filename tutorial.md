@@ -389,8 +389,8 @@ read.table(file = "./mouse_4ct/binStats", header =T)
     
 
 
-<div style="text-align: center;">
-<table class="dataframe"> 
+
+<table class="dataframe" style="margin-left: auto; margin-right: auto;"> 
 <caption>A data.frame: 4 × 8</caption>
 <thead>
 	<tr><th scope=col>Model</th><th scope=col>Accuracy</th><th scope=col>auPR</th><th scope=col>auROC</th><th scope=col>F1</th><th scope=col>MCC</th><th scope=col>Precision</th><th scope=col>Recall</th></tr>
@@ -403,7 +403,7 @@ read.table(file = "./mouse_4ct/binStats", header =T)
 	<tr><td>Erythroid_vs_Others     </td><td>0.962</td><td>0.990</td><td>0.990</td><td>0.964</td><td>0.926</td><td>0.939</td><td>0.990</td></tr>
 </tbody>
 </table>
-</div>
+
 
 ---
 <a id="Step5SHAP_interpretations"></a>
