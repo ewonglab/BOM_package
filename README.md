@@ -31,13 +31,14 @@ Input is a text file with four columns (chromosome, start, stop, condition)
 library(BOM_package)
 library("BSgenome.Mmusculus.UCSC.mm10")
 
-motifs_path <- "./extdata/gimme.vertebrate.v5.0.meme"
-chr_sizes <- './extdata/mm10.chrom.sizes'
-annot <- './extdata/mm10.knownGene.gtf.gz'
+extdata_path <- system.file("extdata",package = "BagOfMotifs")
+motifs_path <- paste0(extdata_path,'gimme.vertebrate.v5.0.meme')
+chr_sizes <- paste0(extdata_path,'/mouse.chrom.sizes.txt')
+annot <- paste0(extdata_path, '/Mus_musculus.GRCm38.92.gtf.gz')
 FIMO_path <- '/path/to/fimo'
                     
 # Generate FASTA and annotate motifs
-generateAllFasta(bedDir = "./bed/", genome = "Mmusculus")
+generateAllFasta(bedDir = 'path/to/input', genome = "Mmusculus")
 BagOfMotifs::runFIMO(motifs_path = motifs_path, FIMO_path = FIMO_path)
 
 # Motif count and model training
