@@ -83,7 +83,7 @@ filterCREs(inputBedFile = input_bed, annotFile = annot, chrSizes = chr_sizes,
                         keep_proximal = FALSE,
                         remove_proximal = TRUE,
                         non_exonic = TRUE, out_bed = "mouseE8.25_4CellTypes_filt.bed",
-                       ovr_dir=TRUE,
+                        ovr_dir=TRUE,
                         celloutputDir =  "./mouse_4ct/")
 date()
 ```
