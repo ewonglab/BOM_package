@@ -36,21 +36,6 @@ devtools::install_github("ewonglab/BOM_package")
 ```
 
 
-```R
-getwd()
-setwd("/g/data/zk16/genomicsCore/jupyter/mouse_enh_grammar/vignette_4celltypes/")
-getwd()
-library(BagOfMotifs)
-extdata_path <- system.file("extdata",package = "BagOfMotifs")
-```
-
-
-'/home/569/dth569'
-
-
-
-'/g/data/zk16/genomicsCore/jupyter/mouse_enh_grammar/vignette_4celltypes'
-
 
 ---
 <a id="Step1PeakFilter"></a>
@@ -476,39 +461,15 @@ p
     Loading required package: shades
     
 
-
-
+<img src="images/output_27_1.png" alt="Allantois" width="200"/>
     
-![png](images/output_27_1.png)
+<img src="images/output_27_2.png" alt="Cardiomycyte" width="200"/>
     
-
-
-
-    
-![png](images/output_27_2.png)
+<img src="images/output_27_4.png" alt="Endothelium" width="200"/>
     
 
-
-
-    [[1]]
+<img src="images/output_27_5.png" alt="Erythroid" width="200"/>
     
-    [[2]]
-    
-    [[3]]
-    
-    [[4]]
-
-
-
-
-    
-![png](images/output_27_4.png)
-    
-
-
-
-    
-![png](images/output_27_5.png)
     
 
 
