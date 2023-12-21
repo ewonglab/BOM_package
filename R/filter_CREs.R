@@ -53,8 +53,7 @@ adjust_CREs <- function(x, N, chrom_sizes){
 #' @param inputBedFile  input bed filename
 #' @param u number of basepairs upstream of transcriptional start sites
 #' @param d number of basepairs downstream of transcriptional start site
-#' @param nbp  number of base pairs
-#' @param min_width   minimum width of a input range to accept (10nt is default)
+#' @param nbp  number of base pairs that each CRE will be centered and adjusted to. i.e. each CRE will be adjusted to this width. 
 #' @param chrSizesFile  File name of chromsome sizes ( tab 
 #' delimited file with no header: first column chromosome ID, second column size)
 #' @param keep_proximal  boolean. Only keep proximal regions (defined by u and d) relative to transcription start sites
@@ -86,8 +85,7 @@ filterCREs <- function(inputBedFile = NULL,
                        chrSizesFile = NULL,
                        u = NULL,
                        d = NULL,
-                       nbp = NULL,
-					   min_width=10,
+                       nbp = 500,
                        keep_proximal = FALSE,
                        remove_proximal = FALSE,
                        non_exonic = FALSE,
@@ -181,7 +179,12 @@ filterCREs <- function(inputBedFile = NULL,
     # Adjust CREs
     cat("Adjusting CRE length...\n")
 	
-    #cres <- adjust_CREs(cres, nbp, chrom_sizes)  # This is redundant as IRanges::trim does this functionality 
+	# Need to work with genomic ranges object. The adjust_CREs function not suitable.
+	# Instead have added GenomicRanges resize and trim functions that will complete this process.
+	#cres <- adjust_CREs(cres, nbp, chrom_sizes)  
+	
+	cres_gr <- GenomicRanges::resize(cres_gr, width=nbp, fix="center")
+
     
     idx <- which(chrom_sizes$chr %in% names(GenomeInfoDb::seqlengths(cres_gr)))
     if (length(idx) == length(names(GenomeInfoDb::seqlengths(cres_gr))))
