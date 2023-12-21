@@ -293,15 +293,15 @@ head(counts[,c(head(colnames(counts)), tail(colnames(counts), 2))])
 <caption>A data.frame: 6 × 8</caption>
 <thead>
 	<tr><th></th><th scope=col>GM.5.0.AP.2.0001</th><th scope=col>GM.5.0.AP.2.0002</th><th scope=col>GM.5.0.AP.2.0003</th><th scope=col>GM.5.0.AP.2.0004</th><th scope=col>GM.5.0.AP.2.0005</th><th scope=col>GM.5.0.AP.2.0006</th><th scope=col>celltype</th><th scope=col>binary_celltype</th></tr>
-	<tr><th></th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;int&gt;</th><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;int&gt;</th></tr>
+
 </thead>
 <tbody>
-	<tr><th scope=row>chr10:111680833-111681333</th><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>Erythroid  </td><td>0</td></tr>
-	<tr><th scope=row>chr10:114633874-114634374</th><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>Endothelium</td><td>0</td></tr>
-	<tr><th scope=row>chr10:116266783-116267283</th><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>Endothelium</td><td>0</td></tr>
-	<tr><th scope=row>chr10:117732122-117732622</th><td>1</td><td>2</td><td>2</td><td>0</td><td>0</td><td>0</td><td>Erythroid  </td><td>0</td></tr>
-	<tr><th scope=row>chr10:121962019-121962519</th><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>Endothelium</td><td>0</td></tr>
-	<tr><th scope=row>chr10:121971621-121972121</th><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>Endothelium</td><td>0</td></tr>
+	<tr><td>chr10:111680833-111681333</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>Erythroid  </td><td>0</td></tr>
+	<tr><td>chr10:114633874-114634374</td><td>0</td><td>0</td><td>0</td><td>1</td><td>0</td><td>0</td><td>Endothelium</td><td>0</td></tr>
+	<tr><td>chr10:116266783-116267283</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>Endothelium</td><td>0</td></tr>
+	<tr><td>chr10:117732122-117732622</td><td>1</td><td>2</td><td>2</td><td>0</td><td>0</td><td>0</td><td>Erythroid  </td><td>0</td></tr>
+	<tr><td>chr10:121962019-121962519</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>Endothelium</td><td>0</td></tr>
+	<tr><td>chr10:121971621-121972121</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>0</td><td>Endothelium</td><td>0</td></tr>
 </tbody>
 </table>
 
@@ -388,7 +388,7 @@ read.table(file = "./mouse_4ct/binStats", header =T)
 <caption>A data.frame: 4 × 8</caption>
 <thead>
 	<tr><th scope=col>Model</th><th scope=col>Accuracy</th><th scope=col>auPR</th><th scope=col>auROC</th><th scope=col>F1</th><th scope=col>MCC</th><th scope=col>Precision</th><th scope=col>Recall</th></tr>
-	<tr><th scope=col>&lt;chr&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th><th scope=col>&lt;dbl&gt;</th></tr>
+
 </thead>
 <tbody>
 	<tr><td>Allantois_vs_Others     </td><td>0.942</td><td>0.996</td><td>0.996</td><td>0.940</td><td>0.888</td><td>0.986</td><td>0.899</td></tr>
