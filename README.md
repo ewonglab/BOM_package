@@ -27,7 +27,7 @@ Installation information can be found <a href="https://meme-suite.org/meme/doc/i
 
 ## Tutorial
 
-<a href="tutorial.html"> How to use BOM to interrogate distal cis-regulatory elements from single cell ATAC data </a>  
+<a href="tutorial.md"> How to use BOM to interrogate distal cis-regulatory elements from single cell ATAC data </a>  
 <br>
 <br>
 A <a href="https://codeocean.com/capsule/4079053/tree"> CodeOcean example</a> is also available where all the software is preinstalled and ready to go.
