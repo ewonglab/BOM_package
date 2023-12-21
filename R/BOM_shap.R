@@ -286,6 +286,6 @@ save_shap_multi <-function(dataDir = NULL, xgb_models = NULL, train_sets = NULL,
     if(!is.null(outDir)){
       shap_out_f <- paste0(outDir, '/', shap_out_f)
     }
-    save_shap(xgb_model = xgb.models[[i]], ts = train.sets[[i]], shap_file = shap_out_f)
+    save_shap(xgb_model = xgb.models[[i]], ts = train.sets[[i]], shap_file = shap_out_f[i])
   }
 }
