@@ -461,14 +461,13 @@ p
     Loading required package: shades
     
 
-<img src="images/output_27_1.png" alt="Allantois" width="200"/>
+<img src="images/output_27_1.png" alt="Allantois" width="250"/>
     
-<img src="images/output_27_2.png" alt="Cardiomycyte" width="200"/>
+<img src="images/output_27_2.png" alt="Cardiomycyte" width="250"/>
     
-<img src="images/output_27_4.png" alt="Endothelium" width="200"/>
+<img src="images/output_27_4.png" alt="Endothelium" width="250"/>
     
-
-<img src="images/output_27_5.png" alt="Erythroid" width="200"/>
+<img src="images/output_27_5.png" alt="Erythroid" width="250"/>
     
     
 
@@ -497,38 +496,14 @@ p
 
 
 
-    
-![png](images/output_28_1.png)
-    
+<img src="images/output_28_1.png" alt="Allantois" width="250"/>   
 
+<img src="images/output_28_2.png" alt="Allantois" width="250"/> 
+  
+<img src="images/output_28_4.png" alt="Allantois" width="250"/>
 
+<img src="images/output_28_5.png" alt="Allantois" width="250"/>
 
-    
-![png](images/output_28_2.png)
-    
-
-
-
-    [[1]]
-    
-    [[2]]
-    
-    [[3]]
-    
-    [[4]]
-
-
-
-
-    
-![png](images/output_28_4.png)
-    
-
-
-
-    
-![png](images/output_28_5.png)
-    
 
 
 
@@ -545,8 +520,7 @@ shapPlots(xgb_model = xgb_model, ts = train_set
 ```
 
 
-    
-![png](output_29_0.png)
+<img src="images/output_29_0.png" alt="Allantois" width="250"/>    
     
 
 
