@@ -15,7 +15,7 @@ library(BagOfMotifs)
 ```
 
 
-Our tutorial requires the mouse mm10 genome. If you don't have this already:
+The tutorial requires the mouse mm10 genome. If you don't have this already:
 ```
 BiocManager::install("BSgenome.Mmusculus.UCSC.mm10")
 ```
@@ -29,10 +29,10 @@ Input is a text file with four columns (chromosome, start, stop, condition)
 
 ```
 library(BOM_package)
-library("BSgenome.Mmusculus.UCSC.mm10")
+library("BSgenome.Mmusculus.UCSC.mm10") # or genome of choice
 
 extdata_path <- system.file("extdata",package = "BagOfMotifs")
-motifs_path <- paste0(extdata_path,'gimme.vertebrate.v5.0.meme')
+motifs_path <- paste0(extdata_path,'/gimme.vertebrate.v5.0.meme')
 chr_sizes <- paste0(extdata_path,'/mouse.chrom.sizes.txt')
 annot <- paste0(extdata_path, '/Mus_musculus.GRCm38.92.gtf.gz')
 FIMO_path <- '/path/to/fimo'
