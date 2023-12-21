@@ -289,7 +289,7 @@ head(counts[,c(head(colnames(counts)), tail(colnames(counts), 2))])
 ```
 
 
-<table class="dataframe">
+<table>
 <caption>A data.frame: 6 × 8</caption>
 <thead>
 	<tr><th></th><th scope=col>GM.5.0.AP.2.0001</th><th scope=col>GM.5.0.AP.2.0002</th><th scope=col>GM.5.0.AP.2.0003</th><th scope=col>GM.5.0.AP.2.0004</th><th scope=col>GM.5.0.AP.2.0005</th><th scope=col>GM.5.0.AP.2.0006</th><th scope=col>celltype</th><th scope=col>binary_celltype</th></tr>
@@ -390,7 +390,7 @@ read.table(file = "./mouse_4ct/binStats", header =T)
 
 
 
-<table class="dataframe" style="margin-left: auto; margin-right: auto;"> 
+<table> 
 <caption>A data.frame: 4 × 8</caption>
 <thead>
 	<tr><th scope=col>Model</th><th scope=col>Accuracy</th><th scope=col>auPR</th><th scope=col>auROC</th><th scope=col>F1</th><th scope=col>MCC</th><th scope=col>Precision</th><th scope=col>Recall</th></tr>
