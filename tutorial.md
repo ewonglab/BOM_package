@@ -405,7 +405,6 @@ read.table(file = "./mouse_4ct/binStats", header =T)
 </table>
 
 
-
 ---
 <a id="Step5SHAP_interpretations"></a>
 <h3><font color="brown"> Step 5 SHAP interpretations </font></h3>
@@ -426,16 +425,7 @@ save_shap_multi(dataDir = "./mouse_4ct/", outDir = "./mouse_4ct/")
 Using the SHAP values we can produce a series of plots to explore the importance of TF binding motifs in the classification tasks. The different plot options are summarized below:
 
 **Bar plot:**
-SHAP barplots represent a ranking of the most important motifs for the classification tasks across all CREs (y-axis). By default, the values shown in the x-axis of this type of plot are the mean of |SHAP| for each TF binding motif across all CREs, however the user can choose the sum of |SHAP| instead.
-
-**Beeswarm plot:**
-In a beeswarm plot, the Y-axis also represents the TF binding motif ranking, by default, based on the sum of |SHAP| across CREs. In this type of plot each CRE is represented by a dot and the SHAP scores are signed values centered on zero (x-axis). Dots are coloured by the TF binding motif count normalised to 0-1 range.
-
-**Watterfall plot:**
-Waterfall plots represent the contribution of the most important TF binding motifs in the classification task. Positive and negative SHAP values are represented by arrows in oposite directions. Motifs are ranked by the magnitude of their contribution. The sign and magnitude or the SHAP score is shown in each case. Additionally, waterfall plots show predicted value of the model, denoted as 'F(x)'. The mean prediction value across all CREs is also shown ('E[f(x)]').
-
-Waterfall plots can display the SHAP values of single CREs or CRE sets, at least one CRE ID should be specified. If multiple CRE IDs are provided and if average_shap is set to TRUE (default), the average SHAP across the CREs specified will be displayed. If average_shap is FALSE, o set of waterfall plots will be produced, one for each CRE.
-
+SHAP barplots is a ranking of the most important motifs for the classification tasks across all CREs (y-axis). By default, the values shown in the x-axis of this type of plot are the mean of |SHAP| for each TF binding motif across all CREs, but you can choose to show the sum of |SHAP| instead.
 
 
 
@@ -470,7 +460,7 @@ p
     
 <table>
   <tr>
-    <td><img src="images/output_27_1.png" alt="Allantois" width="500"/></td>
+    <td><img src="images/output_27_1.png" alt="Allantois" width="500" /></td>
     <td><img src="images/output_27_2.png" alt="Cardiomycyte" width="500"/></td>
   </tr>
   <tr>
@@ -480,6 +470,10 @@ p
 </table>
     
 <br>
+
+
+**Beeswarm plot:**
+In a beeswarm plot, the Y-axis also represents the TF binding motif ranking, by default, this is based on the sum of |SHAP| across CREs. Each CRE is represented by a dot and the SHAP scores are signed values centered on zero (x-axis). Dots are coloured by the TF binding motif count normalised to a range of 0-1.
 
 
 ```R
@@ -507,6 +501,11 @@ p
 </table>
 
 <br>
+
+**Waterfall plot:**
+Waterfall plots represent the cumulative contribution of the most important TF binding motifs in the classification task. Positive and negative SHAP values are represented by arrows in opposite directions. Motifs are ranked by the magnitude of their contribution. The sign and magnitude of the SHAP score are shown in each case. Additionally, waterfall plots show a predicted value of the model, denoted as F(x). The mean prediction value across all CREs is shown by E[f(x)].
+
+Waterfall plots can display the SHAP values of single CREs or sets of CRE. At least one CRE ID should be specified. If multiple CRE IDs are provided and if the average_shap is set to TRUE (default), the average SHAP across the CREs specified will be displayed. If average_shap is FALSE, a set of waterfall plots will be produced, one for each CRE.
 
 
 ```R
