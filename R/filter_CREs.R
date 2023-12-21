@@ -194,7 +194,7 @@ filterCREs <- function(inputBedFile = NULL,
 	  # remove occurances that do not have a significant width
 	  idx.small <- which(GenomicRanges::width(cres_gr) < nbp)
 	  if (length(idx.small) > 0)
-	  {	message(paste0("Removing ", length(idx.small), " regions as they were truncated to a length smaller than ", nbp, " nt (i.e. were located near the edge of a chromosome)")
+	  {	message(paste0("Removing ", length(idx.small), " regions as they were truncated to a length smaller than ", nbp, " nt (i.e. were located near the edge of a chromosome)"))
 		cres_gr <- cres_gr[idx.small * -1]
 	  }
     }
