@@ -389,8 +389,8 @@ read.table(file = "./mouse_4ct/binStats", header =T)
     
 
 
-
-<table class="dataframe" style="width:80%"> 
+<p align="center">
+<table class="dataframe"> 
 <caption>A data.frame: 4 × 8</caption>
 <thead>
 	<tr><th scope=col>Model</th><th scope=col>Accuracy</th><th scope=col>auPR</th><th scope=col>auROC</th><th scope=col>F1</th><th scope=col>MCC</th><th scope=col>Precision</th><th scope=col>Recall</th></tr>
@@ -403,7 +403,7 @@ read.table(file = "./mouse_4ct/binStats", header =T)
 	<tr><td>Erythroid_vs_Others     </td><td>0.962</td><td>0.990</td><td>0.990</td><td>0.964</td><td>0.926</td><td>0.939</td><td>0.990</td></tr>
 </tbody>
 </table>
-
+</p>
 
 ---
 <a id="Step5SHAP_interpretations"></a>
@@ -503,7 +503,7 @@ p
 <br>
 
 **Waterfall plot:**
-Waterfall plots represent the cumulative contribution of the most important TF binding motifs in the classification task. Positive and negative SHAP values are represented by arrows in opposite directions. Motifs are ranked by the magnitude of their contribution. The sign and magnitude of the SHAP score are shown in each case. Additionally, waterfall plots show a predicted value of the model, denoted as F(x). The mean prediction value across all CREs is shown by E[f(x)].
+Waterfall plots represent the cumulative contribution of the most important TF binding motifs in the classification task. Positive and negative SHAP values are displayed as arrows in opposite directions. Motifs are ranked by the magnitude of their contribution. The sign and magnitude of the SHAP score are shown in each case. Additionally, waterfall plots show a predicted value of the model, denoted as F(x). The mean prediction value across all CREs is shown by E[f(x)].
 
 Waterfall plots can display the SHAP values of single CREs or sets of CRE. At least one CRE ID should be specified. If multiple CRE IDs are provided and if the average_shap is set to TRUE (default), the average SHAP across the CREs specified will be displayed. If average_shap is FALSE, a set of waterfall plots will be produced, one for each CRE.
 
