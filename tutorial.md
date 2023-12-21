@@ -289,7 +289,7 @@ head(counts[,c(head(colnames(counts)), tail(colnames(counts), 2))])
 ```
 
 
-<table class="dataframe" style="width:50%">
+<table class="dataframe">
 <caption>A data.frame: 6 × 8</caption>
 <thead>
 	<tr><th></th><th scope=col>GM.5.0.AP.2.0001</th><th scope=col>GM.5.0.AP.2.0002</th><th scope=col>GM.5.0.AP.2.0003</th><th scope=col>GM.5.0.AP.2.0004</th><th scope=col>GM.5.0.AP.2.0005</th><th scope=col>GM.5.0.AP.2.0006</th><th scope=col>celltype</th><th scope=col>binary_celltype</th></tr>
@@ -389,7 +389,7 @@ read.table(file = "./mouse_4ct/binStats", header =T)
     
 
 
-<p align="center">
+<div style="text-align: center;">
 <table class="dataframe"> 
 <caption>A data.frame: 4 × 8</caption>
 <thead>
@@ -403,7 +403,7 @@ read.table(file = "./mouse_4ct/binStats", header =T)
 	<tr><td>Erythroid_vs_Others     </td><td>0.962</td><td>0.990</td><td>0.990</td><td>0.964</td><td>0.926</td><td>0.939</td><td>0.990</td></tr>
 </tbody>
 </table>
-</p>
+</div>
 
 ---
 <a id="Step5SHAP_interpretations"></a>
