@@ -2,8 +2,8 @@ Package: BagOfMotifs
 Type: Package
 Title: Bag of motifs
 Version: 0.0.3
-Authors@R: c(person("Paola", "Cornejo", role = c("aut", "cre"), email = "p.cornejo@victorchang.edu.au"),
-			person ("David", "Humphreys", role = c("aut"), email = "d.humphreys@victorchang.edu.au"),
+Authors@R: c(person ("David", "Humphreys", role = c("aut"), email = "d.humphreys@victorchang.edu.au"),
+			person("Paola", "Cornejo", role = c("aut", "cre"), email = "p.cornejo@victorchang.edu.au"),
 			person ("Emily", "Wong", role = c("aut"), email = "e.wong@victorchang.edu.au"))
 Maintainer: Paola Cornejo <p.cornejo@victorchang.edu.au>
 Description: Bag of motifs R package
