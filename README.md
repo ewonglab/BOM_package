@@ -32,13 +32,13 @@ library(BOM_package)
 library("BSgenome.Mmusculus.UCSC.mm10") # or genome of choice
 
 extdata_path <- system.file("extdata",package = "BagOfMotifs")
-motifs_path <- paste0(extdata_path,'/gimme.vertebrate.v5.0.meme')
-chr_sizes <- paste0(extdata_path,'/mouse.chrom.sizes.txt')
-annot <- paste0(extdata_path, '/Mus_musculus.GRCm38.92.gtf.gz')
-FIMO_path <- '/path/to/fimo'
+motifs_path <- paste0(extdata_path,"/gimme.vertebrate.v5.0.meme")
+chr_sizes <- paste0(extdata_path,"/mouse.chrom.sizes.txt")
+annot <- paste0(extdata_path, "/Mus_musculus.GRCm38.92.gtf.gz")
+FIMO_path <- "/path/to/fimo"
                     
 # Generate FASTA and annotate motifs
-generateAllFasta(bedDir = 'path/to/input', genome = "Mmusculus")
+generateAllFasta(bedDir = "path/to/input", genome = "Mmusculus")
 BagOfMotifs::runFIMO(motifs_path = motifs_path, FIMO_path = FIMO_path)
 
 # Motif count and model training
@@ -50,7 +50,7 @@ BagOfMotifs::predict_binary_multi()
 # Estimate SHAP 
 save_shap_multi()
 
-# Plots (bar/beeswarm/waterfall)
+# Plots (bar, beeswarm, waterfall)
 shapPlots_multi()
 shapPlots_multi(plotType = "beeswarm")
 shapPlots_multi(plotType = "waterfall")
