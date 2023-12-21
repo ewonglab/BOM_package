@@ -192,9 +192,9 @@ filterCREs <- function(inputBedFile = NULL,
       suppressWarnings(GenomeInfoDb::seqlengths(cres_gr) <- chrom_sizes$chr_size[idx])
       cres_gr <- IRanges::trim(cres_gr)
 	  # remove occurances that do not have a significant width
-	  idx.small <- which(GenomicRanges::width(cres_gr) < min_width)
+	  idx.small <- which(GenomicRanges::width(cres_gr) < nbp)
 	  if (length(idx.small) > 0)
-	  {	message(paste0("Removing ", length(idx.small), " regions as they are smaller than ", min_width, " nt"))
+	  {	message(paste0("Removing ", length(idx.small), " regions as they are located at chromosome  than ", nbp, " nt"))
 		cres_gr <- cres_gr[idx.small * -1]
 	  }
     }
