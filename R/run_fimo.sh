@@ -1,9 +1,9 @@
 #!/bin/bash
 
-O=/g/data/zk16/xzhang/BOM/Tutorial/motifs
-M=/g/data/zk16/useful/gimmemotifs/gimme.vertebrate.v5.0.meme
-G=/g/data/zk16/cc3704/mouse_data/Mus_musculus.GRCm38.dna_sm.primary_assembly.fa
-B=/g/data/zk16/xzhang/BOM/Tutorial/bed_files
+O=motifs
+M=gimme.vertebrate.v5.0.meme
+G=Mus_musculus.GRCm38.dna_sm.primary_assembly.fa
+B=bed_files
 
 while getopts o:g:b:m: op
 do 
