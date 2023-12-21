@@ -3,7 +3,7 @@ BAG-of-Motifs (BOM) is an R package that uses XGBoost to construct predictive mo
 
 It is based on the principle that the activity of these regions relies on the binding of transcription factors (TFs) to specific TF binding motifs. Leveraging available TF binding motif profiles and the Extreme Gradient Boosting (XGBoost) algorithm, BOM has achieved high performance in classifying context-specific cis-regulatory elements. 
 
-Additionally, through the use of SHapley Additive exPlanations (SHAP), BOM enables the identification of important TF binding motifs that contribute to the classification. BOM provides several visualization options for motif counts and motif importance scores. Visualizations allow users to explore and interpret the most influential motifs learned by BOM, providing insights into the regulatory landscape of the analyzed cis-regulatory regions.
+Through the use of SHapley Additive exPlanations (SHAP), BOM helps identify the important TF binding motifs that contribute to the classification. BOM provides several visualization options for motif counts and motif importance scores. They allow users to explore and interpret the most influential motifs learned by BOM, providing insights into the regulatory landscape of the analyzed cis-regulatory regions.
 
 
 ## Installation
