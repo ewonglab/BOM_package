@@ -485,16 +485,6 @@ for(i in 1:length(p)){p[[i]] <- p[[i]] + ggtitle(sub(".rds", "", models[i]))}
 p
 ```
 
-    [1m[22mScale for [32mcolour[39m is already present.
-    Adding another scale for [32mcolour[39m, which will replace the existing scale.
-    [1m[22mScale for [32mcolour[39m is already present.
-    Adding another scale for [32mcolour[39m, which will replace the existing scale.
-    [1m[22mScale for [32mcolour[39m is already present.
-    Adding another scale for [32mcolour[39m, which will replace the existing scale.
-    [1m[22mScale for [32mcolour[39m is already present.
-    Adding another scale for [32mcolour[39m, which will replace the existing scale.
-
-
 
 <img src="images/output_28_1.png" alt="Allantois" width="250"/>   
 
