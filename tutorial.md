@@ -289,7 +289,7 @@ head(counts[,c(head(colnames(counts)), tail(colnames(counts), 2))])
 ```
 
 
-<table class="dataframe">
+<table class="dataframe" style="width:50%">
 <caption>A data.frame: 6 × 8</caption>
 <thead>
 	<tr><th></th><th scope=col>GM.5.0.AP.2.0001</th><th scope=col>GM.5.0.AP.2.0002</th><th scope=col>GM.5.0.AP.2.0003</th><th scope=col>GM.5.0.AP.2.0004</th><th scope=col>GM.5.0.AP.2.0005</th><th scope=col>GM.5.0.AP.2.0006</th><th scope=col>celltype</th><th scope=col>binary_celltype</th></tr>
@@ -390,7 +390,7 @@ read.table(file = "./mouse_4ct/binStats", header =T)
 
 
 
-<table class="dataframe">
+<table class="dataframe" style="width:80%"> 
 <caption>A data.frame: 4 × 8</caption>
 <thead>
 	<tr><th scope=col>Model</th><th scope=col>Accuracy</th><th scope=col>auPR</th><th scope=col>auROC</th><th scope=col>F1</th><th scope=col>MCC</th><th scope=col>Precision</th><th scope=col>Recall</th></tr>
@@ -465,16 +465,19 @@ p
     Loading required package: gggenes
     
     Loading required package: shades
-    
 
-<img src="images/output_27_1.png" alt="Allantois" width="250"/>
+
     
-<img src="images/output_27_2.png" alt="Cardiomycyte" width="250"/>
-    
-<img src="images/output_27_4.png" alt="Endothelium" width="250"/>
-    
-<img src="images/output_27_5.png" alt="Erythroid" width="250"/>
-    
+<table>
+  <tr>
+    <td><img src="images/output_27_1.png" alt="Allantois" width="500"/></td>
+    <td><img src="images/output_27_2.png" alt="Cardiomycyte" width="500"/></td>
+  </tr>
+  <tr>
+    <td><img src="images/output_27_4.png" alt="Endothelium" width="500"/></td>
+    <td><img src="images/output_27_5.png" alt="Erythroid" width="500"/></td>
+  </tr>
+</table>
     
 
 
@@ -492,13 +495,16 @@ p
 ```
 
 
-<img src="images/output_28_1.png" alt="Allantois" width="250"/>   
-
-<img src="images/output_28_2.png" alt="Allantois" width="250"/> 
-  
-<img src="images/output_28_4.png" alt="Allantois" width="250"/>
-
-<img src="images/output_28_5.png" alt="Allantois" width="250"/>
+<table>
+  <tr>
+    <td><img src="images/output_28_1.png" alt="Allantois" width="500"/></td>
+    <td><img src="images/output_28_2.png" alt="Allantois" width="500"/></td>
+  </tr>
+  <tr>
+    <td><img src="images/output_28_4.png" alt="Allantois" width="500"/></td>
+    <td><img src="images/output_28_5.png" alt="Allantois" width="500"/></td>
+  </tr>
+</table>
 
 
 
@@ -516,8 +522,9 @@ shapPlots(xgb_model = xgb_model, ts = train_set
 ```
 
 
-<img src="images/output_29_0.png" alt="Allantois" width="250"/>    
-    
+<p align="center">
+<img src="images/output_29_0.png" alt="Allantois" width="600"/>    
+</p>    
 
 
 
