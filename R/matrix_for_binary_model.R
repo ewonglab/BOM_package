@@ -350,7 +350,7 @@ train_binary <- function(input_data = NULL, nrounds = 10000
   motifs_test <- rsample::testing(motifs_split)
   
   set.seed(123)
-  motifs_split2 <- rsample::initial_split(motifs_test, prop = (1-training)/2)
+  motifs_split2 <- rsample::initial_split(motifs_test, prop = 0.5)
   motifs_val <- rsample::training(motifs_split2)
   motifs_test <- rsample::testing(motifs_split2)
 
