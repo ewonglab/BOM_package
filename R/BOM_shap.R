@@ -5,20 +5,24 @@
 #' @param xgb_model  	    XGB model.
 #' @param ts training set for the model provided to xgb_model.
 #' @param plotType  Plottype, can be "bar" (default), "beeswarm", or "waterfall".
-#' @param annotData Dataframe with columns "Motif" and "Factor". The values in "Motif" should match what was used
-#' @param max_display  Number of transcription factors to plot (Default 15). The remaining transcriptions factors are plotted under other
+#' @param annotData Dataframe with columns "Motif" and "Factor". The values in "Motif"
+#' should match what was used.
+#' @param max_display  Number of transcription factors to plot (Default 15). The remaining
+#' transcriptions factors are plotted under other.
 #' @param order  Ïf set to "decreasing" then plots the highest value first through to lowest value.
 #' @param show_numbers  Boolean. If set to TRUE will display numbers on plot.
-#' @param average_shap Boolean. Whether to average shap values across the specified CREs in waterfall plots (default TRUE).
-#' 
+#' @param average_shap Boolean. Whether to average shap values across the specified
+#' CREs in waterfall plots (default TRUE).
+#'
 #' @example
-#' 
+#'
 #' xgb_model <- readRDS("Cardiomyocytes.rds")
 #' train_set <- "cardiom_trainSet.txt"
 #' ts <- read.table(train_set, header = TRUE)
-#' 
-#' p <- shapPlots(xgb_model = xgb_model, ts = ts, CRE_id = "12:98725135-98725635", plotType = "waterfall", annotDat = NULL, annotLength = 30, order = "decreasing",show_numbers = FALSE)
-#'  
+#'
+#' p <- shapPlots(xgb_model = xgb_model, ts = ts, CRE_id = "12:98725135-98725635", plotType = "waterfall", annotDat = NULL
+#' , annotLength = 30, order = "decreasing",show_numbers = FALSE)
+#'
 #'
 #' @export
 shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids = NULL, annotDat = NULL, annotLength = 30
