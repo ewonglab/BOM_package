@@ -5,8 +5,8 @@
 #' @param xgb_model  	    XGB model.
 #' @param ts training set for the model provided to xgb_model.
 #' @param plotType  Plottype, can be "bar" (default), "beeswarm", or "waterfall".
-#' @param annotData Dataframe with columns "Motif" and "Factor". The values in "Motif" should match what was used 
-#' @param max_display  Number of transcription factors to plot (Default 15). The remaining transcriptions factors are plotted under other 
+#' @param annotData Dataframe with columns "Motif" and "Factor". The values in "Motif" should match what was used
+#' @param max_display  Number of transcription factors to plot (Default 15). The remaining transcriptions factors are plotted under other
 #' @param order  Ïf set to "decreasing" then plots the highest value first through to lowest value.
 #' @param show_numbers  Boolean. If set to TRUE will display numbers on plot.
 #' @param average_shap Boolean. Whether to average shap values across the specified CREs in waterfall plots (default TRUE).
@@ -23,7 +23,7 @@
 #' @export
 shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids = NULL, annotDat = NULL, annotLength = 30
                            , order = "decreasing", show_numbers = FALSE, average_shap = TRUE,  ...)
-{	
+{
   require(ggplot2)
   require(shapviz)
   require(gggenes)
@@ -35,16 +35,17 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids
   
   decreasing=TRUE
   if (order=="decreasing")
-  {	decreasing = FALSE } 
+  {	decreasing = FALSE }
   
   p <- {}
   if (plotType == "bar")
   {
-    p <- shapviz::sv_importance(shp, kind="bar",fill="red", max_display = max_display, ...) + 
+    p <- shapviz::sv_importance(shp, kind="bar",fill="red", max_display = max_display, ...) +
       theme(panel.background = element_blank(), axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black")) +
       geom_vline(xintercept = 0, linetype = "solid", color = "grey")
-    if (! is.null(annotDat))
-    {  p$data$feature <- annonTATE(p$data, annotDat, annotLength=annotLength, decreasing=decreasing)  }
+    if (! is.null(annotDat)){
+      p$data$feature <- annonTATE(p$data, annotDat, annotLength=annotLength, decreasing=decreasing)
+    }
     return(p)
   }
   else if (plotType == "beeswarm")
@@ -53,18 +54,18 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids
     theme(panel.background = element_blank()
           , axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black"))
   
-  if (! is.null(annotDat))
-  { p$data$feature <- annonTATE(p$data, annotDat, annotLength=annotLength,decreasing=decreasing)   }
+  if (! is.null(annotDat)){
+    p$data$feature <- annonTATE(p$data, annotDat, annotLength=annotLength,decreasing=decreasing)
+  }
   return(p)
   }
-  else if (plotType =="waterfall")
-  {	
+  else if (plotType =="waterfall"){	
     if(length(CRE_ids) > 1){
       
-      if(length(CRE_ids[!CRE_ids %in% rownames(ts)]) > 0 )
-      { warning("Some CRE ids are not present in training set.")}
-      if(length(CRE_ids[duplicated(CRE_ids)]) > 0 )
-      {
+      if(length(CRE_ids[!CRE_ids %in% rownames(ts)]) > 0 ){
+        warning("Some CRE ids are not present in training set.")
+      }
+      if(length(CRE_ids[duplicated(CRE_ids)]) > 0 ){
         warning("Duplicated values present in CRE_ids. Unique CRE IDs will be used.")
         CRE_ids <- unique(CRE_ids)
         }
@@ -72,24 +73,23 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids
       if(average_shap){
         p <- shapviz::sv_waterfall(shp, row_id = CRE_idx, fill_colors = c("blue", "red"), max_display = max_display, ...) + theme(panel.background = element_blank(),panel.grid.major.y = element_blank()) + 
           theme(panel.background = element_blank(),panel.grid.major.y = element_blank())
-        if (! is.null(annotDat))
-        {	p$data
+        if (! is.null(annotDat)){
+          p$data
           df <- data.frame(feature = row.names(p$data), value=0)
           p$data$label <- annonTATE(df, gimme_annot, waterfallOther = p$data["other","label"]
                                     , annotLength=annotLength,decreasing=decreasing)
         }
         return(p)
       }
-      else
-      {
+      else{
           p_watterfall <- list()
           for(i in 1:length(CRE_idx)){
             print(CRE_idx[i])
             p <- shapviz::sv_waterfall(shp, row_id = CRE_idx[i], fill_colors = c("blue", "red"), max_display = max_display,...) + theme(panel.background = element_blank(),panel.grid.major.y = element_blank()) + 
               theme(panel.background = element_blank(),panel.grid.major.y = element_blank()) +
               ggtitle(rownames(ts)[CRE_idx[i]])
-            if (! is.null(annotDat))
-            {	p$data
+            if (! is.null(annotDat)){
+              p$data
               df <- data.frame(feature = row.names(p$data), value=0)
               p$data$label <- annonTATE(df, gimme_annot, waterfallOther = p$data["other","label"]
                                         , annotLength=annotLength,decreasing=decreasing)
@@ -99,14 +99,13 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids
       }
       return(p_watterfall)
     }
-    else if(length(CRE_ids) == 1)
-    {
+    else if(length(CRE_ids) == 1){
       CRE_idx <- which(rownames(ts) == CRE_ids)
       p <- shapviz::sv_waterfall(shp, row_id = CRE_idx, fill_colors = c("blue", "red"), max_display = max_display,...) + theme(panel.background = element_blank(),panel.grid.major.y = element_blank()) + 
         theme(panel.background = element_blank(),panel.grid.major.y = element_blank()) +
         ggtitle(CRE_ids)       
-      if (! is.null(annotDat))
-      {	p$data
+      if (! is.null(annotDat)){
+        p$data
         df <- data.frame(feature = row.names(p$data), value=0)
         p$data$label <- annonTATE(df, gimme_annot, waterfallOther = p$data["other","label"]
                                   , annotLength=annotLength,decreasing=decreasing)
@@ -123,8 +122,8 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids
 #' @param xgb_models  	List of file names for models
 #' @param train_sets	List of file names for training sets (same order as models).
 #' @param plotType  Plottype, can be "bar" (default), "beeswarm", or "waterfall"
-#' @param annotData Dataframe with columns "Motif" and "Factor". The values in "Motif" should match what was used 
-#' @param max_display  Number of transcription factors to plot (Default 15). The remaining transcriptions factors are plotted under other 
+#' @param annotData Dataframe with columns "Motif" and "Factor". The values in "Motif" should match what was used
+#' @param max_display  Number of transcription factors to plot (Default 15). The remaining transcriptions factors are plotted under other
 #' @param order  Ïf set to "decreasing" then plots the highest value first through to lowest value.
 #' @param show_numbers  Boolean. If set to TRUE will display numbers on plot.
 #' @param average_shap Boolean. Whether to average shap values across the specified CREs in waterfall plots (default TRUE).
@@ -144,8 +143,7 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids
 shapPlots_multi <- function(dataDir = NULL, xgb_models = NULL, train_sets = NULL, plotType = "bar"
                             , max_display = 15, CRE_ids = NULL, annotDat = NULL
                             , annotLength = 30, order = "decreasing", show_numbers = FALSE
-                            , average_shap = TRUE, ...)
-{
+                            , average_shap = TRUE, ...){
   if(!is.null(xgb_models)){
     xgb.models <- lapply(xgb_models, readRDS)
   }else{
@@ -169,9 +167,6 @@ shapPlots_multi <- function(dataDir = NULL, xgb_models = NULL, train_sets = NULL
     p_list[[i]] <- shapPlots(xgb_model = xgb.models[[i]], ts = train.sets[[i]], plotType = plotType, max_display = max_display
                              , CRE_ids = CRE_ids, annotDat = annotDat, annotLength = annotLength
                              , order = order, show_numbers = show_numbers, average_shap = average_shap)
-    #if(plotType %in% c("bar", "beeswarm")){
-    #      p_list[[i]] + ggplot2::ggtitle(sub("_train.txt", "", basename(train_sets[[i]])))
-    #      }
   }
   return(p_list)
 }
@@ -179,7 +174,7 @@ shapPlots_multi <- function(dataDir = NULL, xgb_models = NULL, train_sets = NULL
 
 ##############################################################################
 ## annonTATE
-#' Re-annotates a ggplot created from shapviz. 
+#' Re-annotates a ggplot created from shapviz.
 #' Appends gene annotation onto exsiting annotation.
 #'
 #' @param plotDat              Data slot from a ggplot object
@@ -188,27 +183,25 @@ shapPlots_multi <- function(dataDir = NULL, xgb_models = NULL, train_sets = NULL
 #' @param waterfallOther      Annotation for waterfall plots "other" category
 #' @param decreasing         Plot in decreasing order (default FALSE).
 #'
-annonTATE <- function(plotDat, peakAnnotations, annotLength = 30, waterfallOther=NULL, decreasing=FALSE)
-{
+annonTATE <- function(plotDat, peakAnnotations, annotLength = 30, waterfallOther=NULL, decreasing=FALSE){
     otherAnnotation <- 'other'
-    if (! is.null(waterfallOther))
-    {  otherAnnotation <- waterfallOther  }
+    if (! is.null(waterfallOther)){
+      otherAnnotation <- waterfallOther
+    }
     
     peakAnnotations$Motif <- gsub(pattern = "-", replacement = ".", x = peakAnnotations$Motif) # hack to ensure that matching occurs
     lookupIDs <- as.character(plotDat$feature)
     TF_IDs    <- {}
-    for(i in 1:length(lookupIDs))
-    {
-        if (lookupIDs[i] == "other")
-        {    
+    for(i in 1:length(lookupIDs)){
+        if (lookupIDs[i] == "other"){
             TF_IDs <- c(TF_IDs,otherAnnotation)
-        }
-        else
-        {     idx    <- which(peakAnnotations$Motif %in% lookupIDs[i]) 
-            if(length(idx) > 0)
-            {  TF_IDs <- c(TF_IDs, paste0(unlist(peakAnnotations$Factor[idx]), collapse=",")) }
-            else  
-            {     TF_IDs <- c(TF_IDs, lookupIDs[i]) }
+        }else{
+          idx <- which(peakAnnotations$Motif %in% lookupIDs[i]) 
+            if(length(idx) > 0){
+              TF_IDs <- c(TF_IDs, paste0(unlist(peakAnnotations$Factor[idx]), collapse=","))
+            }else{
+              TF_IDs <- c(TF_IDs, lookupIDs[i])
+            }
         }
     }
 
@@ -220,7 +213,6 @@ annonTATE <- function(plotDat, peakAnnotations, annotLength = 30, waterfallOther
 
     newFeatures <- factor(plotDat$feature, levels= unique(sum_by_feature_ordered$feature))
     
-
     return(newFeatures)
 
 }
@@ -239,7 +231,7 @@ annonTATE <- function(plotDat, peakAnnotations, annotLength = 30, waterfallOther
 #'
 #' @export
 #' 
-save_shap <-function(xgb_model = NULL, ts = NULL, shap_file){
+save_shap <- function(xgb_model = NULL, ts = NULL, shap_file){
   require(shapviz)
   ts$binary_celltype <- NULL
   shp <- shapviz::shapviz(object = xgb_model, data.matrix(ts))
