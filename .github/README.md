@@ -58,7 +58,7 @@ shapPlots_multi(plotType = "waterfall")
 
 ## Tutorial
 
-<a href="[tutorial.md](https://github.com/ewonglab/BOM_package/blob/main/tutorial.md)"> How to use BOM to interrogate distal cis-regulatory elements from single cell ATAC data </a>  
+<a href="https://github.com/ewonglab/BOM_package/blob/main/tutorial.md"> How to use BOM to interrogate distal cis-regulatory elements from single cell ATAC data </a>  
 <br>
 <br>
 A <a href="https://codeocean.com/capsule/4079053/tree"> CodeOcean example</a> is also available where all the software is preinstalled and ready to go.
