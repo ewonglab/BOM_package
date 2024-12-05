@@ -487,36 +487,26 @@ p
 
 
     
-![png](output_27_1.png)
+![png](images/output_27_1.png)
     
 
 
 
     
-![png](output_27_2.png)
+![png](images/output_27_2.png)
     
-
-
-
-    [[1]]
-    
-    [[2]]
-    
-    [[3]]
-    
-    [[4]]
 
 
 
 
     
-![png](output_27_4.png)
+![png](images/output_27_4.png)
     
 
 
 
     
-![png](output_27_5.png)
+![png](images/output_27_5.png)
     
 
 
@@ -545,36 +535,25 @@ p
 
 
     
-![png](output_28_1.png)
+![png](images/output_28_1.png)
     
 
 
 
     
-![png](output_28_2.png)
-    
-
-
-
-    [[1]]
-    
-    [[2]]
-    
-    [[3]]
-    
-    [[4]]
-
-
-
-
-    
-![png](output_28_4.png)
+![png](images/output_28_2.png)
     
 
 
 
     
-![png](output_28_5.png)
+![png](images/output_28_4.png)
+    
+
+
+
+    
+![png](images/output_28_5.png)
     
 
 
@@ -593,7 +572,7 @@ shapPlots(xgb_model = xgb_model, ts = train_set
 
 
     
-![png](output_29_0.png)
+![png](images/output_29_0.png)
     
 
 
