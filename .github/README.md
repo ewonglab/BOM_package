@@ -10,7 +10,7 @@ Through the use of SHapley Additive exPlanations (SHAP), BOM helps identify the 
 
 Before proceeding with the tutorial, please ensure that all required R package dependencies are installed. You can use the code below to install them. Missing packages may cause errors during execution. 
 
-```
+```r
 required_packages <- c("foreach", "doParallel", "tidyr", "dplyr", "xgboost"
                        , "rsample", "cvAUC", "pROC", "ggplot2", "yardstick"
                        , "cowplot", "shapviz", "gggenes", "shades"
@@ -31,14 +31,14 @@ install_if_missing(required_packages)
 ## Installation
 
 For installing and loading BOM, run:
-```
+```r
 devtools::install_github("ewonglab/BOM_package")
 library(BagOfMotifs)
 ```
 
 
 The tutorial requires the mouse mm10 genome. If you don't have this already:
-```
+```r
 BiocManager::install("BSgenome.Mmusculus.UCSC.mm10")
 ```
 
@@ -49,7 +49,7 @@ Installation information can be found <a href="https://meme-suite.org/meme/doc/i
 
 Input is a text file with four columns (chromosome, start, stop, condition)
 
-```
+```r
 library(BOM_package)
 library("BSgenome.Mmusculus.UCSC.mm10") # or genome of choice
 
