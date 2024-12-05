@@ -21,13 +21,12 @@
 #' ts <- read.table(train_set, header = TRUE)
 #'
 #' p <- shapPlots(xgb_model = xgb_model, ts = ts, CRE_id = "12:98725135-98725635", plotType = "waterfall", annotDat = NULL
-#' , annotLength = 30, order = "decreasing",show_numbers = FALSE)
+#' , annotLength = 30, order = "decreasing", show_numbers = FALSE)
 #'
 #'
 #' @export
 shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids = NULL, annotDat = NULL, annotLength = 30
-                           , order = "decreasing", show_numbers = FALSE, average_shap = TRUE,  ...)
-{
+                           , order = "decreasing", show_numbers = FALSE, average_shap = TRUE,  ...){
   require(ggplot2)
   require(shapviz)
   require(gggenes)
@@ -37,33 +36,33 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids
   ts$binary_celltype <- NULL
   shp <- shapviz::shapviz(object = xgb_model, data.matrix(ts))
   
-  decreasing=TRUE
-  if (order=="decreasing")
-  {	decreasing = FALSE }
+  decreasing <- TRUE
+  if (order == "decreasing"){
+    decreasing = FALSE
+  }
   
-  p <- {}
-  if (plotType == "bar")
-  {
-    p <- shapviz::sv_importance(shp, kind="bar",fill="red", max_display = max_display, ...) +
+  p <- {
+    
+  }
+  if (plotType == "bar"){
+    p <- shapviz::sv_importance(shp, kind = "bar", fill = "red", max_display = max_display, ...) +
       theme(panel.background = element_blank(), axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black")) +
       geom_vline(xintercept = 0, linetype = "solid", color = "grey")
     if (! is.null(annotDat)){
-      p$data$feature <- annonTATE(p$data, annotDat, annotLength=annotLength, decreasing=decreasing)
+      p$data$feature <- annonTATE(p$data, annotDat, annotLength = annotLength, decreasing = decreasing)
     }
     return(p)
-  }
-  else if (plotType == "beeswarm")
-  {  	p <- shapviz::sv_importance(shp, kind="beeswarm", max_display = max_display, ...) +
+  }else if (plotType == "beeswarm"){
+    p <- shapviz::sv_importance(shp, kind = "beeswarm", max_display = max_display, ...) +
     scale_color_gradient(low = "blue", high = "red") +
     theme(panel.background = element_blank()
           , axis.line.x = element_line(size = 0.5, linetype = "solid", colour = "black"))
   
   if (! is.null(annotDat)){
-    p$data$feature <- annonTATE(p$data, annotDat, annotLength=annotLength,decreasing=decreasing)
+    p$data$feature <- annonTATE(p$data, annotDat, annotLength = annotLength,decreasing = decreasing)
   }
   return(p)
-  }
-  else if (plotType =="waterfall"){	
+  } else if (plotType == "waterfall"){	
     if(length(CRE_ids) > 1){
       
       if(length(CRE_ids[!CRE_ids %in% rownames(ts)]) > 0 ){
@@ -75,17 +74,17 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids
         }
       CRE_idx <- which(rownames(ts) %in% CRE_ids)
       if(average_shap){
-        p <- shapviz::sv_waterfall(shp, row_id = CRE_idx, fill_colors = c("blue", "red"), max_display = max_display, ...) + theme(panel.background = element_blank(),panel.grid.major.y = element_blank()) + 
-          theme(panel.background = element_blank(),panel.grid.major.y = element_blank())
+        p <- shapviz::sv_waterfall(shp, row_id = CRE_idx, fill_colors = c("blue", "red"), max_display = max_display, ...) +
+        theme(panel.background = element_blank(), panel.grid.major.y = element_blank()) + 
+        theme(panel.background = element_blank(),panel.grid.major.y = element_blank())
         if (! is.null(annotDat)){
           p$data
-          df <- data.frame(feature = row.names(p$data), value=0)
-          p$data$label <- annonTATE(df, gimme_annot, waterfallOther = p$data["other","label"]
-                                    , annotLength=annotLength,decreasing=decreasing)
+          df <- data.frame(feature = row.names(p$data), value = 0)
+          p$data$label <- annonTATE(df, gimme_annot, waterfallOther = p$data["other", "label"]
+                                    , annotLength = annotLength, decreasing = decreasing)
         }
         return(p)
-      }
-      else{
+      }else{
           p_watterfall <- list()
           for(i in 1:length(CRE_idx)){
             print(CRE_idx[i])
@@ -94,9 +93,9 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids
               ggtitle(rownames(ts)[CRE_idx[i]])
             if (! is.null(annotDat)){
               p$data
-              df <- data.frame(feature = row.names(p$data), value=0)
-              p$data$label <- annonTATE(df, gimme_annot, waterfallOther = p$data["other","label"]
-                                        , annotLength=annotLength,decreasing=decreasing)
+              df <- data.frame(feature = row.names(p$data), value = 0)
+              p$data$label <- annonTATE(df, gimme_annot, waterfallOther = p$data["other", "label"]
+                                        , annotLength = annotLength, decreasing = decreasing)
             }
             p_watterfall[[i]] <- p
           }
@@ -105,14 +104,15 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids
     }
     else if(length(CRE_ids) == 1){
       CRE_idx <- which(rownames(ts) == CRE_ids)
-      p <- shapviz::sv_waterfall(shp, row_id = CRE_idx, fill_colors = c("blue", "red"), max_display = max_display,...) + theme(panel.background = element_blank(),panel.grid.major.y = element_blank()) + 
-        theme(panel.background = element_blank(),panel.grid.major.y = element_blank()) +
+      p <- shapviz::sv_waterfall(shp, row_id = CRE_idx, fill_colors = c("blue", "red"), max_display = max_display, ...) +
+      theme(panel.background = element_blank(), panel.grid.major.y = element_blank()) + 
+        theme(panel.background = element_blank(), panel.grid.major.y = element_blank()) +
         ggtitle(CRE_ids)       
       if (! is.null(annotDat)){
         p$data
-        df <- data.frame(feature = row.names(p$data), value=0)
-        p$data$label <- annonTATE(df, gimme_annot, waterfallOther = p$data["other","label"]
-                                  , annotLength=annotLength,decreasing=decreasing)
+        df <- data.frame(feature = row.names(p$data), value = 0)
+        p$data$label <- annonTATE(df, gimme_annot, waterfallOther = p$data["other", "label"]
+                                  , annotLength = annotLength, decreasing = decreasing)
       }
       return(p)
       }
@@ -139,8 +139,9 @@ shapPlots <- function(xgb_model, ts, plotType = "bar", max_display = 15, CRE_ids
 #' 
 #' plots <- shapPlots_multi(xgb_models = model_list, train_sets = train_list)
 #' plots <- shapPlots_multi(xgb_models = model_list, train_sets = train_list, plotType = "beeswarm")
-#' plots <- shapPlots_multi(xgb_models = model_list, train_sets = train_list, plotType = "waterfall", CRE_ids = c("19:10232248-10232748", "2:157923362-157923862"), average_shap = F)
-#'  
+#' plots <- shapPlots_multi(xgb_models = model_list, train_sets = train_list, plotType = "waterfall"
+#' , CRE_ids = c("19:10232248-10232748", "2:157923362-157923862"), average_shap = F)
+#'
 #'
 #' @export
 #'
@@ -187,8 +188,8 @@ shapPlots_multi <- function(dataDir = NULL, xgb_models = NULL, train_sets = NULL
 #' @param waterfallOther      Annotation for waterfall plots "other" category
 #' @param decreasing         Plot in decreasing order (default FALSE).
 #'
-annonTATE <- function(plotDat, peakAnnotations, annotLength = 30, waterfallOther=NULL, decreasing=FALSE){
-    otherAnnotation <- 'other'
+annonTATE <- function(plotDat, peakAnnotations, annotLength = 30, waterfallOther = NULL, decreasing = FALSE){
+    otherAnnotation <- "other"
     if (! is.null(waterfallOther)){
       otherAnnotation <- waterfallOther
     }
@@ -198,24 +199,24 @@ annonTATE <- function(plotDat, peakAnnotations, annotLength = 30, waterfallOther
     TF_IDs    <- {}
     for(i in 1:length(lookupIDs)){
         if (lookupIDs[i] == "other"){
-            TF_IDs <- c(TF_IDs,otherAnnotation)
+            TF_IDs <- c(TF_IDs, otherAnnotation)
         }else{
           idx <- which(peakAnnotations$Motif %in% lookupIDs[i]) 
             if(length(idx) > 0){
-              TF_IDs <- c(TF_IDs, paste0(unlist(peakAnnotations$Factor[idx]), collapse=","))
+              TF_IDs <- c(TF_IDs, paste0(unlist(peakAnnotations$Factor[idx]), collapse = ","))
             }else{
               TF_IDs <- c(TF_IDs, lookupIDs[i])
             }
         }
     }
 
-    plotDat$feature <- substr(paste0(plotDat$feature,"_", TF_IDs), 1, annotLength)
+    plotDat$feature <- substr(paste0(plotDat$feature, "_", TF_IDs), 1, annotLength)
     
     sum_by_feature <- aggregate(value ~ feature, data = plotDat, sum)
     sum_by_feature_ordered <- sum_by_feature[order(sum_by_feature$value, decreasing = decreasing),]
     sum_by_feature_ordered
 
-    newFeatures <- factor(plotDat$feature, levels= unique(sum_by_feature_ordered$feature))
+    newFeatures <- factor(plotDat$feature, levels = unique(sum_by_feature_ordered$feature))
     
     return(newFeatures)
 
@@ -227,21 +228,21 @@ annonTATE <- function(plotDat, peakAnnotations, annotLength = 30, waterfallOther
 #' @param xgb_model   xgb_model prepared from xgboost
 #' @param ts          training set (matrix)
 #' @param shap_file   filename to save shap values to. Will create a tab delimited text file 
-#' 
+#'
 #' @example
+#'
+#'
 #' 
-#' 
-#'  
 #'
 #' @export
-#' 
+#'
 save_shap <- function(xgb_model = NULL, ts = NULL, shap_file){
   require(shapviz)
   ts$binary_celltype <- NULL
   shp <- shapviz::shapviz(object = xgb_model, data.matrix(ts))
   shap <- as.data.frame(shp$S)
   rownames(shap) <- rownames(shp$X)
-  write.table(x = shap, file = shap_file, sep ='\t', quote = F)
+  write.table(x = shap, file = shap_file, sep = "\t", quote = F)
 }
 
 
@@ -249,14 +250,14 @@ save_shap <- function(xgb_model = NULL, ts = NULL, shap_file){
 #' Saves SHAP values to a file
 #'
 #' @param 
-#' 
+#'
 #' @example
+#'
+#'
 #' 
-#' 
-#'  
 #'
 #' @export
-#' 
+#'
 save_shap_multi <-function(dataDir = NULL, xgb_models = NULL, train_sets = NULL, outDir = NULL){
   require(shapviz)
   if(!is.null(xgb_models)){
@@ -280,7 +281,7 @@ save_shap_multi <-function(dataDir = NULL, xgb_models = NULL, train_sets = NULL,
   for(i in 1:length(celltype_model)){
     shap_out_f <- paste0(celltype_model, "_shap.txt")
     if(!is.null(outDir)){
-      shap_out_f <- paste0(outDir, '/', shap_out_f)
+      shap_out_f <- paste0(outDir, "/", shap_out_f)
     }
     save_shap(xgb_model = xgb.models[[i]], ts = train.sets[[i]], shap_file = shap_out_f[i])
   }
