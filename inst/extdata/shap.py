@@ -1,16 +1,12 @@
 import xgboost
 import pandas as pd
-import os
-import numpy as np
-import random
-import sys
 import shap
 
-def shap_py(xgb_model,train_data, out_file):
+def shap_py(xgb_model, train_data, out_file):
     print("Reading model...")
     model_xgb_test = xgboost.Booster()
     model_xgb_test.load_model(xgb_model)
-    
+
     X = pd.read_csv(train_data, index_col = 0, sep = '\t')
     del X['binary_celltype']
     
@@ -27,3 +23,4 @@ def shap_py(xgb_model,train_data, out_file):
     shap_values_pd.to_csv(out_file, sep='\t', index=True)
 
     print("Done")
+
