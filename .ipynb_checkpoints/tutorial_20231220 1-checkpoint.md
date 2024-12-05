@@ -107,6 +107,7 @@ date()
 'Thu Dec 21 12:36:42 2023'
 
 
+```text
     Reading CREs...
     
     
@@ -146,7 +147,7 @@ date()
     Cardiomyocytes.bed
     Erythroid.bed
     Allantois.bed
-    
+```    
 
 
 
@@ -182,10 +183,11 @@ generateAllFasta(bedDir = "./mouse_4ct/", genome = Mmusculus, fastaDir = "./mous
 '/g/data/zk16/genomicsCore/jupyter/mouse_enh_grammar/vignette_4celltypes'
 
 
+```text
     Creating 4 output fasta files
     
     Fasta files generated
-    
+```    
 
 
 
@@ -252,6 +254,7 @@ date()
 'Thu Dec 21 10:41:14 2023'
 
 
+```text
     Loading required package: foreach
     
     Loading required package: doParallel
@@ -286,7 +289,7 @@ date()
     Saving CRE ids of training, validation and test sets...
     
     Complete
-    
+```   
 
 
 
@@ -341,6 +344,7 @@ BagOfMotifs::predict_binary_multi(inputMotif_dir = './mouse_4ct/'
                                   , outputFile = './mouse_4ct/mouseE8.25_ROCs.pdf')
 ```
 
+```text
     Preparing Allantois_vs_Others predict binary output
     
     Preparing Cardiomyocytes_vs_Others predict binary output
@@ -348,7 +352,7 @@ BagOfMotifs::predict_binary_multi(inputMotif_dir = './mouse_4ct/'
     Preparing Endothelium_vs_Others predict binary output
     
     Preparing Erythroid_vs_Others predict binary output
-    
+```    
 
 
 
@@ -368,6 +372,7 @@ prcurve_multi(inputMotif_dir = "./mouse_4ct/"
               , outputFile = "./mouse_4ct/mouseE8.25_PRcurvess.pdf")
 ```
 
+```text
     Loading required package: cowplot
     
     Preparing Allantois_vs_Others PR curve
@@ -377,7 +382,7 @@ prcurve_multi(inputMotif_dir = "./mouse_4ct/"
     Preparing Endothelium_vs_Others PR curve
     
     Preparing Erythroid_vs_Others PR curve
-    
+```    
 
 
 
@@ -394,9 +399,10 @@ read.table(file = "./mouse_4ct/binStats", header =T)
 
 ```
 
+```text
     Using files ending with pattern 'pred.txt'
     
-
+```
 
 
 <table class="dataframe">
@@ -428,9 +434,10 @@ By using the function **"save_shap"** for a single model or **"save_shap_multi"*
 save_shap_multi(dataDir = "./mouse_4ct/", outDir = "./mouse_4ct/")
 ```
 
+```text
     Loading required package: shapviz
     
-
+```
 
 Using the SHAP values we can produce a series of plots to explore the importance of TF binding motifs in the classification tasks. The different plot options are summarized below:
 
@@ -469,12 +476,13 @@ for(i in 1:length(p)){p[[i]] <- p[[i]] + ggtitle(sub(".rds", "", models[i]))}
 p
 ```
 
+```text
     Loading required package: ggplot2
     
     Loading required package: gggenes
     
     Loading required package: shades
-    
+```    
 
 
 
