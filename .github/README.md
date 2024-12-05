@@ -6,6 +6,28 @@ It is based on the principle that the activity of these regions relies on the bi
 Through the use of SHapley Additive exPlanations (SHAP), BOM helps identify the important TF binding motifs that contribute to the classification. BOM provides several visualization options for motif counts and motif importance scores. They allow users to explore and interpret the most influential motifs learned by BOM, providing insights into the regulatory landscape of the analyzed cis-regulatory regions.
 
 
+## Dependencies
+
+Before proceeding with the tutorial, please ensure that all required R package dependencies are installed. You can use the code below to install them. Missing packages may cause errors during execution. 
+
+```
+required_packages <- c("foreach", "doParallel", "tidyr", "dplyr", "xgboost"
+                       , "rsample", "cvAUC", "pROC", "ggplot2", "yardstick"
+                       , "cowplot", "shapviz", "gggenes", "shades"
+                       , "GenomicRanges", "IRanges", "GenomicFeatures"
+                       , "GenomeInfoDb", "Biostrings", "BSgenome")
+
+install_if_missing <- function(packages) {
+  missing <- packages[!packages %in% installed.packages()[, "Package"]]
+  if (length(missing) > 0) {
+    install.packages(missing, dependencies = TRUE)
+  }}
+
+install_if_missing(required_packages)
+
+```
+
+
 ## Installation
 
 For installing and loading BOM, run:
