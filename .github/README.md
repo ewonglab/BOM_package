@@ -1,4 +1,4 @@
-# BOM: predictive models to find important motifs at cis-regulatory regions 
+# BOM: predictive models to find important motifs at cis-regulatory regions
 BAG-of-Motifs (BOM) is an R package that uses XGBoost to construct predictive models of cis-regulatory sequences between cell states. It then interprets the importance of each motif in the model using SHAP scores.
 
 It is based on the principle that the activity of these regions relies on the binding of TFs to specific motifs. Leveraging available TF binding motif profiles and the Extreme Gradient Boosting (XGBoost) algorithm, BOM has achieved high performance in classifying context-specific cis-regulatory elements.
@@ -8,7 +8,7 @@ Through the use of SHapley Additive exPlanations (SHAP), BOM helps identify the 
 
 ## Dependencies
 
-Before proceeding with the tutorial, please ensure that all required R package dependencies are installed. You can use the code below to install them. Missing packages may cause errors during execution. 
+Before proceeding with the tutorial, please ensure that all required R package dependencies are installed. You can use the code below to install them. Missing packages may cause errors during execution.
 
 ```r
 required_packages <- c("foreach", "doParallel", "tidyr", "dplyr", "xgboost"
@@ -84,5 +84,5 @@ shapPlots_multi(plotType = "waterfall")
 <br>
 <br>
 A <a href="https://codeocean.com/capsule/4079053/tree"> CodeOcean example</a> is also available where all the software is preinstalled and ready to go.
- 
+
 To use, clone the capsule and run the jupyternotebook "tutorial_model_EW_20231201.ipynb"
