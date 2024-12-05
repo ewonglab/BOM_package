@@ -15,11 +15,11 @@
 
 
 <br>
-This tutorial uses regulatory regions from four cell types from snATAC-seq data of whole mouse embryo "mouseE8.25_4CellTypes.bed" [1]. The full dataset comprises of 17 cell types but we have restricted to four for the tutorial. snATAC-seq peaks were associated to cell types based on differential accessibility. 
+This tutorial uses regulatory regions from four cell types from snATAC-seq data of whole mouse embryo "mouseE8.25_4CellTypes.bed" [1]. The full dataset comprises of 17 cell types but we have restricted to four for the tutorial. snATAC-seq peaks were associated to cell types based on differential accessibility.
 
 In this tutorial, we are using binary classification to examine our regulatory regions. This means that the positive and negative (background) sets are balanced in numbers. We also use stratified sampling to ensure that the each class (e.g. cell type) is equally well represented in the negative set.
 
-Note that if you are working with snATAC-seq data using Signac and ArchR, these methods have inbuilt tests to provide sets of marker peaks for each cell cluster which can be used as input. 
+Note that if you are working with snATAC-seq data using Signac and ArchR, these methods have inbuilt tests to provide sets of marker peaks for each cell cluster which can be used as input.
 
 
 
@@ -41,20 +41,20 @@ devtools::install_github("ewonglab/BOM_package")
 <a id="Step1PeakFilter"></a>
 <h3><font color="brown"> Step 1 Peak filter</font></h3>
 
-BOM takes as input a table of genomic coordinates labeled with one or more cell types/states. Input should have 4 columns (chr, start, end, condition). 
+BOM takes as input a table of genomic coordinates labeled with one or more cell types/states. Input should have 4 columns (chr, start, end, condition).
 
-The function "filterCREs" has some useful options to filter the peaks. Here, we are focusing on cell-type specific distal elements, thus we remove peaks located within 1kb from a TSS and peaks overlapping exons. We also adjust the width of each element so that each peak is centered and spans 500bp (parameter nbp) in total. We remove peaks annotated to multiple cell types. 
+The function "filterCREs" has some useful options to filter the peaks. Here, we are focusing on cell-type specific distal elements, thus we remove peaks located within 1kb from a TSS and peaks overlapping exons. We also adjust the width of each element so that each peak is centered and spans 500bp (parameter nbp) in total. We remove peaks annotated to multiple cell types.
 
-This step is optional in that the preprocessing really depends on your research question. BOM is flexible and you may already have the exact sets of sequences you want to interrogate, in which case you may decide to forego this step with your data. 
+This step is optional in that the preprocessing really depends on your research question. BOM is flexible and you may already have the exact sets of sequences you want to interrogate, in which case you may decide to forego this step with your data.
 
 We find that BOM models are not predictive if the class is too small (e.g. < 100 CREs). You may want to consider filtering out these classes.
 
 Possible filter options within filterCREs include
- 
+
 - keeping only regions that are proximal to a transcription start site (TSS)
 - keeping only regions located distally
 - remove any regions overlapping exons
-- adjust the width of the regions to ensure concistency. 
+- adjust the width of the regions to ensure concistency.
 
 
 Required arguments:
@@ -72,7 +72,7 @@ Required arguments:
 ```R
 date() # takes ~2mins to complete
 library(BagOfMotifs)
-# Package contains 
+# Package contains
 extdata_path <- system.file("extdata",package = "BagOfMotifs")
 input_bed <- paste0(extdata_path,'/mouseE8.25_4CellTypes.bed')
 chr_sizes <- paste0(extdata_path,'/mouse.chrom.sizes.txt') #https://hgdownload.soe.ucsc.edu/goldenPath/mm10/bigZips/
@@ -91,6 +91,7 @@ date()
 
 
 
+```text
     Reading CREs...
     
     
@@ -130,7 +131,7 @@ date()
     Cardiomyocytes.bed
     Erythroid.bed
     Allantois.bed
-    
+ ```
 
 
 
@@ -148,7 +149,7 @@ Note please FIMO version 5.5.0 or earlier.
 
 This step identifies transcription factor (TF) binding motifs within the CRE using FIMO.
 
-Files that have ~1000 peaks will take approximately 5 minutes. 
+Files that have ~1000 peaks will take approximately 5 minutes.
 
 Input file should have 4 columns (chr, start, end, condition). 
 
@@ -165,21 +166,22 @@ generateAllFasta(bedDir = "./mouse_4ct/", genome = Mmusculus, fastaDir = "./mous
 
 '/g/data/zk16/genomicsCore/jupyter/mouse_enh_grammar/vignette_4celltypes'
 
-
+```text
     Creating 4 output fasta files
     
     Fasta files generated
     
 
+```
 
 
 ```R
-# Identify motifs from 
+# Identify motifs from
 fimo_path = 'path/to/fimo'
 fimo_path <- '/g/data/zk16/genomicsCore/software/'
 motifs_path <- "./extdata/gimme.vertebrate.v5.0.meme")
 date()
-BagOfMotifs::runFIMO(input_path = './mouse_4ct/', motifs_path = motifs_path, p_thresh = 0.0001, 
+BagOfMotifs::runFIMO(input_path = './mouse_4ct/', motifs_path = motifs_path, p_thresh = 0.0001,
                    out_path = './mouse_4ct/', FIMO_path = fimo_path)
 date()
 ```
@@ -190,7 +192,7 @@ If you have many sequences, you can also run FIMO using gnu parallel on the comm
 
 
 ```R
-#Example of how to run FIMO using bash parallel via bash command line 
+#Example of how to run FIMO using bash parallel via bash command line
 
 cd directory_containing_fastaFiles
 
@@ -223,7 +225,7 @@ Required arguments for this function include:
 ```R
 # prepare counts for binary classifications
 
-date() # takes ~2-3 mins to run for all celltypes 
+date() # takes ~2-3 mins to run for all celltypes
 
 
 binModel(target_ct = NULL, data_path = './mouse_4ct/', qval_thresh = 0.5
@@ -235,6 +237,7 @@ date()
 
 
 
+```text
     Loading required package: foreach
     
     Loading required package: doParallel
@@ -269,7 +272,7 @@ date()
     Saving CRE ids of training, validation and test sets...
     
     Complete
-    
+```    
 
 
 
@@ -323,7 +326,7 @@ BagOfMotifs::predict_binary_multi(inputMotif_dir = './mouse_4ct/'
                                   , pred_dir = './mouse_4ct/'
                                   , outputFile = './mouse_4ct/mouseE8.25_ROCs.pdf')
 ```
-
+```text
     Preparing Allantois_vs_Others predict binary output
     
     Preparing Cardiomyocytes_vs_Others predict binary output
@@ -332,7 +335,7 @@ BagOfMotifs::predict_binary_multi(inputMotif_dir = './mouse_4ct/'
     
     Preparing Erythroid_vs_Others predict binary output
     
-
+```
 
 
 <p align="center">
@@ -354,7 +357,7 @@ prcurve_multi(inputMotif_dir = "./mouse_4ct/"
               , inputXGB_dir = "./mouse_4ct/"
               , outputFile = "./mouse_4ct/mouseE8.25_PRcurvess.pdf")
 ```
-
+```text
     Loading required package: cowplot
     
     Preparing Allantois_vs_Others PR curve
@@ -365,7 +368,7 @@ prcurve_multi(inputMotif_dir = "./mouse_4ct/"
     
     Preparing Erythroid_vs_Others PR curve
     
-
+```
 
 <p align="center">
   <img src="images/PRcurvess.png" alt="PR">
@@ -383,8 +386,9 @@ read.table(file = "./mouse_4ct/binStats", header =T)
 
 ```
 
+```text
     Using files ending with pattern 'pred.txt'
-    
+```    
 
 
 
@@ -416,9 +420,10 @@ By using the function **"save_shap"** for a single model or **"save_shap_multi"*
 save_shap_multi(dataDir = "./mouse_4ct/", outDir = "./mouse_4ct/")
 ```
 
+```text
     Loading required package: shapviz
     
-
+```
 
 Using the SHAP values we can produce a series of plots to explore the importance of TF binding motifs in the classification tasks. The different plot options are summarized below:
 
@@ -448,11 +453,13 @@ for(i in 1:length(p)){p[[i]] <- p[[i]] + ggtitle(sub(".rds", "", models[i]))}
 p
 ```
 
+```text
     Loading required package: ggplot2
     
     Loading required package: gggenes
     
     Loading required package: shades
+```
 
 <br>
     
@@ -530,6 +537,7 @@ sessionInfo()
 ```
 
 
+```text
     R version 4.1.0 (2021-05-18)
     Platform: x86_64-pc-linux-gnu (64-bit)
     Running under: Rocky Linux 8.8 (Green Obsidian)
@@ -564,7 +572,7 @@ sessionInfo()
     [41] utf8_1.2.2        stringi_1.7.6     munsell_0.5.0     crayon_1.5.0     
     [45] Cairo_1.6-0      
 
-
+```
 ---
 <a id="BOM_references"></a>
 <h3><font color="brown"> References</font></h3>
