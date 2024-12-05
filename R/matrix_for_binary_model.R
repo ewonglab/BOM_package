@@ -12,35 +12,34 @@
 #' 
 #' @examples 
 #' \dontrun{
-#' extdata_path <- system.file("extdata",package = "BagOfMotifs")
+#' extdata_path <- system.file("extdata", package = "BagOfMotifs")
 #' data_path <- paste0(extdata_path, "/tutorial/motifs") 
 #' 
-#' binModel(data_path=data_path, qval_thresh=0.5, outDir='results/', target_ct= 'Cardiomyocytes')
+#' binModel(data_path = data_path, qval_thresh = 0.5, outDir = "results/", target_ct = "Cardiomyocytes")
 #' }
 #' @export
-binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL, nthreads=1
+binModel <- function(data_path, qval_thresh, outDir, target_ct = NULL, nthreads = 1
                      , nrounds = 10000
                      , eta = 0.01, max_depth = 6, subsample = 0.5
                      , colsample_bytree = 0.5, objective = "binary:logistic"
                      , early_stopping_rounds = NULL
-                     , eval_metric = "error", maximize = F
+                     , eval_metric = "error", maximize = FALSE
                      , params = list(), feval = NULL, verbose = 0
                      , print_every_n = 1L, save_period = NULL
                      , xgb_model = NULL
                      , callbacks = list()
-                     , training = 0.6)
-{
+                     , training = 0.6){
   require(foreach)
   require(doParallel)
   # Set up multiple workers
-  system.name <- Sys.info()['sysname']
+  system.name <- Sys.info()["sysname"]
   new_cl <- FALSE
   if (system.name == "Windows") {
     new_cl <- TRUE
     cluster <- parallel::makePSOCKcluster(rep("localhost", nthreads))
     doParallel::registerDoParallel(cluster)
   } else {
-    doParallel::registerDoParallel(cores=nthreads)
+    doParallel::registerDoParallel(cores = nthreads)
   }
 
   # Check requested threads is available
@@ -51,20 +50,19 @@ binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL, nthreads=1
   
   
   # list directories containing FIMO output
-  directories <- list.dirs(path = data_path, full.names = T, recursive=F)
+  directories <- list.dirs(path = data_path, full.names = TRUE, recursive = FALSE)
   celltypes <- basename(directories)
   
-  counts_files <- list.files(path=data_path, full.names =T, recursive=T, pattern='fimo.tsv*')
+  counts_files <- list.files(path = data_path, full.names = TRUE, recursive = TRUE, pattern = "fimo.tsv*")
   # Read results of motif search
-  message(paste0("Reading input data from ",data_path,".\nThere are ", length(directories), " directories found."))
+  message(paste0("Reading input data from ", data_path, ".\nThere are ", length(directories), " directories found."))
   
-  read_and_update <- function(fn, pb) 
-  {  
+  read_and_update <- function(fn, pb) {
     cat("=")
-    as.data.frame(read.table(fn, sep='\t', header=TRUE))
+    as.data.frame(read.table(fn, sep = "\t", header = TRUE))
   }
   
-  counts <- foreach::foreach(thisSample=counts_files) %dopar% {
+  counts <- foreach::foreach(thisSample = counts_files) %dopar% {
     read_and_update(thisSample)
   }
   #	suppressWarnings({
@@ -73,18 +71,15 @@ binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL, nthreads=1
   #	close(pb)
   
   counts <- lapply(counts, as.data.frame)
-  for(i in 1:length(counts))
-  {
-    if (nrow(counts[[i]]) == 0)
-    {
-      stop(paste0("No data for ",countfiles[i]))
+  for(i in 1:length(counts)){
+    if (nrow(counts[[i]]) == 0){
+      stop(paste0("No data for ", countfiles[i]))
     }
   }
   
   
-  counts <- lapply(counts, function(x) x[x[,9] <= qval_thresh,])
+  counts <- lapply(counts, function(x) x[x[, 9] <= qval_thresh, ])
   names(counts) <- celltypes
-  
   
   ## count the number of unique CREs per condition
   n_CREs_by_ct <- unlist(lapply(counts, function(x) length(unique(x$sequence_name))))
@@ -99,8 +94,8 @@ binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL, nthreads=1
     binModel_oneVsOthers(target_ct, counts, n_CREs_by_ct, celltypes, outDir)
     
     message("Training....")
-    inputData <- paste0(outDir,"/", target_ct,"_vs_Others.txt")
-    outputFileNames <- paste0(outDir,"/",target_ct,"_vs_Others.rds")
+    inputData <- paste0(outDir, "/", target_ct, "_vs_Others.txt")
+    outputFileNames <- paste0(outDir, "/", target_ct, "_vs_Others.rds")
     
     message(paste0("Preparing training for ", target_ct))
     train_binary(input_data = inputData, save_name = outputFileNames, 
@@ -111,30 +106,28 @@ binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL, nthreads=1
                  , maximize = maximize, params = params, feval = feval
                  , verbose = verbose, print_every_n = print_every_n
                  , save_period = save_period, callbacks = callbacks
-                 , training = training, ids_pfx = paste0(outDir,"/", target_ct))
+                 , training = training, ids_pfx = paste0(outDir, "/", target_ct))
     
-  }
-  else  # Do all comparisons
+  }else  # Do all comparisons
   {	message("Processing all cell types")
     
-    #	parallel::parLapply(cl, celltypes, binModel_oneVsOthers, counts, n_CREs_by_ct, celltypes, outDir)
-    #browser()
-    outputforDebug <-foreach::foreach(thisCellType=celltypes) %dopar% {
+    # parallel::parLapply(cl, celltypes, binModel_oneVsOthers, counts, n_CREs_by_ct, celltypes, outDir)
+    # browser()
+    outputforDebug <- foreach::foreach(thisCellType=celltypes) %dopar% {
       binModel_oneVsOthers(thisCellType, counts, n_CREs_by_ct, celltypes, outDir)
     } 
     
     # Training
     
     message("Training....")
-    inputData <- paste0(outDir,"/",celltypes,"_vs_Others.txt")
-    outputFileNames <- paste0(outDir,"/",celltypes,"_vs_Others.rds")
+    inputData <- paste0(outDir, "/", celltypes, "_vs_Others.txt")
+    outputFileNames <- paste0(outDir, "/", celltypes, "_vs_Others.rds")
     
     #	mapply(train_binary, inputData, save_name = outputFileNames, nthread = nthreads, verbose = 0)
-    for ( i in 1:length(inputData))
-    {
+    for ( i in 1:length(inputData)){
       message(paste0("Preparing training for ", celltypes[i]))
-      train_binary(input_data=inputData[i], save_name=outputFileNames[i], 
-                   early_stopping_rounds=early_stopping_rounds, nthread=nthreads
+      train_binary(input_data = inputData[i], save_name = outputFileNames[i]
+		   , early_stopping_rounds = early_stopping_rounds, nthread = nthreads
                    , nrounds = nrounds, eta = eta, max_depth = max_depth
                    , subsample = subsample, colsample_bytree = colsample_bytree
                    , objective = objective, eval_metric = eval_metric
@@ -142,7 +135,7 @@ binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL, nthreads=1
                    , verbose = verbose, print_every_n = print_every_n
                    , save_period = save_period
                    , xgb_model = xgb_model, callbacks = callbacks
-                   , training = training, ids_pfx = paste0(outDir,"/", celltypes[i]))
+                   , training = training, ids_pfx = paste0(outDir, "/", celltypes[i]))
     }  
     
 
@@ -170,10 +163,9 @@ binModel <- function(data_path, qval_thresh, outDir, target_ct=NULL, nthreads=1
 #' @param outDir out directory
 #'
 #'
-binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, outDir)
-{
+binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, outDir){
   n <- n_CREs_by_ct[target_ct]
-  n_bkg <- round(n/(length(celltypes) -1))
+  n_bkg <- round(n/(length(celltypes) - 1))
   
   # check whether the number of CREs of every context is enough to make a balanced set
   
@@ -183,7 +175,7 @@ binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, out
     n <- n_bkg * (length(celltypes) -1)
     tmp <- counts[[target_ct]]
     set.seed(123)
-    pos_sample <- sample(x = unique(tmp$sequence_name), size = n, replace = F)
+    pos_sample <- sample(x = unique(tmp$sequence_name), size = n, replace = FALSE)
     counts[[target_ct]] <- tmp[tmp$sequence_name %in% pos_sample,]
   }
   
@@ -197,7 +189,7 @@ binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, out
     tmp[tmp$sequence_name %in% ct_sample, ]
   })
   
-  names(negative_set) <- celltypes[celltypes!=target_ct]
+  names(negative_set) <- celltypes[celltypes! = target_ct]
   
   for (i in seq_along(negative_set)) {
     negative_set[[i]]$celltype <- celltypes[celltypes != target_ct][i]
@@ -209,13 +201,12 @@ binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, out
   tmp <- as.data.frame(table(negative_set.df[,1:2]))
   
   tmp <- tidyr::spread(tmp, motif_id, Freq)
-  tmp <- merge(tmp, unique(negative_set.df[,2:3]), by="sequence_name")
+  tmp <- merge(tmp, unique(negative_set.df[, 2:3]), by = "sequence_name")
   #browser()
-  if (length(unique(tmp$sequence_name)) != nrow(tmp))
-  { 	warning("Unexpectedly Input data has duplicate peaks for ",target_ct,"! (when generating background)") 
-    rownames(tmp) <- make.unique(tmp$sequence_name)
-  }else
-  {
+  if (length(unique(tmp$sequence_name)) != nrow(tmp)){
+	  warning("Unexpectedly Input data has duplicate peaks for ", target_ct, "! (when generating background)")
+	  rownames(tmp) <- make.unique(tmp$sequence_name)
+  } else {
     rownames(tmp) <- tmp$sequence_name 
   } 
   tmp$sequence_name <- NULL
@@ -227,13 +218,12 @@ binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, out
   positive <- positive[,c("motif_id", "sequence_name", "celltype")]
   tmp2 <- as.data.frame(table(positive[,1:2]))
   tmp2 <- tidyr::spread(tmp2, motif_id, Freq)
-  tmp2 <- merge(tmp2, unique(positive[,2:3]), by="sequence_name")
+  tmp2 <- merge(tmp2, unique(positive[,2:3]), by = "sequence_name")
   #enhancer IDs as rownames
-  if (length(unique(tmp2$sequence_name)) != nrow(tmp2))
-  { 	warning("Unexpectedly Input data has duplicate peaks for ",target_ct,"! (when generating background)") 
-    rownames(tmp2) <- make.unique(tmp2$sequence_name)
-  }else
-  {
+  if (length(unique(tmp2$sequence_name)) != nrow(tmp2)){
+	  warning("Unexpectedly Input data has duplicate peaks for ",target_ct,"! (when generating background)")
+	  rownames(tmp2) <- make.unique(tmp2$sequence_name)
+  } else {
     rownames(tmp2) <- tmp2$sequence_name 
   } 
   tmp2$sequence_name <- NULL
@@ -242,12 +232,13 @@ binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, out
   
   final_set <- dplyr::bind_rows(tmp, tmp2)
   final_set[is.na(final_set)] <- 0
-  final_set <- final_set[,c(colnames(final_set)[colnames(final_set)!="celltype"],"celltype")]
-  final_set$binary_celltype <- ifelse(final_set$celltype==target_ct, 1, 0)
+  final_set <- final_set[, c(colnames(final_set)[colnames(final_set) != "celltype"], "celltype")]
+  final_set$binary_celltype <- ifelse(final_set$celltype == target_ct, 1, 0)
   
   #  if()
   message(paste("Saving matrix of motif counts for binary classification...\n"))
-  write.table(x = final_set, file = paste0(outDir,"/",target_ct,"_vs_Others.txt"), quote = F, sep = '\t')
+  write.table(x = final_set, file = paste0(outDir, "/" , target_ct, "_vs_Others.txt")
+	      , quote = F, sep = '\t')
   
   message("Content of output table:\n")
   out_content <- as.data.frame(table(final_set$binary_celltype))
@@ -260,7 +251,7 @@ binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, out
 #############################################################
 #' train_binary
 #' @description Function to train a binary classification model. 
-#' 
+#'
 #' @param input_data  File containing the input matrix of motif counts
 #' @param nrounds Number of boosting rounds (default: 10000)
 #' @param eta Learning rate (default: 0.01)
@@ -280,14 +271,14 @@ binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, out
 #' @param print_every_n Print evaluation messages each n-th iterations (default: 1)
 #' @param training Proportion of data that will be split for training and test. 
 #' Default is 0.6 which leaves 0.2 and 0.2 for validation and testing respectively.
-#'      
+#'
 #' @examples 
 #' \dontrun{
 #' extdata_path <- system.file("extdata",package = "BagOfMotifs")
 #' motif_counts <- paste0(extdata_path, "/tutorial/motifs/Cardiomyocytes_vs_other_counts.txt")
-#' 
-#' 
-#' train_binary(input_data = motif_counts, save_name="Cardiomyocytes_vs_other.rds"
+#'
+#'
+#' train_binary(input_data = motif_counts, save_name = "Cardiomyocytes_vs_other.rds"
 #' , early_stopping_rounds = 100, print_every_n = 100, nthread = 4)
 #' }
 #' @export
@@ -295,14 +286,14 @@ train_binary <- function(input_data = NULL, nrounds = 10000
                          , eta = 0.01, max_depth = 6, subsample = 0.5
                          , colsample_bytree = 0.5, objective = "binary:logistic"
                          , early_stopping_rounds = NULL
-                         , nthread = 1, eval_metric = "error", maximize = F
+                         , nthread = 1, eval_metric = "error", maximize = FALSE
                          , params = list(), feval = NULL, verbose = 1
                          , print_every_n = 1L, save_period = NULL
                          , save_name = "xgboost.model", xgb_model = NULL
-                         , callbacks = list(), training = 0.6, ids_pfx = NULL)
-{
-	if ((training > 1) | (training < 0) )
-	{ error("Parameter training has to be between 0 and 1") }
+                         , callbacks = list(), training = 0.6, ids_pfx = NULL){
+	if ((training > 1) | (training < 0) {
+		error("Parameter training has to be between 0 and 1")
+	}
 
   nrounds <- as.integer(nrounds)
   max_depth <- as.integer(max_depth)
@@ -327,13 +318,15 @@ train_binary <- function(input_data = NULL, nrounds = 10000
   maximize <- as.logical(maximize)
   
   # Reading table of motif counts
-  if (verbose)
-  {  cat("Reading motif counts...\n")  }
-  counts.tab <- read.table(file = input_data, header =T
-                           , stringsAsFactors = F, sep = '\t')
+  if (verbose){
+	  cat("Reading motif counts...\n")
+  }
+  counts.tab <- read.table(file = input_data, header = TRUE
+                           , stringsAsFactors = F, sep = "\t")
   counts.tab$celltype <- NULL
   
   counts.tab.NAs <- sapply(counts.tab, function(x) sum(is.na(x)))
+			   
   if(any(counts.tab.NAs) > 0){
     warning("NAs present in matrix of motif counts...\n")  
   }
@@ -342,8 +335,9 @@ train_binary <- function(input_data = NULL, nrounds = 10000
   counts.tab$binary_celltype <- as.numeric(counts.tab$binary_celltype)
   
   # Split dataset into training, validation and test sets
-  if (verbose)
-  {  message("Splitting data into training, validation and test sets...\n")  }
+  if (verbose){
+	  message("Splitting data into training, validation and test sets...\n")
+  }
   set.seed(123)
   motifs_split <- rsample::initial_split(counts.tab, prop = training)
   motifs_train <- rsample::training(motifs_split)
@@ -356,31 +350,32 @@ train_binary <- function(input_data = NULL, nrounds = 10000
 
   # Removing non-variable motifs from training set
   motifs_train.sd <- apply(motifs_train, 2, sd)
-  motifs_train <- motifs_train[, names(which(motifs_train.sd != 0)), drop = F]
-  motifs_val <- motifs_val[,colnames(motifs_train), drop = F]
+  motifs_train <- motifs_train[, names(which(motifs_train.sd != 0)), drop = FALSE]
+  motifs_val <- motifs_val[, colnames(motifs_train), drop = FALSE]
 
   message("Saving CRE ids of training, validation and test sets...")
   write.table(x = as.data.frame(rownames(motifs_train))
-              , file = paste0(ids_pfx, "_training_CREs"), quote = F, sep = '\t'
-              , col.names = F, row.names = F)
+              , file = paste0(ids_pfx, "_training_CREs"), quote = FALSE, sep = "\t"
+              , col.names = FALSE, row.names = FALSE)
   write.table(x = as.data.frame(rownames(motifs_val))
-              , file = paste0(ids_pfx, "_val_CREs"), quote = F, sep = '\t'
-              , col.names = F, row.names = F)
+              , file = paste0(ids_pfx, "_val_CREs"), quote = FALSE, sep = "\t"
+              , col.names = FALSE, row.names = FALSE)
   write.table(x = as.data.frame(rownames(motifs_test))
-              , file = paste0(ids_pfx, "_test_CREs"), quote = F, sep = '\t'
-              , col.names = F, row.names = F)
+              , file = paste0(ids_pfx, "_test_CREs"), quote = FALSE, sep = "\t"
+              , col.names = FALSE, row.names = FALSE)
 
   # Prepare training and validation DMatrix objects
   dtrain <- xgboost::xgb.DMatrix(label = as.numeric(motifs_train$binary_celltype)
-                        , data = as.matrix(motifs_train[, colnames(motifs_train)[colnames(motifs_train)!="binary_celltype"]]))
+                        , data = as.matrix(motifs_train[, colnames(motifs_train)[colnames(motifs_train) != "binary_celltype"]]))
   dvalid <- xgboost::xgb.DMatrix(label = as.numeric(motifs_val$binary_celltype)
-                    , data = as.matrix(motifs_val[, colnames(motifs_val)[colnames(motifs_val)!="binary_celltype"]]))
+                    , data = as.matrix(motifs_val[, colnames(motifs_val)[colnames(motifs_val) != "binary_celltype"]]))
   
   # params$data <- dtrain
   watchlist <- list(train = dtrain, validation = dvalid) 
   
-  if (verbose)
-  { message("Training binary classification model...\n") }
+  if (verbose){
+	  message("Training binary classification model...\n")
+  }
   set.seed(123) 
   model <- xgboost::xgb.train(
     data = dtrain,
@@ -404,8 +399,9 @@ train_binary <- function(input_data = NULL, nrounds = 10000
     xgb_model = xgb_model,
     callbacks = callbacks
   )
-	if(verbose)
-	{	message("Saving model...\n")  }
+	if(verbose){
+		message("Saving model...\n")
+	}
   
 	#xgb.save(model, params$save_name)
 	saveRDS(model, save_name)
