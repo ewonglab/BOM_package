@@ -5,13 +5,13 @@
 #' @param pred_df input data frame containing predictions from a binary model.
 #' @param celltype Cell type/state.
 #'
-#' @examples 
+#' @examples
 #'
-#' Endo_pred <- read.table(file = "Endothelium_pred.txt", header = T, stringsAsFactors = F)
+#' Endo_pred <- read.table(file = "Endothelium_pred.txt", header = TRUE, stringsAsFactors = FALSE)
 #' Endo_stats <- binStats_single(pred_df = Endo_pred, celltype = "Endothelium")
-#
+#'
 #' @export
-#' 
+#'
 
 binStats_single <- function(pred_df, model){
   TP <- nrow(pred_df[pred_df$true_class == 1 & pred_df$predicted_class == 1, ])
@@ -20,21 +20,22 @@ binStats_single <- function(pred_df, model){
   FN <- nrow(pred_df[pred_df$true_class == 1 & pred_df$predicted_class == 0, ])
   recall <- TP/(TP + FN)
   precision <- TP/(TP + FP)
-  f1 <- 2*((precision*recall)/(precision+recall))
+  f1 <- 2 * ((precision * recall)/(precision + recall))
   
-  roc_auc <- round(cvAUC::AUC(pred_df$prob, pred_df$true_class),4)
-  acc <- round(nrow(pred_df[pred_df$predicted_class==pred_df$true_class,])/nrow(pred_df),4)
+  roc_auc <- round(cvAUC::AUC(pred_df$prob, pred_df$true_class), 4)
+  acc <- round(nrow(pred_df[pred_df$predicted_class == pred_df$true_class, ]) / nrow(pred_df), 4)
   
   mcc <- ((as.numeric(TP) * as.numeric(TN)) - (as.numeric(FP) * as.numeric(FN))) /
-    sqrt((as.numeric(TP) + as.numeric(FP)) * (as.numeric(TP) + as.numeric(FN)) * (as.numeric(TN) + as.numeric(FP)) * (as.numeric(TN) + as.numeric(FN)))
+    sqrt((as.numeric(TP) + as.numeric(FP)) * (as.numeric(TP) + as.numeric(FN)) * 
+         (as.numeric(TN) + as.numeric(FP)) * (as.numeric(TN) + as.numeric(FN)))
   
-  pred_df$true_class <- factor(pred_df$true_class, levels = c(0,1))
+  pred_df$true_class <- factor(pred_df$true_class, levels = c(0, 1))
   pr_auc_val <- yardstick::pr_auc(pred_df, truth = true_class
-                                  , prob, event_level="second"
+                                  , prob, event_level = "second"
                                   , estimator = "binary")
   pr_auc_val <- pr_auc_val$.estimate
   
-  #output dataframe
+  # output dataframe
   out_df <- data.frame(Model = model, Accuracy = acc
                        , auPR = pr_auc_val, auROC = roc_auc
                        , F1 = f1, MCC = mcc, Precision = precision
@@ -75,14 +76,14 @@ save_binStats <- function(pred_dir = NULL, pred_files = NULL, out_file, digits =
   }
   
   celltypes <- sub("_pred.txt", "", basename(pred_files))
-  pred_li <- lapply(pred_files, read.table, header = T, stringsAsFactors = F)
+  pred_li <- lapply(pred_files, read.table, header = TRUE, stringsAsFactors = FALSE)
 
   pred_stats <- lapply(1:length(pred_li)
                        , function(x) binStats_single(pred_li[[x]], celltypes[x]))
   pred_stats <- do.call("rbind", pred_stats)
   
   stat_cols <- vapply(pred_stats, is.numeric, FUN.VALUE = logical(1))
-  pred_stats[,stat_cols] <- round(pred_stats[,stat_cols], digits = digits)
+  pred_stats[, stat_cols] <- round(pred_stats[, stat_cols], digits = digits)
   
-  write.table(x = pred_stats, file = out_file, quote = F, sep ='\t', row.names = F)
+  write.table(x = pred_stats, file = out_file, quote = FALSE, sep = "\t", row.names = FALSE)
 }
