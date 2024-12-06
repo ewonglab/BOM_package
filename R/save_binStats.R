@@ -52,25 +52,25 @@ binStats_single <- function(pred_df, model){
 #' @param out_file Output file name.
 #' @param digits Number of digits to round prediction statistics (default 3).
 #'
-#' @examples 
+#' @examples
 #'
-#' 
+#'
 #' save_binStats(inputFile = "binary_stats.txt", digits = 4)
-#' 
+#'
 #' save_binStats(pred_files = c("Allantois_pred.txt", "Cardiomyocytes_pred.txt", "Endothelium_pred.txt")
 #' , inputFile = "binary_stats.txt")
-#
+#'
 #' @export
-#' 
+#'
 
 save_binStats <- function(pred_dir = NULL, pred_files = NULL, out_file, digits = 3){
   if(is.null(pred_files)){
     message("Using files ending with pattern 'pred.txt'")
     
     if(is.null(pred_dir)){
-      pred_files <- list.files(path = ".", pattern = "(.*)pred.txt$", full.names = T)
+      pred_files <- list.files(path = ".", pattern = "(.*)pred.txt$", full.names = TRUE)
     }else{
-      pred_files <- list.files(path = pred_dir, pattern = "(.*)pred.txt$", full.names = T)
+      pred_files <- list.files(path = pred_dir, pattern = "(.*)pred.txt$", full.names = TRUE)
     }
       
   }
