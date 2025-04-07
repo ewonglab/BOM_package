@@ -189,7 +189,7 @@ binModel_oneVsOthers <- function(target_ct, counts, n_CREs_by_ct, celltypes, out
     tmp[tmp$sequence_name %in% ct_sample, ]
   })
   
-  names(negative_set) <- celltypes[celltypes! = target_ct]
+  names(negative_set) <- celltypes[celltypes != target_ct]
   
   for (i in seq_along(negative_set)) {
     negative_set[[i]]$celltype <- celltypes[celltypes != target_ct][i]
@@ -291,7 +291,7 @@ train_binary <- function(input_data = NULL, nrounds = 10000
                          , print_every_n = 1L, save_period = NULL
                          , save_name = "xgboost.model", xgb_model = NULL
                          , callbacks = list(), training = 0.6, ids_pfx = NULL){
-	if ((training > 1) | (training < 0) {
+	if ((training > 1) | (training < 0)) {
 		error("Parameter training has to be between 0 and 1")
 	}
 
