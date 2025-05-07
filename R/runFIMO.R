@@ -8,6 +8,7 @@
 #' @param p_thresh p-value threshold (default 0.0001)
 #' @param FIMO_path Path to FIMO
 #' @param verbosity Level of verbosity for FIMO. Default = 1.
+#' @param FIMO_update Binary variable to indicate if FIMO is updated. Default = FALSE.
 #'
 #' @examples
 #'
@@ -22,7 +23,7 @@
 #' @export
 #'
 runFIMO <- function(input_path, motifs_path, out_path
-                    , p_thresh = 0.0001, FIMO_path, verbosity = 1){
+                    , p_thresh = 0.0001, FIMO_path, FIMO_update = TRUE,  verbosity = 1){
   # create output directory
   mkidir_command <- paste("mkdir -p", out_path)
   system(mkidir_command)
@@ -30,12 +31,29 @@ runFIMO <- function(input_path, motifs_path, out_path
   # get sequences for CRE coordinates
   message("Looking for motif instances with FIMO...")
   fastaFiles <- list.files(path = input_path, pattern = ".fa$", full.names = TRUE)
-  for(fastaFile in fastaFiles){
-    fimo_command <- paste(paste(FIMO_path, "fimo", sep = "/")
-                          , " --thresh", p_thresh, "--verbosity", as.integer(verbosity)
-                          , "--o", paste0(out_path, "/",
-                                          sub(".fa$", "", basename(fastaFile)))
-                          , motifs_path, fastaFile)
-    system(fimo_command)
+  # concise FIMO invocation
+  pgc_flag <- if (as.logical(FIMO_update)) "--no-pgc" else ""
+  fimo_exec <- file.path(FIMO_path, "fimo")
+
+  for (fastaFile in fastaFiles) {
+    out_dir <- file.path(out_path, sub("\\.fa$", "", basename(fastaFile)))
+    args <- c(
+      "--thresh",    p_thresh,
+      "--verbosity", as.integer(verbosity),
+      pgc_flag,
+      "--o",         out_dir,
+      motifs_path,
+      fastaFile
+    )
+    cmd <- paste(
+      shQuote(fimo_exec),
+      paste(args[args != ""], collapse = " ")
+    )
+    system(cmd)
   }
-}
+
+
+                    }
+
+
+

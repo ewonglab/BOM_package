@@ -176,7 +176,7 @@ generateAllFasta(bedDir = "./mouse_4ct/", genome = Mmusculus, fastaDir = "./mous
 
 
 ```R
-# Identify motifs from
+# Identify motifs from FIMO Version from 5.5.4
 fimo_path = 'path/to/fimo'
 fimo_path <- '/g/data/zk16/genomicsCore/software/'
 motifs_path <- "./extdata/gimme.vertebrate.v5.0.meme")

@@ -20,7 +20,7 @@ The tutorial requires the mouse mm10 genome. If you don't have this already:
 BiocManager::install("BSgenome.Mmusculus.UCSC.mm10")
 ```
 
-FIMO is required:
+FIMO is required: 
 Installation information can be found <a href="https://meme-suite.org/meme/doc/install.html"> here </a> 
 
 ## Quick start
@@ -39,7 +39,20 @@ FIMO_path <- "/path/to/fimo"
                     
 # Generate FASTA and annotate motifs
 generateAllFasta(bedDir = "path/to/input", genome = "Mmusculus")
-BagOfMotifs::runFIMO(motifs_path = motifs_path, FIMO_path = FIMO_path)
+
+# Run FIMO to scan motifs
+# For FIMO ≥ 5.5.4 (default):
+BagOfMotifs::runFIMO(
+	motifs_path = motifs_path,
+	FIMO_path   = FIMO_path
+)
+
+# For FIMO < 5.5.4, disable the updated parser:
+BagOfMotifs::runFIMO(
+	motifs_path   = motifs_path,
+	FIMO_path     = FIMO_path,
+	FIMO_updated  = FALSE
+)
 
 # Motif count and model training
 BagOfMotifs::binModel()
