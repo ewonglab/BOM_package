@@ -144,7 +144,9 @@ date()
 
 
 This step uses FIMO from the MEME Suite. We use vertebrate motifs from [GIMME Motifs](https://github.com/vanheeringen-lab/gimmemotifs) [2].
-Note please FIMO version 5.5.0 or earlier.
+> **Note (FIMO < 5.5.4)**
+>
+> If you are using a FIMO version earlier than 5.5.4, set `FIMO_updated = FALSE` in the `runFIMO()` call and remove the `--no-pgc` flag when running FIMO on the command line.
 
 
 This step identifies transcription factor (TF) binding motifs within the CRE using FIMO.
@@ -198,7 +200,7 @@ cd directory_containing_fastaFiles
 
 mkdir mouseE8.25_motifs
 
-ls *.fasta | parallel fimo --thresh 0.001 --o {.} gimme.vertebrate.v5.0.meme mouseE8.25_motifs/{}
+ls *.fasta | parallel fimo --no-pgc --thresh 0.001 --o {.} gimme.vertebrate.v5.0.meme mouseE8.25_motifs/{}
 ```
 
 ---
