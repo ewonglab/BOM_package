@@ -6,6 +6,7 @@
 #' The fourth column should contain cell type/condition annotation.
 #' @param genome  Genome as a BSgenome object
 #' @param FastaFile Path to output fasta file. If NULL, a Biostrings object will be returned. Default = NULL. 
+#' @param UCSC  Logical. If TRUE, the chromosome names in the fasta file will be in UCSC format (e.g. chr1, chr2). If FALSE, the chromosome names will be in Ensembl format (e.g. 1, 2). Default = FALSE.
 #'     
 #' @examples 
 #'
@@ -24,7 +25,7 @@
 #'
 #' @export
 #'
-getFasta <- function(bed = NULL, genome, FastaFile = NULL){
+getFasta <- function(bed = NULL, genome, UCSC, FastaFile = NULL){
   if(is.null(bed)){
     stop("CRE coordinates not provided.")
   }
@@ -32,7 +33,11 @@ getFasta <- function(bed = NULL, genome, FastaFile = NULL){
   gRangesBed <-  with(bed, GenomicRanges::GRanges(chr, IRanges::IRanges(start + 1, end)))
   GenomeInfoDb::seqlevelsStyle(gRangesBed) <- "ucsc"
   sequences <- Biostrings::getSeq(genome, gRangesBed)
-  names(sequences) <- with(bed, paste(chr, paste(start, end, sep = "-"), sep = ":"))
+  if (UCSC == TRUE){
+	names(sequences) <- with(bed, paste(paste0("chr", chr), paste(start, end, sep = "-"), sep = ":"))
+  }else{
+	  names(sequences) <- with(bed, paste(chr, paste(start, end, sep = "-"), sep = ":"))
+  }
   if(!is.null(FastaFile)){
     Biostrings::writeXStringSet(sequences, FastaFile)
   } else {
@@ -49,6 +54,7 @@ getFasta <- function(bed = NULL, genome, FastaFile = NULL){
 #' @param bedDir    Path to directory containing celltype/state specific BED files. The first three columns in the BED files should correspond to chromosome, start and end positions. The fourth column should contain cell type/state annotation.
 #' @param genome    Genome as a BSgenome object
 #' @param fastaDir  Directory to where fasta files are written to 
+#' @param UCSC	 Logical. If TRUE, the chromosome names in the fasta file will be in UCSC format (e.g. chr1, chr2). If FALSE, the chromosome names will be in Ensembl format (e.g. 1, 2). Default = FALSE.
 #'
 #' @examples 
 #'
@@ -64,7 +70,7 @@ getFasta <- function(bed = NULL, genome, FastaFile = NULL){
 #'
 #' @export
 #'
-generateAllFasta <- function(bedDir = NULL, genome = NULL, fastaDir = NULL){
+generateAllFasta <- function(bedDir = NULL, genome = NULL, fastaDir = NULL, UCSC = FALSE){
 	if(is.null(bedDir)){
 		stop("Bed input directory not provided.")
 	}
@@ -90,7 +96,7 @@ generateAllFasta <- function(bedDir = NULL, genome = NULL, fastaDir = NULL){
 	message(paste0("Creating ", length(allfastaFiles)," output fasta files"))
 	for(i in 1:length(allfastaFiles)){
 		bed_data <- read.table(file = paste0(bedDir, "/", fl[i]), header = F, stringsAsFactors = F, sep = "\t")  
-		getFasta(bed = bed_data, genome, FastaFile = paste0(fastaDir, "/", allfastaFiles[i]))
+		getFasta(bed = bed_data, genome, UCSC, FastaFile = paste0(fastaDir, "/", allfastaFiles[i]))
 	}
 	message("Fasta files generated")
 }

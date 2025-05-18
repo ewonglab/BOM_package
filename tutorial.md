@@ -158,11 +158,11 @@ Input file should have 4 columns (chr, start, end, condition).
 
 
 ```R
-# We generate fasta files for the peaks specific to each cell type
+# Generating FASTA files for cell type–specific peaks. Specify the header format (UCSC or Gencode) by setting the `UCSC` parameter to `TRUE` or `FALSE`.  
 getwd()
 library(BagOfMotifs)
 Mmusculus <- BSgenome.Mmusculus.UCSC.mm10::BSgenome.Mmusculus.UCSC.mm10
-generateAllFasta(bedDir = "./mouse_4ct/", genome = Mmusculus, fastaDir = "./mouse_4ct/")
+generateAllFasta(bedDir = "./mouse_4ct/", genome = Mmusculus, UCSC = TRUE, fastaDir = "./mouse_4ct/")
 ```
 
 
